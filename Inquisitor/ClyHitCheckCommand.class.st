@@ -4,6 +4,11 @@ Class {
 	#category : #Inquisitor
 }
 
+{ #category : #activation }
+ClyHitCheckCommand class >> contextMenuOrder [
+	^100
+]
+
 { #category : #accessing }
 ClyHitCheckCommand >> defaultMenuIconName [
 	^#comments
