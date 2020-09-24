@@ -23,18 +23,16 @@ Inquisitor class >> mainInstance: anInstance [
 
 { #category : #'as yet unclassified' }
 Inquisitor >> hitCheckOn: aRBProgramNode [
-	"self inform: aRBProgramNode asString.
-	self inform: testClass asString.
-	self inform: testMethodName asString."
-	| testInstance sindarinDebugger hitCount nodes |
+	| testInstance hitCount b |
 	testInstance := testClass new.
-	sindarinDebugger := SindarinDebugger debug: [ testInstance perform: testMethodName ].
-	sindarinDebugger stepUntil: [ sindarinDebugger method selector = testMethodName.].
 	hitCount := 0.
-	nodes := OrderedCollection new.
-	[sindarinDebugger isExecutionFinished] whileFalse: [ ((sindarinDebugger node) == aRBProgramNode) ifTrue: [ hitCount := hitCount + 1 ]. nodes add: sindarinDebugger node. sindarinDebugger step ].
-	self inform: hitCount asString.
-	nodes inspect.
+	testInstance setUp.
+	b := Breakpoint new node: aRBProgramNode.
+	b always.
+	b install.
+	[testInstance perform: testMethodName] on: Break do: [ :ex| hitCount := hitCount + 1. ex resume. ].
+	b remove.
+	self inform: 'This node is encountered ', hitCount asString, ' times'.
 ]
 
 { #category : #'as yet unclassified' }
