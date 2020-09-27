@@ -3,7 +3,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'testMethodName',
-		'testClass'
+		'testClass',
+		'questionHistory'
 	],
 	#classVars : [
 		'mainInstance'
@@ -26,31 +27,24 @@ Inquisitor class >> mainInstance: anInstance [
 	mainInstance := anInstance
 ]
 
-{ #category : #adding }
+{ #category : #'question management' }
 Inquisitor >> addResolvedQuestion: anInquisitorQuestion [
-	self inform: anInquisitorQuestion resultDescription
+	self inform: anInquisitorQuestion resultDescription.
+	self questionHistory add: anInquisitorQuestion.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'question management' }
 Inquisitor >> askQuestion: anInquisitorQuestion [
 	anInquisitorQuestion askToInquisitor: self
 ]
 
-{ #category : #'as yet unclassified' }
-Inquisitor >> hitCheckOn: aRBProgramNode [
-	| testInstance hitCount b |
-	testInstance := testClass new.
-	hitCount := 0.
-	testInstance setUp.
-	b := Breakpoint new node: aRBProgramNode.
-	b always.
-	b install.
-	[testInstance perform: testMethodName] on: Break do: [ :ex| hitCount := hitCount + 1. ex resume. ].
-	b remove.
-	self inform: 'This node is encountered ', hitCount asString, ' times'.
+{ #category : #accessing }
+Inquisitor >> questionHistory [
+	questionHistory ifNil: [ questionHistory := OrderedCollection new ].
+	^ questionHistory 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #utility }
 Inquisitor >> runExecution [
 	| testInstance |
 	testInstance := testClass new.
@@ -58,22 +52,22 @@ Inquisitor >> runExecution [
 	testInstance perform: testMethodName
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 Inquisitor >> testClass [
 	^ testClass
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 Inquisitor >> testClass: anObject [
 	testClass := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 Inquisitor >> testMethodName [
 	^ testMethodName
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 Inquisitor >> testMethodName: anObject [
 	testMethodName := anObject
 ]

@@ -23,5 +23,6 @@ ClyCreateInquisitor >> defaultMenuItemName [
 ClyCreateInquisitor >> execute [
 	| i |
 	i := Inquisitor new testClass: method methodClass; testMethodName: method selector.
-	Inquisitor mainInstance: i
+	Inquisitor mainInstance: i.
+	i inspect
 ]
