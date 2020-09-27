@@ -2,7 +2,6 @@ Class {
 	#name : #HitCheckQuestion,
 	#superclass : #InquisitorQuestion,
 	#instVars : [
-		'node',
 		'hitCount'
 	],
 	#category : #Inquisitor
@@ -28,16 +27,6 @@ HitCheckQuestion >> askToInquisitor: anInquisitor [
 { #category : #accessing }
 HitCheckQuestion >> hitCount [
 	^ hitCount
-]
-
-{ #category : #accessing }
-HitCheckQuestion >> node [
-	^ node
-]
-
-{ #category : #accessing }
-HitCheckQuestion >> node: aRBProgramNode [
-	node := aRBProgramNode 
 ]
 
 { #category : #converting }

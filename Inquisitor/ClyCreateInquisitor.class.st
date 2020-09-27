@@ -6,7 +6,7 @@ Class {
 
 { #category : #activation }
 ClyCreateInquisitor class >> contextMenuOrder [
-	^100
+	^95
 ]
 
 { #category : #accessing }

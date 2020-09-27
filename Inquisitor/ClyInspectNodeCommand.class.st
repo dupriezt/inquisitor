@@ -6,7 +6,7 @@ Class {
 
 { #category : #activation }
 ClyInspectNodeCommand class >> contextMenuOrder [
-	^100
+	^95
 ]
 
 { #category : #accessing }
