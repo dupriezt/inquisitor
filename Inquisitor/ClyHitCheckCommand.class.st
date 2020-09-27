@@ -21,5 +21,5 @@ ClyHitCheckCommand >> defaultMenuItemName [
 
 { #category : #accessing }
 ClyHitCheckCommand >> execute [
-	Inquisitor mainInstance hitCheckOn: sourceNode
+	Inquisitor askQuestion: (HitCheckQuestion newForNode: sourceNode).
 ]
