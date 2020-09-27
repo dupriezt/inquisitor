@@ -40,6 +40,14 @@ HitCheckQuestion >> node: aRBProgramNode [
 	node := aRBProgramNode 
 ]
 
+{ #category : #converting }
+HitCheckQuestion >> printOn: aStream [
+	aStream
+		nextPutAll: hitCount asString;
+		nextPutAll: ' hits on node ';
+		nextPutAll: node asString
+]
+
 { #category : #'as yet unclassified' }
 HitCheckQuestion >> resultDescription [
 	^ 'The execution encountered this node ', hitCount asString, ' times'
