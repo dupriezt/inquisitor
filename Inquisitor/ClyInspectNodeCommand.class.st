@@ -1,6 +1,6 @@
 Class {
 	#name : #ClyInspectNodeCommand,
-	#superclass : #ClyDebuggingCommand,
+	#superclass : #ClyInquisitorCommand,
 	#category : #Inquisitor
 }
 
