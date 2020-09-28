@@ -29,8 +29,13 @@ Inquisitor class >> mainInstance: anInstance [
 
 { #category : #'question management' }
 Inquisitor >> addResolvedQuestion: anInquisitorQuestion [
+	| entry |
 	self inform: anInquisitorQuestion resultDescription.
-	self questionHistory add: anInquisitorQuestion.
+	anInquisitorQuestion additionalResultPrint.
+	entry := Dictionary new.
+	entry at: #q put: anInquisitorQuestion.
+	entry at: #a put: anInquisitorQuestion result.
+	self questionHistory add: entry.
 ]
 
 { #category : #'question management' }

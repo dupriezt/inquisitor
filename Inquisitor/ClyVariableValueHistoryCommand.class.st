@@ -5,8 +5,20 @@ Class {
 }
 
 { #category : #activation }
+ClyVariableValueHistoryCommand class >> canBeExecutedInContext: aSourceCodeContext [
+	^ (super canBeExecutedInContext: aSourceCodeContext)
+		and: [ aSourceCodeContext selectedSourceNode isVariable ]
+]
+
+{ #category : #activation }
 ClyVariableValueHistoryCommand class >> contextMenuOrder [
 	^95
+]
+
+{ #category : #accessing }
+ClyVariableValueHistoryCommand >> createQuestion [
+	sourceNode isTemp ifTrue: [ ^ LocalVariableValueHistoryQuestion newForNode: sourceNode andMethod: method].
+	self error: 'Unsupported variable type'
 ]
 
 { #category : #accessing }
@@ -21,6 +33,5 @@ ClyVariableValueHistoryCommand >> defaultMenuItemName [
 
 { #category : #accessing }
 ClyVariableValueHistoryCommand >> execute [
-
-	Inquisitor askQuestion: (VariableValueHistoryQuestion newForNode: sourceNode andMethod: method)
+	Inquisitor askQuestion: self createQuestion
 ]

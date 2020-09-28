@@ -2,11 +2,16 @@ Class {
 	#name : #VariableValueHistoryQuestion,
 	#superclass : #InquisitorQuestion,
 	#instVars : [
-		'objectToValueHistory',
-		'method'
+		'method',
+		'objectToValueHistoryDictionary'
 	],
 	#category : #Inquisitor
 }
+
+{ #category : #testing }
+VariableValueHistoryQuestion class >> isAbstract [
+	^ self = VariableValueHistoryQuestion
+]
 
 { #category : #'instance creation' }
 VariableValueHistoryQuestion class >> newForNode: aRBProgramNode andMethod: aCompiledMethod [
@@ -14,24 +19,44 @@ VariableValueHistoryQuestion class >> newForNode: aRBProgramNode andMethod: aCom
 ]
 
 { #category : #'as yet unclassified' }
+VariableValueHistoryQuestion >> additionalResultPrint [
+	self objectToValueHistoryDictionary inspect
+]
+
+{ #category : #'as yet unclassified' }
 VariableValueHistoryQuestion >> askToInquisitor: anInquisitor [
-	| b methodOrClass |
-	node isVariable
-		ifFalse: [ self inform: 'Node is not a variable'. ^ self ].
-	methodOrClass := node isLocalVariable
+	| b varValueAndVarOwner varValue varOwner |
+	node isVariable ifFalse: [ self inform: 'Node is not a variable'. ^ self ].
+	b := self placeWriteBreakpointOnVariable.
+	"methodOrClass := node isLocalVariable
 		ifTrue: [ method ]
 		ifFalse: [ method methodClass ].
-	b := VariableBreakpoint watchVariableWrites: node name inClass: methodOrClass.
+	b := VariableBreakpoint watchVariableWrites: node name inClass: methodOrClass."
 	[anInquisitor runExecution] on: Break do: [ :ex| 
-		self inform: 'hey'.
-		"objectOwningVariable := ex signalerContext sender receiver.
-		self objectToValueHistory at"
-		"compiler := OpalCompiler new context: ex signalerContext sender; source: expression.
-		self valueHistory add: compiler evaluate."
+		varValueAndVarOwner := self getVariableValueAndVariableOwnerInContext: ex signalerContext sender.
+		varValue := varValueAndVarOwner at: #varValue.
+		varOwner := varValueAndVarOwner at: #varOwner.
+		self objectToValueHistoryDictionary at: varOwner ifAbsentPut: [ OrderedCollection new ].
+		(self objectToValueHistoryDictionary at: varOwner) add: varValue.
 		ex resume.
 	].
 	b remove.
 	anInquisitor addResolvedQuestion: self.
+]
+
+{ #category : #'as yet unclassified' }
+VariableValueHistoryQuestion >> getVariableValueAndVariableOwnerInContext: aContext [
+	"Must return a dictionary of the form: #varValue -> value of the watched variable, #varOwner -> object or class owning the variable"
+	self subclassResponsibility 
+]
+
+{ #category : #'as yet unclassified' }
+VariableValueHistoryQuestion >> getVariableValueInContext: aContext [
+	| varIsLocal varValue |
+	varIsLocal := node isLocalVariable.
+	varValue := varIsLocal
+		ifTrue: [ aContext tempNamed: node name ]
+		ifFalse: [ aContext receiver var ]
 ]
 
 { #category : #accessing }
@@ -40,9 +65,15 @@ VariableValueHistoryQuestion >> method: aCompiledMethod [
 ]
 
 { #category : #'as yet unclassified' }
-VariableValueHistoryQuestion >> objectToValueHistory [
-	objectToValueHistory ifNil: [ objectToValueHistory := Dictionary new ].
-	^ objectToValueHistory
+VariableValueHistoryQuestion >> objectToValueHistoryDictionary [
+	objectToValueHistoryDictionary ifNil: [ objectToValueHistoryDictionary := Dictionary new ].
+	^ objectToValueHistoryDictionary
+]
+
+{ #category : #'as yet unclassified' }
+VariableValueHistoryQuestion >> placeWriteBreakpointOnVariable [
+	"Must return the breakpoint it placed"
+	self subclassResponsibility 
 ]
 
 { #category : #converting }
@@ -52,9 +83,18 @@ VariableValueHistoryQuestion >> printOn: aStream [
 		nextPutAll: ': Variable Value History'
 ]
 
+{ #category : #accessing }
+VariableValueHistoryQuestion >> result [
+	^ objectToValueHistoryDictionary
+]
+
 { #category : #'as yet unclassified' }
 VariableValueHistoryQuestion >> resultDescription [
-	^ 'resultDescription'
+	| varOwnerCount varValueChangeCount |
+	varOwnerCount := 0.
+	varValueChangeCount := 0.
+	self objectToValueHistoryDictionary associationsDo: [ :assoc | varOwnerCount := varOwnerCount + 1. varValueChangeCount := varValueChangeCount + (assoc value size) ].
+	^ varValueChangeCount asString, ' value changes, over ', varOwnerCount asString, ' objects'
 ]
 
 { #category : #accessing }

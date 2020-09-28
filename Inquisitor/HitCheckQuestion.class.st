@@ -38,6 +38,11 @@ HitCheckQuestion >> printOn: aStream [
 ]
 
 { #category : #'as yet unclassified' }
+HitCheckQuestion >> result [
+	^ hitCount
+]
+
+{ #category : #'as yet unclassified' }
 HitCheckQuestion >> resultDescription [
 	^ 'The execution encountered this node ', hitCount asString, ' times'
 ]
