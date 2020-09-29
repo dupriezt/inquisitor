@@ -1,6 +1,12 @@
 Class {
 	#name : #InquisitorTest,
 	#superclass : #TestCase,
+	#instVars : [
+		'myInstanceVariable'
+	],
+	#classVars : [
+		'myClassVariable'
+	],
 	#category : #Inquisitor
 }
 
@@ -19,8 +25,9 @@ InquisitorTest >> testDummy [
 	| i |
 	i := 0.
 	1+1.
-	Point new.
-	[ i = 3 ] whileFalse: [ i := i + 1 ].
+	myInstanceVariable := Point x: 4 y:2.
+	myClassVariable := Point x: 6 y: 0.
+	[ i = 3 ] whileFalse: [ i := i + 1. myInstanceVariable := Point x: 4 y: i. myClassVariable := Point x: 6 y: 2*i ].
 	self inform: 'testDummy was ran'.
 	self assert: true.
 ]
