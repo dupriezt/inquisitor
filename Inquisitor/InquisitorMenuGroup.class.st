@@ -6,7 +6,7 @@ Class {
 
 { #category : #parents }
 InquisitorMenuGroup class >> parentGroup [
-    ^ClyDebuggingMenuGroup
+    ^ ClyDebuggingMenuGroup
 ]
 
 { #category : #accessing }

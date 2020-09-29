@@ -1,13 +1,14 @@
 Class {
 	#name : #ClyVariableValueHistoryCommand,
-	#superclass : #ClyInquisitorCommand,
+	#superclass : #ClyInquisitorSourceCodeCommand,
 	#category : #Inquisitor
 }
 
 { #category : #activation }
 ClyVariableValueHistoryCommand class >> canBeExecutedInContext: aSourceCodeContext [
-	^ (super canBeExecutedInContext: aSourceCodeContext)
-		and: [ aSourceCodeContext selectedSourceNode isVariable ]
+	^ true
+	"^ (super canBeExecutedInContext: aSourceCodeContext)
+		and: [ aSourceCodeContext selectedSourceNode isVariable ]"
 ]
 
 { #category : #activation }
