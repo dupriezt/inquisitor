@@ -20,6 +20,8 @@ ClyVariableValueHistoryCommand class >> contextMenuOrder [
 ClyVariableValueHistoryCommand >> createQuestion [
 	sourceNode isTemp ifTrue: [ ^ LocalVariableValueHistoryQuestion newForNode: sourceNode andMethod: method].
 	sourceNode isArgumentVariable ifTrue: [ ^ ArgumentVariableValueHistoryQuestion newForNode: sourceNode andMethod: method ].
+	sourceNode isInstanceVariable ifTrue: [ ^ InstanceVariableValueHistoryQuestion newForNode: sourceNode andMethod: method ].
+	sourceNode isClassVariable ifTrue: [ ^ ClassVariableValueHistoryQuestion newForNode: sourceNode andMethod: method ].
 	self error: 'Unsupported variable type'
 ]
 
