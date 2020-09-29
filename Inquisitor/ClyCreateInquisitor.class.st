@@ -1,6 +1,6 @@
 Class {
 	#name : #ClyCreateInquisitor,
-	#superclass : #ClyInquisitorMethodCommand,
+	#superclass : #ClyInquisitorSourceCodeAndMethodCommand,
 	#category : #Inquisitor
 }
 
