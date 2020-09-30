@@ -56,7 +56,9 @@ ValueCheckQuestion >> result [
 
 { #category : #'as yet unclassified' }
 ValueCheckQuestion >> resultDescription [
-	^ '', (valueHistory size asString), ' values: ', (valueHistory at: 1 ifAbsent: [ '' ]) asString, ' ', (valueHistory at: 2 ifAbsent: [ '' ]) asString, ' ', (valueHistory at: 3 ifAbsent: [ '' ]) asString, ' ', ((valueHistory size > 3) ifTrue: [ '...' ] ifFalse: [ '' ])
+	| vh |
+	vh := self valueHistory.
+	^ '', (vh size asString), ' values: ', (vh at: 1 ifAbsent: [ '' ]) asString, ' ', (vh at: 2 ifAbsent: [ '' ]) asString, ' ', (vh at: 3 ifAbsent: [ '' ]) asString, ' ', ((vh size > 3) ifTrue: [ '...' ] ifFalse: [ '' ])
 ]
 
 { #category : #'as yet unclassified' }
