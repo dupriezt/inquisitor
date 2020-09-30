@@ -46,9 +46,10 @@ InquisitorTest >> testDummy2 [
 { #category : #tests }
 InquisitorTest >> testDummy3 [
 	| i |
-	i := 0.
-	[ i = 4 ] whileTrue: [ i := i + 1 ].
-	self assert: i equals: 4
+	i := 5.
+	Point new.
+	[ i = 0 ] whileFalse: [ i := i - 1 ].
+	self assert: i equals: 1.
 ]
 
 { #category : #tests }
