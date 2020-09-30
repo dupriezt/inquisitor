@@ -18,5 +18,5 @@ ClyInquisitorSourceCodeAndMethodCommand class >> isAbstract [
 ClyInquisitorSourceCodeAndMethodCommand class >> methodMenuActivation [
 	"Right click on a method in the rightmost pane of calypso"
 	<classAnnotation>
-	^ CmdContextMenuActivation byItemOf: InquisitorMenuGroup order: 10 for: ClyMethod asCalypsoItemContext
+	^ CmdContextMenuActivation byItemOf: InquisitorMenuGroup order: self contextMenuOrder for: ClyMethod asCalypsoItemContext
 ]

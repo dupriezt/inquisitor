@@ -6,7 +6,7 @@ Class {
 
 { #category : #activation }
 ClyHitCheckCommand class >> contextMenuOrder [
-	^95
+	^90
 ]
 
 { #category : #accessing }

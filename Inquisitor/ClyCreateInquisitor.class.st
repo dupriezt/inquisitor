@@ -6,12 +6,12 @@ Class {
 
 { #category : #activation }
 ClyCreateInquisitor class >> contextMenuOrder [
-	^95
+	^85
 ]
 
 { #category : #accessing }
 ClyCreateInquisitor >> defaultMenuIconName [
-	^#comments
+	^#add
 ]
 
 { #category : #accessing }

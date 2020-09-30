@@ -6,7 +6,7 @@ Class {
 
 { #category : #activation }
 ClyValueCheckCommand class >> contextMenuOrder [
-	^95
+	^100
 ]
 
 { #category : #accessing }
@@ -16,7 +16,7 @@ ClyValueCheckCommand >> defaultMenuIconName [
 
 { #category : #accessing }
 ClyValueCheckCommand >> defaultMenuItemName [
-	^'Value Check'
+	^'Value Check of Expression...'
 ]
 
 { #category : #accessing }
