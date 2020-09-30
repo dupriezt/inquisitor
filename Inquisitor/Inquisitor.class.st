@@ -54,7 +54,7 @@ Inquisitor >> runExecution [
 	| testInstance |
 	testInstance := testClass new.
 	testInstance setUp.
-	testInstance perform: testMethodName
+	[testInstance perform: testMethodName] on: TestFailure do: [ :ex| self inform: 'Test execution stopped at: ', ex asString ]
 ]
 
 { #category : #accessing }
