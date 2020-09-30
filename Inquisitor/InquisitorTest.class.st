@@ -1,6 +1,6 @@
 Class {
 	#name : #InquisitorTest,
-	#superclass : #TestCase,
+	#superclass : #InquisitorTestAncestor,
 	#instVars : [
 		'myInstanceVariable'
 	],
@@ -11,6 +11,16 @@ Class {
 }
 
 { #category : #tests }
+InquisitorTest >> doSomething [
+	myInstanceVariable := 43
+]
+
+{ #category : #tests }
+InquisitorTest >> fillVariables [
+	myInstanceVariable := 42
+]
+
+{ #category : #tests }
 InquisitorTest >> methodWithArgument: aString andArgument: aNumber [
 
 	| s |
@@ -18,6 +28,11 @@ InquisitorTest >> methodWithArgument: aString andArgument: aNumber [
 	s := aString, 'hello'.
 	^ s
 	
+]
+
+{ #category : #tests }
+InquisitorTest >> setInstanceVariableTo43 [
+	myInstanceVariable := 43
 ]
 
 { #category : #tests }
@@ -50,6 +65,14 @@ InquisitorTest >> testDummy3 [
 	Point new.
 	[ i = 0 ] whileFalse: [ i := i - 1 ].
 	self assert: i equals: 1.
+]
+
+{ #category : #tests }
+InquisitorTest >> testDummy4 [
+	self doSomething.
+	self fillVaraibles.
+	self doSomething.
+	self assert: myInstanceVariable equals: 42
 ]
 
 { #category : #tests }
