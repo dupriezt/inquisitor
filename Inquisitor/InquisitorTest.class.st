@@ -44,6 +44,14 @@ InquisitorTest >> testDummy2 [
 ]
 
 { #category : #tests }
+InquisitorTest >> testDummy3 [
+	| i |
+	i := 0.
+	[ i = 4 ] whileTrue: [ i := i + 1 ].
+	self assert: i equals: 4
+]
+
+{ #category : #tests }
 InquisitorTest >> testDummyCallingMethodWithArguments [
 	self methodWithArgument: 'anneau' andArgument: 52.
 	self methodWithArgument: 'bateau' andArgument: 64.
