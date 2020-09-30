@@ -25,7 +25,7 @@ ValueCheckQuestion >> askToInquisitor: anInquisitor [
 	b always.
 	b install.
 	[anInquisitor runExecution] on: Break do: [ :ex| 
-		compiler := OpalCompiler new context: ex signalerContext sender; source: expression.
+		compiler := OpalCompiler new context: ex signalerContext sender; receiver: ex signalerContext sender receiver; source: expression.
 		self valueHistory add: compiler evaluate.
 		ex resume.
 	].
