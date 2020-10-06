@@ -6,9 +6,8 @@ Class {
 
 { #category : #activation }
 ClyVariableValueHistoryCommand class >> canBeExecutedInContext: aSourceCodeContext [
-	^ true
-	"^ (super canBeExecutedInContext: aSourceCodeContext)
-		and: [ aSourceCodeContext selectedSourceNode isVariable ]"
+	^ (super canBeExecutedInContext: aSourceCodeContext)
+		and: [ aSourceCodeContext selectedSourceNode isVariable ]
 ]
 
 { #category : #activation }
