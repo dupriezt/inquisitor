@@ -4,6 +4,11 @@ Class {
 	#category : #Inquisitor
 }
 
+{ #category : #testing }
+ClyCreateInquisitor class >> canBeExecutedInContext: aToolContext [
+	^ aToolContext selectedMethods ifNotEmpty: [:array | (array at: 1) isTestMethod  ]
+]
+
 { #category : #activation }
 ClyCreateInquisitor class >> contextMenuOrder [
 	^85
