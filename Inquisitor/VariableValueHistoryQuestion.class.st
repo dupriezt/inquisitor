@@ -3,7 +3,8 @@ Class {
 	#superclass : #InquisitorQuestion,
 	#instVars : [
 		'method',
-		'objectToValueHistoryDictionary'
+		'objectToValueHistoryDictionary',
+		'data'
 	],
 	#category : #Inquisitor
 }
@@ -20,7 +21,7 @@ VariableValueHistoryQuestion class >> newForNode: aRBProgramNode andMethod: aCom
 
 { #category : #'as yet unclassified' }
 VariableValueHistoryQuestion >> askToInquisitor: anInquisitor [
-	| b varValueAndVarOwner varValue varOwner |
+	| b varValueAndVarOwner varValue varOwner methodInvocation |
 	node isVariable ifFalse: [ self inform: 'Node is not a variable'. ^ self ].
 	b := self placeWriteBreakpointOnVariable.
 	"methodOrClass := node isLocalVariable
@@ -31,12 +32,28 @@ VariableValueHistoryQuestion >> askToInquisitor: anInquisitor [
 		varValueAndVarOwner := self getVariableValueAndVariableOwnerInContext: ex signalerContext sender.
 		varValue := varValueAndVarOwner at: #varValue.
 		varOwner := varValueAndVarOwner at: #varOwner.
-		self objectToValueHistoryDictionary at: varOwner ifAbsentPut: [ OrderedCollection new ].
-		(self objectToValueHistoryDictionary at: varOwner) add: varValue.
+		methodInvocation := MethodInvocation newForContext: (ex signalerContext sender).
+		self data at: varOwner ifAbsentPut: [ Dictionary new ].
+		(self data at: varOwner) at: methodInvocation ifAbsentPut: [ OrderedCollection new ].
+		((self data at: varOwner) at: methodInvocation) add: varValue.
+		"self objectToValueHistoryDictionary at: varOwner ifAbsentPut: [ OrderedCollection new ].
+		(self objectToValueHistoryDictionary at: varOwner) add: varValue."
 		ex resume.
 	].
 	b remove.
 	anInquisitor addResolvedQuestion: self.
+]
+
+{ #category : #'as yet unclassified' }
+VariableValueHistoryQuestion >> data [
+	"Dictionary<1:Object, Dictionary<2:MethodInvocation, 3:OrderedCollection<value>>
+	Stores the values a variable has during the execution.
+	1: owner of the variable (instance of the class where the variable is defined)
+	2: a method invocation during which the value of the variable is changed
+	3: the list of values the variable takes during the method invocation used as key
+	"
+	data ifNil: [ data := Dictionary new ].
+	^ data
 ]
 
 { #category : #'as yet unclassified' }
@@ -80,7 +97,8 @@ VariableValueHistoryQuestion >> printOn: aStream [
 
 { #category : #accessing }
 VariableValueHistoryQuestion >> result [
-	^ objectToValueHistoryDictionary
+	^ self data
+	"^ objectToValueHistoryDictionary"
 ]
 
 { #category : #'as yet unclassified' }
@@ -88,7 +106,7 @@ VariableValueHistoryQuestion >> resultDescription [
 	| varOwnerCount varValueChangeCount |
 	varOwnerCount := 0.
 	varValueChangeCount := 0.
-	self objectToValueHistoryDictionary associationsDo: [ :assoc | varOwnerCount := varOwnerCount + 1. varValueChangeCount := varValueChangeCount + (assoc value size) ].
+	self data associationsDo: [ :assoc | varOwnerCount := varOwnerCount + 1. varValueChangeCount := varValueChangeCount + (assoc value size) ].
 	^ varValueChangeCount asString, ' value changes, over ', varOwnerCount asString, ' objects'
 ]
 
