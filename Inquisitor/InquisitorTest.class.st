@@ -21,6 +21,11 @@ InquisitorTest >> fillVariables [
 ]
 
 { #category : #tests }
+InquisitorTest >> methodTakesArgument: anInt [
+	^ 1 + anInt
+]
+
+{ #category : #tests }
 InquisitorTest >> methodWithArgument: aString andArgument: aNumber [
 
 	| s |
@@ -60,9 +65,9 @@ InquisitorTest >> testDummy2 [
 
 { #category : #tests }
 InquisitorTest >> testDummy3 [
-	| i |
+	| i b |
 	i := 5.
-	Point new.
+	b := Point new.
 	[ i = 0 ] whileFalse: [ i := i - 1 ].
 	self assert: i equals: 1.
 ]
@@ -72,6 +77,13 @@ InquisitorTest >> testDummy4 [
 	self doSomething.
 	self fillVaraibles.
 	self doSomething.
+	self assert: myInstanceVariable equals: 42
+]
+
+{ #category : #tests }
+InquisitorTest >> testDummy5 [
+	self methodTakesArgument: 52.
+	self methodTakesArgument: 65.
 	self assert: myInstanceVariable equals: 42
 ]
 
