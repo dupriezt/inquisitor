@@ -67,6 +67,11 @@ Inquisitor >> testClass: anObject [
 	testClass := anObject
 ]
 
+{ #category : #tests }
+Inquisitor >> testMethodFullName [
+	^ self testClass asString, '>>#', self testMethodName asString
+]
+
 { #category : #accessing }
 Inquisitor >> testMethodName [
 	^ testMethodName
