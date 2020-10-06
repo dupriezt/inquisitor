@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'testMethodName',
 		'testClass',
-		'questionHistory'
+		'questionHistory',
+		'isSilent'
 	],
 	#classVars : [
 		'mainInstance'
@@ -30,17 +31,34 @@ Inquisitor class >> mainInstance: anInstance [
 { #category : #'question management' }
 Inquisitor >> addResolvedQuestion: anInquisitorQuestion [
 	| entry |
-	self inform: anInquisitorQuestion resultDescription.
-	anInquisitorQuestion additionalResultPrint.
 	entry := Dictionary new.
 	entry at: #q put: anInquisitorQuestion.
 	entry at: #a put: anInquisitorQuestion result.
 	self questionHistory add: entry.
+	self displayResultOfQuestion: anInquisitorQuestion
 ]
 
 { #category : #'question management' }
 Inquisitor >> askQuestion: anInquisitorQuestion [
 	anInquisitorQuestion askToInquisitor: self
+]
+
+{ #category : #'question management' }
+Inquisitor >> displayResultOfQuestion: anInquisitorQuestion [
+	self isSilent ifTrue: [ ^ self ].
+	self inform: anInquisitorQuestion resultDescription.
+	anInquisitorQuestion result inspect.
+]
+
+{ #category : #'question management' }
+Inquisitor >> isSilent [
+	isSilent ifNil: [ isSilent := false ].
+	^ isSilent
+]
+
+{ #category : #'question management' }
+Inquisitor >> isSilent: aBoolean [
+	isSilent := aBoolean
 ]
 
 { #category : #accessing }

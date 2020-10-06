@@ -1,5 +1,5 @@
 Class {
-	#name : #InquisitorTest,
+	#name : #InquisitorTestDummy,
 	#superclass : #InquisitorTestAncestor,
 	#instVars : [
 		'myInstanceVariable'
@@ -11,22 +11,22 @@ Class {
 }
 
 { #category : #tests }
-InquisitorTest >> doSomething [
+InquisitorTestDummy >> doSomething [
 	myInstanceVariable := 43
 ]
 
 { #category : #tests }
-InquisitorTest >> fillVariables [
+InquisitorTestDummy >> fillVariables [
 	myInstanceVariable := 42
 ]
 
 { #category : #tests }
-InquisitorTest >> methodTakesArgument: anInt [
+InquisitorTestDummy >> methodTakesArgument: anInt [
 	^ 1 + anInt
 ]
 
 { #category : #tests }
-InquisitorTest >> methodWithArgument: aString andArgument: aNumber [
+InquisitorTestDummy >> methodWithArgument: aString andArgument: aNumber [
 
 	| s |
 	Point x: aNumber y: aNumber + 2.
@@ -36,12 +36,12 @@ InquisitorTest >> methodWithArgument: aString andArgument: aNumber [
 ]
 
 { #category : #tests }
-InquisitorTest >> setInstanceVariableTo43 [
+InquisitorTestDummy >> setInstanceVariableTo43 [
 	myInstanceVariable := 43
 ]
 
 { #category : #tests }
-InquisitorTest >> testDummy [
+InquisitorTestDummy >> testDummy [
 	| i |
 	i := 0.
 	1+1.
@@ -53,7 +53,7 @@ InquisitorTest >> testDummy [
 ]
 
 { #category : #tests }
-InquisitorTest >> testDummy2 [
+InquisitorTestDummy >> testDummy2 [
 	| i |
 	i := 0.
 	1+1.
@@ -64,7 +64,7 @@ InquisitorTest >> testDummy2 [
 ]
 
 { #category : #tests }
-InquisitorTest >> testDummy3 [
+InquisitorTestDummy >> testDummy3 [
 	| i b |
 	i := 5.
 	b := Point new.
@@ -73,7 +73,7 @@ InquisitorTest >> testDummy3 [
 ]
 
 { #category : #tests }
-InquisitorTest >> testDummy4 [
+InquisitorTestDummy >> testDummy4 [
 	self doSomething.
 	self fillVaraibles.
 	self doSomething.
@@ -81,14 +81,14 @@ InquisitorTest >> testDummy4 [
 ]
 
 { #category : #tests }
-InquisitorTest >> testDummy5 [
+InquisitorTestDummy >> testDummy5 [
 	self methodTakesArgument: 52.
 	self methodTakesArgument: 65.
 	self assert: myInstanceVariable equals: 42
 ]
 
 { #category : #tests }
-InquisitorTest >> testDummyCallingMethodWithArguments [
+InquisitorTestDummy >> testDummyCallingMethodWithArguments [
 	self methodWithArgument: 'anneau' andArgument: 52.
 	self methodWithArgument: 'bateau' andArgument: 64.
 	self inform: 'testDummyCallingMethodWithArguments was ran'.

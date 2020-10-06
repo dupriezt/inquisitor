@@ -13,12 +13,6 @@ InquisitorQuestion class >> isAbstract [
 ]
 
 { #category : #'as yet unclassified' }
-InquisitorQuestion >> additionalResultPrint [
-	"If the result of the question is complex, it may be worth taking additional actions to show the result, like opening an inspector on the result data"
-	^ nil
-]
-
-{ #category : #'as yet unclassified' }
 InquisitorQuestion >> askToInquisitor: anInquisitor [
 	"Answer the question, using anInquisitor to run the execution. Must call 'anInquisitor addResolvedQuestion: self' when done"
 	self subclassResponsibility 

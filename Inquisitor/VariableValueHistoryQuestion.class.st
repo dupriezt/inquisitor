@@ -19,11 +19,6 @@ VariableValueHistoryQuestion class >> newForNode: aRBProgramNode andMethod: aCom
 ]
 
 { #category : #'as yet unclassified' }
-VariableValueHistoryQuestion >> additionalResultPrint [
-	self objectToValueHistoryDictionary inspect
-]
-
-{ #category : #'as yet unclassified' }
 VariableValueHistoryQuestion >> askToInquisitor: anInquisitor [
 	| b varValueAndVarOwner varValue varOwner |
 	node isVariable ifFalse: [ self inform: 'Node is not a variable'. ^ self ].

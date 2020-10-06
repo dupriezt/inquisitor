@@ -14,11 +14,6 @@ ValueCheckQuestion class >> newForNode: aRBProgramNode andExpression: aString [
 ]
 
 { #category : #'as yet unclassified' }
-ValueCheckQuestion >> additionalResultPrint [
-	self valueHistory inspect
-]
-
-{ #category : #'as yet unclassified' }
 ValueCheckQuestion >> askToInquisitor: anInquisitor [
 	| b compiler |
 	b := Breakpoint new node: node.
