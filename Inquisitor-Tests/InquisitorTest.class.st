@@ -3,7 +3,8 @@ Class {
 	#superclass : #TestCase,
 	#instVars : [
 		'inquisitor',
-		'inquisitedMethod'
+		'inquisitedMethod',
+		'instances'
 	],
 	#category : #'Inquisitor-Tests'
 }
@@ -16,6 +17,18 @@ InquisitorTest >> dummyForTestHitCheck [
 ]
 
 { #category : #running }
+InquisitorTest >> dummyForTestVariableValueHistory_ArgumentVariables [
+	InquisitorTestVariableDummy new methodWithArgument: 0; methodWithArgument: 1.
+	InquisitorTestVariableDummy new methodWithArgument: 10.
+]
+
+{ #category : #running }
+InquisitorTest >> dummyForTestVariableValueHistory_InstanceVariable [
+	InquisitorTestVariableDummy new setInstanceVariableTo: 0; setInstanceVariableTo: 1.
+	InquisitorTestVariableDummy new setInstanceVariableTo: 2.
+]
+
+{ #category : #running }
 InquisitorTest >> dummyForTestVariableValueHistory_LocalVariable [
 	InquisitorTestVariableDummy new setLocalVariables; setLocalVariables.
 	InquisitorTestVariableDummy new setLocalVariables.
@@ -25,7 +38,7 @@ InquisitorTest >> dummyForTestVariableValueHistory_LocalVariable [
 InquisitorTest >> setUp [
 	super setUp.
 	inquisitor := Inquisitor new.
-	inquisitor isSilent: true
+	inquisitor isSilent: true.
 ]
 
 { #category : #running }
@@ -33,6 +46,11 @@ InquisitorTest >> setUpForInquisitedMethod: aCompiledMethod [
 	inquisitedMethod := aCompiledMethod.
 	inquisitor testClass: inquisitedMethod methodClass.
 	inquisitor testMethodName: inquisitedMethod selector.
+]
+
+{ #category : #running }
+InquisitorTest >> tearDown [
+	InquisitorTestVariableDummy clearInstances
 ]
 
 { #category : #running }
@@ -52,6 +70,56 @@ InquisitorTest >> testHitCheck [
 ]
 
 { #category : #running }
+InquisitorTest >> testVariableValueHistory_ArgumentVariables [
+	| questionedMethod argumentOneNode q a invocationsToValueHistory1 invocationsToValueHistory2 valueHistoryOfInvocation1 valueHistoryOfInvocation2 valueHistoryOfInvocation3 |
+	self setUpForInquisitedMethod: InquisitorTest>>#dummyForTestVariableValueHistory_ArgumentVariables.
+	
+	questionedMethod := InquisitorTestVariableDummy>>#methodWithArgument:.
+	argumentOneNode := questionedMethod ast arguments at: 1.
+	q := ArgumentVariableValueHistoryQuestion newForNode: argumentOneNode andMethod: questionedMethod.
+	q askToInquisitor: inquisitor.
+	a := inquisitor questionHistory last at: #a.
+	instances := InquisitorTestVariableDummy instances.
+	self assertCollection: a keys hasSameElements: instances.
+	invocationsToValueHistory1 := a at: (instances at: 1).
+	invocationsToValueHistory2 := a at: (instances at: 2).
+	self assert: invocationsToValueHistory1 size equals: 2.
+	self assert: invocationsToValueHistory2 size equals: 1.
+	valueHistoryOfInvocation1 := invocationsToValueHistory1 at: (invocationsToValueHistory1 keys at: 1).
+	valueHistoryOfInvocation2 := invocationsToValueHistory1 at: (invocationsToValueHistory1 keys at: 2).
+	valueHistoryOfInvocation3 := invocationsToValueHistory2 at: (invocationsToValueHistory2 keys at: 1).
+	self assertCollection: valueHistoryOfInvocation1 hasSameElements: {0}.
+	self assertCollection: valueHistoryOfInvocation2 hasSameElements: {1}.
+	self assertCollection: valueHistoryOfInvocation3 hasSameElements: {10}.
+	
+]
+
+{ #category : #running }
+InquisitorTest >> testVariableValueHistory_InstanceVariables [
+	| questionedMethod q a invocationsToValueHistory1 invocationsToValueHistory2 valueHistoryOfInvocation1 valueHistoryOfInvocation2 valueHistoryOfInvocation3 instanceVariableNode |
+	self setUpForInquisitedMethod: InquisitorTest>>#dummyForTestVariableValueHistory_InstanceVariable.
+	
+	questionedMethod := InquisitorTestVariableDummy>>#setInstanceVariableTo:.
+	instanceVariableNode := (questionedMethod ast body statements at: 1) variable.
+	q := InstanceVariableValueHistoryQuestion newForNode: instanceVariableNode andMethod: questionedMethod.
+	q askToInquisitor: inquisitor.
+	a := inquisitor questionHistory last at: #a.
+	instances := InquisitorTestVariableDummy instances.
+	self assertCollection: a keys hasSameElements: instances.
+	invocationsToValueHistory1 := a at: (instances at: 1).
+	invocationsToValueHistory2 := a at: (instances at: 2).
+	self assert: invocationsToValueHistory1 size equals: 2.
+	self assert: invocationsToValueHistory2 size equals: 1.
+	valueHistoryOfInvocation1 := invocationsToValueHistory1 at: (invocationsToValueHistory1 keys at: 1).
+	valueHistoryOfInvocation2 := invocationsToValueHistory1 at: (invocationsToValueHistory1 keys at: 2).
+	valueHistoryOfInvocation3 := invocationsToValueHistory2 at: (invocationsToValueHistory2 keys at: 1).
+	self assertCollection: valueHistoryOfInvocation1 hasSameElements: {0}.
+	self assertCollection: valueHistoryOfInvocation2 hasSameElements: {1}.
+	self assertCollection: valueHistoryOfInvocation3 hasSameElements: {2}.
+	
+]
+
+{ #category : #running }
 InquisitorTest >> testVariableValueHistory_LocalVariable [
 	| localVariableNode q a questionedMethod instance1 instance2 invocation1 invocation2 invocation3 |
 	self setUpForInquisitedMethod: InquisitorTest>>#dummyForTestVariableValueHistory_LocalVariable.
@@ -61,12 +129,10 @@ InquisitorTest >> testVariableValueHistory_LocalVariable [
 	q := LocalVariableValueHistoryQuestion newForNode: localVariableNode andMethod: questionedMethod.
 	q askToInquisitor: inquisitor.
 	a := inquisitor questionHistory last at: #a.
-	self assert: a size equals: 2.
-	instance1 := (a keys at: 1).
-	instance2 := (a keys at: 2).
-	self assert: instance1 class identicalTo: InquisitorTestVariableDummy.
-	self assert: instance2 class identicalTo: InquisitorTestVariableDummy.
-	self assert: instance1 ~= instance2.
+	instances := InquisitorTestVariableDummy instances.
+	self assertCollection: a keys hasSameElements: instances.
+	instance1 := (instances at: 1).
+	instance2 := (instances at: 2).
 	self assert: (a at: instance1) size equals: 2.
 	self assert: (a at: instance2) size equals: 1.
 	invocation1 := (a at: instance1) keys at: 1.
