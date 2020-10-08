@@ -10,6 +10,26 @@ Class {
 }
 
 { #category : #running }
+InquisitorTest >> checkFormatOf: aCollection accordingTo: aTemplate [
+	
+	| templateIsDictionary assignment |
+	"Determine if aTemplate is for a dictionary or an ordered collection."
+	templateIsDictionary := nil.
+	aTemplate do: [:elem | templateIsDictionary ifNil: [ templateIsDictionary := elem isAssociation] ifNotNil: [ :tmpltIsDict | (tmpltIsDict = elem isAssociation) ifTrue: [ self error: 'aTemplate contains associations and non-associations' ] ] ].
+	
+	assignment := Dictionary new. "Dictionary maping symbols in aTemplate to the value they represent in aCollection"
+	templateIsDictionary ifTrue: [ 
+		self assert: aCollection isDictionary.
+		self assert: aCollection keys size equals: aTemplate size.
+		
+		
+	] ifFalse: [
+		self assert: aCollection isSequenceable.
+	
+	]
+]
+
+{ #category : #running }
 InquisitorTest >> dummyForTestHitCheck [
 	| i |
 	i := 4.
@@ -39,6 +59,7 @@ InquisitorTest >> setUp [
 	super setUp.
 	inquisitor := Inquisitor new.
 	inquisitor isSilent: true.
+	InquisitorTestVariableDummy clearInstances
 ]
 
 { #category : #running }
