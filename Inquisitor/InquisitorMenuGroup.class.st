@@ -11,7 +11,7 @@ InquisitorMenuGroup class >> parentGroup [
 
 { #category : #accessing }
 InquisitorMenuGroup >> iconName [
-	^#comments
+	^#confirm
 ]
 
 { #category : #testing }
