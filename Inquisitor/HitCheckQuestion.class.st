@@ -2,7 +2,8 @@ Class {
 	#name : #HitCheckQuestion,
 	#superclass : #InquisitorQuestion,
 	#instVars : [
-		'hitCount'
+		'hitCount',
+		'breakpoint'
 	],
 	#category : #Inquisitor
 }
@@ -14,13 +15,14 @@ HitCheckQuestion class >> newForNode: aRBProgramNode [
 
 { #category : #'as yet unclassified' }
 HitCheckQuestion >> askToInquisitor: anInquisitor [
-	| b |
 	hitCount := 0.
-	b := Breakpoint new node: node.
-	b always.
-	b install.
-	[anInquisitor runExecution] on: Break do: [ :ex| hitCount := hitCount + 1. ex resume. ].
-	b remove.
+	Breakpoint registerObserver: self.
+	breakpoint := Breakpoint new node: node.
+	breakpoint always.
+	breakpoint install.
+	[anInquisitor runExecution] on: Break do: [ :ex| "hitCount := hitCount + 1." ex resume. ].
+	breakpoint remove.
+	Breakpoint unregisterObserver: self.
 	anInquisitor addResolvedQuestion: self.
 ]
 
@@ -45,4 +47,12 @@ HitCheckQuestion >> result [
 { #category : #'as yet unclassified' }
 HitCheckQuestion >> resultDescription [
 	^ 'The execution encountered this node ', hitCount asString, ' times'
+]
+
+{ #category : #'as yet unclassified' }
+HitCheckQuestion >> update: aNotification [
+	"Called by the Breakpoint class when a breakpoint is hit/added/removed"
+	aNotification isBreakpointHitNotification ifTrue: [
+		(aNotification breakpoint = breakpoint) ifTrue: [ hitCount := hitCount + 1 ]
+	]
 ]
