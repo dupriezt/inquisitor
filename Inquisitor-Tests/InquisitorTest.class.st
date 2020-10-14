@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'inquisitor',
 		'inquisitedMethod',
-		'instances'
+		'instances',
+		'breakpoints'
 	],
 	#category : #'Inquisitor-Tests'
 }
@@ -59,7 +60,8 @@ InquisitorTest >> setUp [
 	super setUp.
 	inquisitor := Inquisitor new.
 	inquisitor isSilent: true.
-	InquisitorTestVariableDummy clearInstances
+	InquisitorTestVariableDummy clearInstances.
+	breakpoints := OrderedCollection new
 ]
 
 { #category : #running }
@@ -71,7 +73,8 @@ InquisitorTest >> setUpForInquisitedMethod: aCompiledMethod [
 
 { #category : #running }
 InquisitorTest >> tearDown [
-	InquisitorTestVariableDummy clearInstances
+	InquisitorTestVariableDummy clearInstances.
+	breakpoints do: [ :brkpt | brkpt remove ]
 ]
 
 { #category : #running }
@@ -88,6 +91,22 @@ InquisitorTest >> testHitCheck [
 	q2 := HitCheckQuestion newForNode: fourHitNode.
 	q2 askToInquisitor: inquisitor.
 	self assert: (inquisitor questionHistory last at: #a) equals: 4.
+]
+
+{ #category : #running }
+InquisitorTest >> testHitCheckNotAffectedByOtherBreakpoints [
+	| oneHitNode fourHitNode q1 b |
+	self setUpForInquisitedMethod: InquisitorTest>>#dummyForTestHitCheck.
+	
+	fourHitNode := ((inquisitedMethod ast body statements at: 2) arguments at: 1) body statements at: 1.
+	"Install breakpoint on another node of the method, as if the user had set a manual breakpoint there"
+	b := Breakpoint new node: fourHitNode; always; install.
+	breakpoints add: b.
+	
+	oneHitNode := inquisitedMethod ast body statements at: 1.
+	q1 := HitCheckQuestion newForNode: oneHitNode.
+	q1 askToInquisitor: inquisitor.
+	self assert: (inquisitor questionHistory last at: #a) equals: 1.
 ]
 
 { #category : #running }

@@ -21,7 +21,7 @@ ClyCreateInquisitor >> defaultMenuIconName [
 
 { #category : #accessing }
 ClyCreateInquisitor >> defaultMenuItemName [
-	^'Create Inquisitor on test method'
+	^'Create Inquisitor on this test method'
 ]
 
 { #category : #accessing }
