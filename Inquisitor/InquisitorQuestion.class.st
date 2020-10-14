@@ -39,3 +39,16 @@ InquisitorQuestion >> resultDescription [
 	"Returns a string describing the result of this question"
 	^ self subclassResponsibility
 ]
+
+{ #category : #updating }
+InquisitorQuestion >> update: aNotification [
+	"If this object has been registered as an observer to the Breakpoint class, this method will be called when a breakpoint is hit/added/removed."
+	aNotification isBreakpointHitNotification ifTrue: [
+		self whenBreakpointIsHit: aNotification breakpoint
+	]
+]
+
+{ #category : #updating }
+InquisitorQuestion >> whenBreakpointIsHit: aBreakpoint [
+	self subclassResponsibility 
+]

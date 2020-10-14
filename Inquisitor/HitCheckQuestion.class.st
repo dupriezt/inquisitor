@@ -20,7 +20,7 @@ HitCheckQuestion >> askToInquisitor: anInquisitor [
 	breakpoint := Breakpoint new node: node.
 	breakpoint always.
 	breakpoint install.
-	[anInquisitor runExecution] on: Break do: [ :ex| "hitCount := hitCount + 1." ex resume. ].
+	[anInquisitor runExecution] on: Break do: [ :ex| ex resume. ].
 	breakpoint remove.
 	Breakpoint unregisterObserver: self.
 	anInquisitor addResolvedQuestion: self.
@@ -50,9 +50,6 @@ HitCheckQuestion >> resultDescription [
 ]
 
 { #category : #'as yet unclassified' }
-HitCheckQuestion >> update: aNotification [
-	"Called by the Breakpoint class when a breakpoint is hit/added/removed"
-	aNotification isBreakpointHitNotification ifTrue: [
-		(aNotification breakpoint = breakpoint) ifTrue: [ hitCount := hitCount + 1 ]
-	]
+HitCheckQuestion >> whenBreakpointIsHit: aBreakpoint [
+	(aBreakpoint = breakpoint) ifTrue: [ hitCount := hitCount + 1 ]
 ]
