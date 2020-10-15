@@ -4,7 +4,6 @@ Class {
 	#instVars : [
 		'inquisitor',
 		'inquisitedMethod',
-		'instances',
 		'breakpoints'
 	],
 	#category : #'Inquisitor-Tests'
@@ -74,6 +73,7 @@ InquisitorTest >> setUpForInquisitedMethod: aCompiledMethod [
 { #category : #running }
 InquisitorTest >> tearDown [
 	InquisitorTestVariableDummy clearInstances.
+	InquisitorTestMethodReturnDummy clearInstances.
 	breakpoints do: [ :brkpt | brkpt remove ]
 ]
 
@@ -111,7 +111,7 @@ InquisitorTest >> testHitCheckNotAffectedByOtherBreakpoints [
 
 { #category : #running }
 InquisitorTest >> testVariableValueHistory_ArgumentVariables [
-	| questionedMethod argumentOneNode q a invocationsToValueHistory1 invocationsToValueHistory2 valueHistoryOfInvocation1 valueHistoryOfInvocation2 valueHistoryOfInvocation3 |
+	| instances questionedMethod argumentOneNode q a invocationsToValueHistory1 invocationsToValueHistory2 valueHistoryOfInvocation1 valueHistoryOfInvocation2 valueHistoryOfInvocation3 |
 	self setUpForInquisitedMethod: InquisitorTest>>#dummyForTestVariableValueHistory_ArgumentVariables.
 	
 	questionedMethod := InquisitorTestVariableDummy>>#methodWithArgument:.
@@ -136,7 +136,7 @@ InquisitorTest >> testVariableValueHistory_ArgumentVariables [
 
 { #category : #running }
 InquisitorTest >> testVariableValueHistory_InstanceVariables [
-	| questionedMethod q a invocationsToValueHistory1 invocationsToValueHistory2 valueHistoryOfInvocation1 valueHistoryOfInvocation2 valueHistoryOfInvocation3 instanceVariableNode |
+	| instances questionedMethod q a invocationsToValueHistory1 invocationsToValueHistory2 valueHistoryOfInvocation1 valueHistoryOfInvocation2 valueHistoryOfInvocation3 instanceVariableNode |
 	self setUpForInquisitedMethod: InquisitorTest>>#dummyForTestVariableValueHistory_InstanceVariable.
 	
 	questionedMethod := InquisitorTestVariableDummy>>#setInstanceVariableTo:.
@@ -161,7 +161,7 @@ InquisitorTest >> testVariableValueHistory_InstanceVariables [
 
 { #category : #running }
 InquisitorTest >> testVariableValueHistory_LocalVariable [
-	| localVariableNode q a questionedMethod instance1 instance2 invocation1 invocation2 invocation3 |
+	| instances localVariableNode q a questionedMethod instance1 instance2 invocation1 invocation2 invocation3 |
 	self setUpForInquisitedMethod: InquisitorTest>>#dummyForTestVariableValueHistory_LocalVariable.
 	
 	questionedMethod := InquisitorTestVariableDummy>>#setLocalVariables.

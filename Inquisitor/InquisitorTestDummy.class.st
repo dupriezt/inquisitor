@@ -108,6 +108,26 @@ InquisitorTestDummy >> testDummyCallingMethodWithArguments [
 ]
 
 { #category : #tests }
+InquisitorTestDummy >> testDummyReturnFalseStatement [
+	Point x:2y:3.
+	self inform: 'test dummy was executed'.
+	^ false
+]
+
+{ #category : #tests }
+InquisitorTestDummy >> testDummyReturnImplicitSelfStatement [
+	Point x:2y:3.
+	self inform: 'test dummy was executed'.
+]
+
+{ #category : #tests }
+InquisitorTestDummy >> testDummyReturnNilStatement [
+	Point x:2y:3.
+	self inform: 'test dummy was executed'.
+	^ nil
+]
+
+{ #category : #tests }
 InquisitorTestDummy >> testDummyReturnSelfStatement [
 	Point x:2y:3.
 	self inform: 'test dummy was executed'.
@@ -115,8 +135,21 @@ InquisitorTestDummy >> testDummyReturnSelfStatement [
 ]
 
 { #category : #tests }
-InquisitorTestDummy >> testDummyReturnStatement [
+InquisitorTestDummy >> testDummyReturnStackTopFromBlockStatement [
+	Point x:2y:3.
+	[ ^ 5 ] value
+]
+
+{ #category : #tests }
+InquisitorTestDummy >> testDummyReturnTopStatement [
 	Point x:2y:3.
 	self inform: 'test dummy was executed'.
 	^ 42
+]
+
+{ #category : #tests }
+InquisitorTestDummy >> testDummyReturnTrueStatement [
+	Point x:2y:3.
+	self inform: 'test dummy was executed'.
+	^ true
 ]
