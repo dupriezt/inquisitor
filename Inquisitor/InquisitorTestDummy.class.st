@@ -11,6 +11,18 @@ Class {
 }
 
 { #category : #tests }
+InquisitorTestDummy >> aaaa [
+	Point x:4y:2.
+	^ 2
+]
+
+{ #category : #tests }
+InquisitorTestDummy >> aaaab [
+	Point x:4y:2.
+	^ self
+]
+
+{ #category : #tests }
 InquisitorTestDummy >> doSomething [
 	myInstanceVariable := 43
 ]
@@ -93,4 +105,18 @@ InquisitorTestDummy >> testDummyCallingMethodWithArguments [
 	self methodWithArgument: 'bateau' andArgument: 64.
 	self inform: 'testDummyCallingMethodWithArguments was ran'.
 	self assert: true.
+]
+
+{ #category : #tests }
+InquisitorTestDummy >> testDummyReturnSelfStatement [
+	Point x:2y:3.
+	self inform: 'test dummy was executed'.
+	^ self
+]
+
+{ #category : #tests }
+InquisitorTestDummy >> testDummyReturnStatement [
+	Point x:2y:3.
+	self inform: 'test dummy was executed'.
+	^ 42
 ]
