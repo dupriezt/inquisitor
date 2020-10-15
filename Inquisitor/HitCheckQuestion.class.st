@@ -2,8 +2,7 @@ Class {
 	#name : #HitCheckQuestion,
 	#superclass : #InquisitorQuestion,
 	#instVars : [
-		'hitCount',
-		'breakpoint'
+		'hitCount'
 	],
 	#category : #Inquisitor
 }
@@ -15,14 +14,11 @@ HitCheckQuestion class >> newForNode: aRBProgramNode [
 
 { #category : #'as yet unclassified' }
 HitCheckQuestion >> askToInquisitor: anInquisitor [
+	| b |
 	hitCount := 0.
-	Breakpoint registerObserver: self.
-	breakpoint := Breakpoint new node: node.
-	breakpoint always.
-	breakpoint install.
-	[anInquisitor runExecution] on: Break do: [ :ex| ex resume. ].
-	breakpoint remove.
-	Breakpoint unregisterObserver: self.
+	b := Breakpoint new node: node; always; install.
+	self breakpoints add: b.
+	self runExecutionWithInquisitor: anInquisitor.
 	anInquisitor addResolvedQuestion: self.
 ]
 
@@ -50,6 +46,6 @@ HitCheckQuestion >> resultDescription [
 ]
 
 { #category : #'as yet unclassified' }
-HitCheckQuestion >> whenBreakpointIsHit: aBreakpoint [
-	(aBreakpoint = breakpoint) ifTrue: [ hitCount := hitCount + 1 ]
+HitCheckQuestion >> whenBreakpoint: aBreakpoint isHitForBreakException: aBreakException [
+	hitCount := hitCount + 1
 ]
