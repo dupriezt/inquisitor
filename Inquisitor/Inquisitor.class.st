@@ -5,7 +5,9 @@ Class {
 		'testMethodName',
 		'testClass',
 		'questionHistory',
-		'isSilent'
+		'isSilent',
+		'lastBreakpointHit',
+		'codeBlockToExecute'
 	],
 	#classVars : [
 		'mainInstance'
@@ -28,6 +30,14 @@ Inquisitor class >> mainInstance: anInstance [
 	mainInstance := anInstance
 ]
 
+{ #category : #'instance creation' }
+Inquisitor class >> newInquisitorOnCodeBlock: aBlockClosure [
+	| i |
+	i := self new codeBlockToExecute: aBlockClosure; yourself.
+	Inquisitor mainInstance: i.
+	i inspect
+]
+
 { #category : #'question management' }
 Inquisitor >> addResolvedQuestion: anInquisitorQuestion [
 	| entry |
@@ -41,6 +51,16 @@ Inquisitor >> addResolvedQuestion: anInquisitorQuestion [
 { #category : #'question management' }
 Inquisitor >> askQuestion: anInquisitorQuestion [
 	anInquisitorQuestion askToInquisitor: self
+]
+
+{ #category : #accessing }
+Inquisitor >> codeBlockToExecute [
+	^ codeBlockToExecute
+]
+
+{ #category : #accessing }
+Inquisitor >> codeBlockToExecute: aBlockClosure [
+	codeBlockToExecute := aBlockClosure
 ]
 
 { #category : #'question management' }
@@ -69,10 +89,16 @@ Inquisitor >> questionHistory [
 
 { #category : #utility }
 Inquisitor >> runExecution [
-	| testInstance |
-	testInstance := testClass new.
-	testInstance setUp.
-	[testInstance perform: testMethodName] on: TestFailure do: [ :ex| self inform: 'Test execution stopped at: ', ex asString ]
+	| testInstance executionBlock |
+	self codeBlockToExecute ifNil: [ 
+		"This Inquisitor is not a specific code block, but rather on a test method"	
+		testInstance := testClass new.
+		testInstance setUp.
+		executionBlock := [testInstance perform: testMethodName]
+	] ifNotNil: [ :cdblk | "This inquisitor is on a specific code block"
+		executionBlock := cdblk
+	].
+	executionBlock on: TestFailure do: [ :ex| self inform: 'Inquisitor execution stopped at: ', ex asString ]
 ]
 
 { #category : #accessing }
@@ -98,4 +124,12 @@ Inquisitor >> testMethodName [
 { #category : #accessing }
 Inquisitor >> testMethodName: anObject [
 	testMethodName := anObject
+]
+
+{ #category : #'as yet unclassified' }
+Inquisitor >> update: aNotification [
+	"If this object has been registered as an observer to the Breakpoint class, this method will be called when a breakpoint is hit/added/removed."
+	aNotification isBreakpointHitNotification ifFalse: [ ^ self ]. "Notification is not a breakpoint hit"
+	(aNotification nodes size >= 2) ifTrue: [ self error: 'Unexpected case: breakpoint hit notification contains more than one node'  ].
+	lastBreakpointHit := aNotification breakpoint.
 ]
