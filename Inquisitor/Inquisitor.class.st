@@ -31,7 +31,7 @@ Inquisitor class >> mainInstance: anInstance [
 ]
 
 { #category : #'instance creation' }
-Inquisitor class >> newInquisitorOnCodeBlock: aBlockClosure [
+Inquisitor class >> newOnCodeBlock: aBlockClosure [
 	| i |
 	i := self new codeBlockToExecute: aBlockClosure; yourself.
 	Inquisitor mainInstance: i.
