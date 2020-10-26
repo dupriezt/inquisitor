@@ -52,7 +52,7 @@ InquisitorTestDummy >> setInstanceVariableTo43 [
 	myInstanceVariable := 43
 ]
 
-{ #category : #tests }
+{ #category : #'as yet unclassified' }
 InquisitorTestDummy >> testDummy [
 	| i |
 	i := 0.

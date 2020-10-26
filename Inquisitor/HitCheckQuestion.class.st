@@ -2,7 +2,10 @@ Class {
 	#name : #HitCheckQuestion,
 	#superclass : #InquisitorQuestion,
 	#instVars : [
-		'hitCount'
+		'hitCount',
+		'capturePoints',
+		'breakpointsEncountered',
+		'timeIndex'
 	],
 	#category : #Inquisitor
 }
@@ -22,9 +25,27 @@ HitCheckQuestion >> askToInquisitor: anInquisitor [
 	anInquisitor addResolvedQuestion: self.
 ]
 
+{ #category : #'as yet unclassified' }
+HitCheckQuestion >> breakpointsEncountered [
+	breakpointsEncountered ifNil: [ breakpointsEncountered := OrderedCollection new ].
+	^ breakpointsEncountered
+]
+
+{ #category : #'as yet unclassified' }
+HitCheckQuestion >> capturePoints [
+	capturePoints ifNil: [ capturePoints := OrderedCollection new ].
+	^ capturePoints
+]
+
 { #category : #accessing }
 HitCheckQuestion >> hitCount [
 	^ hitCount
+]
+
+{ #category : #'as yet unclassified' }
+HitCheckQuestion >> nextTimeIndex [
+	timeIndex ifNil: [ timeIndex := 0 ] ifNotNil: [timeIndex := timeIndex + 1].
+	^ timeIndex
 ]
 
 { #category : #converting }
@@ -37,7 +58,8 @@ HitCheckQuestion >> printOn: aStream [
 
 { #category : #'as yet unclassified' }
 HitCheckQuestion >> result [
-	^ hitCount
+	"^ hitCount"
+	^ capturePoints
 ]
 
 { #category : #'as yet unclassified' }
@@ -47,5 +69,10 @@ HitCheckQuestion >> resultDescription [
 
 { #category : #'as yet unclassified' }
 HitCheckQuestion >> whenBreakpoint: aBreakpoint isHitForBreakException: aBreakException [
-	hitCount := hitCount + 1
+	| cp | 
+	self breakpointsEncountered add: aBreakpoint.
+	cp := CapturePoint newForContext: (aBreakException signalerContext sender) andCapturedValue: 1 andBreakpointsEncountered: self breakpointsEncountered.
+	cp timeIndex: self nextTimeIndex.
+	self capturePoints add: cp.
+"	hitCount := hitCount + 1"
 ]
