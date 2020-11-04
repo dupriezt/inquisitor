@@ -21,7 +21,7 @@ ClyShowMainInquisitorCommand >> defaultMenuIconName [
 
 { #category : #accessing }
 ClyShowMainInquisitorCommand >> defaultMenuItemName [
-	self isMainInquisitorDefined ifFalse: [ ^ 'No main inquisitor defined. Right-click on a test method' ] ifTrue: [ ^ 'Test: ', Inquisitor mainInstance testMethodFullName ].
+	self isMainInquisitorDefined ifFalse: [ ^ 'No main inquisitor defined. Right-click on a test method' ] ifTrue: [ ^ 'Inquisited Test: ', Inquisitor mainInstance testMethodFullName ].
 ]
 
 { #category : #accessing }
