@@ -22,7 +22,6 @@ HitCheckQuestion >> askToInquisitor: anInquisitor [
 	b := Breakpoint new node: node; always; install.
 	self breakpoints add: b.
 	self runExecutionWithInquisitor: anInquisitor.
-	anInquisitor addResolvedQuestion: self.
 ]
 
 { #category : #'as yet unclassified' }
@@ -58,21 +57,20 @@ HitCheckQuestion >> printOn: aStream [
 
 { #category : #'as yet unclassified' }
 HitCheckQuestion >> result [
-	"^ hitCount"
 	^ capturePoints
 ]
 
 { #category : #'as yet unclassified' }
 HitCheckQuestion >> resultDescription [
-	^ 'The execution encountered this node ', hitCount asString, ' times'
+	^ 'The execution encountered this node ', capturePoints size asString, ' times'
 ]
 
 { #category : #'as yet unclassified' }
 HitCheckQuestion >> whenBreakpoint: aBreakpoint isHitForBreakException: aBreakException [
 	| cp | 
 	self breakpointsEncountered add: aBreakpoint.
-	cp := CapturePoint newForContext: (aBreakException signalerContext sender) andCapturedValue: 1 andBreakpointsEncountered: self breakpointsEncountered.
+	cp := CapturePoint newForContext: (aBreakException signalerContext sender) andCapturedValue: nil andBreakpointsEncountered: self breakpointsEncountered.
 	cp timeIndex: self nextTimeIndex.
 	self capturePoints add: cp.
-"	hitCount := hitCount + 1"
+	hitCount := hitCount + 1
 ]

@@ -41,7 +41,6 @@ VariableValueHistoryQuestion >> askToInquisitor: anInquisitor [
 		ex resume.
 	].
 	b remove.
-	anInquisitor addResolvedQuestion: self.
 ]
 
 { #category : #'as yet unclassified' }

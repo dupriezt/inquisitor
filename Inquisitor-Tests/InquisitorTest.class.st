@@ -79,7 +79,7 @@ InquisitorTest >> tearDown [
 
 { #category : #running }
 InquisitorTest >> testHitCheckNotAffectedByOtherBreakpoints [
-	| oneHitNode fourHitNode q1 b |
+	| oneHitNode fourHitNode q b |
 	self setUpForInquisitedMethod: InquisitorTest>>#dummyForTestHitCheck.
 	
 	fourHitNode := ((inquisitedMethod ast body statements at: 2) arguments at: 1) body statements at: 1.
@@ -88,9 +88,9 @@ InquisitorTest >> testHitCheckNotAffectedByOtherBreakpoints [
 	breakpoints add: b.
 	
 	oneHitNode := inquisitedMethod ast body statements at: 1.
-	q1 := HitCheckQuestion newForNode: oneHitNode.
-	q1 askToInquisitor: inquisitor.
-	self assert: (inquisitor questionHistory last at: #a) size equals: 1.
+	q := HitCheckQuestion newForNode: oneHitNode.
+	q askToInquisitor: inquisitor.
+	self assert: q result size equals: 1.
 ]
 
 { #category : #running }
@@ -101,7 +101,7 @@ InquisitorTest >> testHitCheck_FourHit [
 	fourHitNode :=  ((inquisitedMethod ast body statements at: 2) arguments at: 1) body statements at: 1.
 	q := HitCheckQuestion newForNode: fourHitNode.
 	q askToInquisitor: inquisitor.
-	self assert: (inquisitor questionHistory last at: #a) size equals: 4.
+	self assert: q result size equals: 4.
 ]
 
 { #category : #running }
@@ -112,7 +112,7 @@ InquisitorTest >> testHitCheck_OneHit [
 	oneHitNode := inquisitedMethod ast body statements at: 1.
 	q := HitCheckQuestion newForNode: oneHitNode.
 	q askToInquisitor: inquisitor.
-	self assert: (inquisitor questionHistory last at: #a) size equals: 1.
+	self assert: q result size equals: 1.
 ]
 
 { #category : #running }

@@ -16,7 +16,7 @@ InquisitorQuestion class >> isAbstract [
 
 { #category : #'as yet unclassified' }
 InquisitorQuestion >> askToInquisitor: anInquisitor [
-	"Answer the question, using anInquisitor to run the execution. Must call 'anInquisitor addResolvedQuestion: self' when done"
+	"Answer the question, using anInquisitor to run the execution."
 	self subclassResponsibility 
 ]
 
@@ -37,6 +37,12 @@ InquisitorQuestion >> node: aRBProgramNode [
 ]
 
 { #category : #'as yet unclassified' }
+InquisitorQuestion >> registerBreakpointHit: aBreakpointHit [
+	"Called by the announcer of BreakpointHit announcement"
+	lastBreakpointHit := aBreakpointHit breakpoint
+]
+
+{ #category : #'as yet unclassified' }
 InquisitorQuestion >> result [
 	"Must return the result of the question: the data object (whatever it is) describing the answer to this question"
 	self subclassResponsibility 
@@ -50,25 +56,16 @@ InquisitorQuestion >> resultDescription [
 
 { #category : #'as yet unclassified' }
 InquisitorQuestion >> runExecutionWithInquisitor: anInquisitor [
-	Breakpoint registerObserver: self.
+	SystemAnnouncer uniqueInstance when: BreakpointHit send: #registerBreakpointHit: to: self.
 	[ anInquisitor runExecution ] on: Break do: [ :ex |
 		lastBreakpointHit ifNil: [ self error: 'Unexpected case: Break exception signalled, but no breakpoint hit has been registered' ].
+		"We only do something if the breakpoint that was hit belongs to those that this question installed"
 		(breakpoints includes: lastBreakpointHit) ifTrue: [ self whenBreakpoint: lastBreakpointHit isHitForBreakException: ex ].
 		lastBreakpointHit := nil.
 		ex resume
 	].
-	Breakpoint unregisterObserver: self.
+	SystemAnnouncer uniqueInstance unsubscribe: self.
 	breakpoints do: [ :brkpt | brkpt remove ].
-]
-
-{ #category : #updating }
-InquisitorQuestion >> update: aNotification [
-	"If this object has been registered as an observer to the Breakpoint class, this method will be called when a breakpoint is hit/added/removed."
-	aNotification isBreakpointHitNotification ifFalse: [ ^ self ]. "Notification is not a breakpoint hit"
-	"(breakpoints includes: aNotification breakpoint) ifFalse: [ ^ self ]." "Breakpoint hit is not a breakpoint set by this instance"
-		
-	(aNotification nodes size >= 2) ifTrue: [ self error: 'Unexpected case: breakpoint hit notification contains more than one node'  ].
-	lastBreakpointHit := aNotification breakpoint.
 ]
 
 { #category : #'as yet unclassified' }

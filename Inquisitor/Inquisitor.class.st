@@ -39,7 +39,7 @@ Inquisitor class >> newOnCodeBlock: aBlockClosure [
 ]
 
 { #category : #'question management' }
-Inquisitor >> addResolvedQuestion: anInquisitorQuestion [
+Inquisitor >> addAnsweredQuestion: anInquisitorQuestion [
 	| entry |
 	entry := Dictionary new.
 	entry at: #q put: anInquisitorQuestion.
@@ -50,7 +50,8 @@ Inquisitor >> addResolvedQuestion: anInquisitorQuestion [
 
 { #category : #'question management' }
 Inquisitor >> askQuestion: anInquisitorQuestion [
-	anInquisitorQuestion askToInquisitor: self
+	anInquisitorQuestion askToInquisitor: self.
+	self addAnsweredQuestion: anInquisitorQuestion.
 ]
 
 { #category : #accessing }

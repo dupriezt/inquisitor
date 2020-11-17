@@ -21,7 +21,6 @@ MethodReturnQuestion >> askToInquisitor: anInquisitor [
 	"Install breakpoints on all return nodes and store them"
 	self breakpoints addAll: (returnNodes collect: [ :retNode | Breakpoint new node: retNode; always; install; yourself ]).
 	self runExecutionWithInquisitor: anInquisitor.
-	anInquisitor addResolvedQuestion: self.
 ]
 
 { #category : #accessing }
