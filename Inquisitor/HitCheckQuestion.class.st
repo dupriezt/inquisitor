@@ -69,7 +69,7 @@ HitCheckQuestion >> resultDescription [
 HitCheckQuestion >> whenBreakpoint: aBreakpoint isHitForBreakException: aBreakException [
 	| cp | 
 	self breakpointsEncountered add: aBreakpoint.
-	cp := CapturePoint newForContext: (aBreakException signalerContext sender) andCapturedValue: nil andBreakpointsEncountered: self breakpointsEncountered.
+	cp := CapturePoint newForContext: (aBreakException signalerContext sender) andCapturedValue: nil andBreakpointsEncountered: self breakpointsEncountered copy.
 	cp timeIndex: self nextTimeIndex.
 	self capturePoints add: cp.
 	hitCount := hitCount + 1
