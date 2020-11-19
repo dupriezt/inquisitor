@@ -98,7 +98,7 @@ InquisitorTest >> testHitCheck_FourHit [
 	| fourHitNode q |
 	self setUpForInquisitedMethod: InquisitorTest>>#dummyForTestHitCheck.
 	
-	fourHitNode :=  ((inquisitedMethod ast body statements at: 2) arguments at: 1) body statements at: 1.
+	fourHitNode :=  ((inquisitedMethod ast body statements at: 2) arguments at: 1) body statements at: 1. "'i := i - 1' assignment node"
 	q := HitCheckQuestion newForNode: fourHitNode.
 	q askToInquisitor: inquisitor.
 	self assert: q result size equals: 4.
@@ -109,7 +109,7 @@ InquisitorTest >> testHitCheck_OneHit [
 	| oneHitNode q |
 	self setUpForInquisitedMethod: InquisitorTest>>#dummyForTestHitCheck.
 	
-	oneHitNode := inquisitedMethod ast body statements at: 1.
+	oneHitNode := inquisitedMethod ast body statements at: 1. "'i := 4' assignment node"
 	q := HitCheckQuestion newForNode: oneHitNode.
 	q askToInquisitor: inquisitor.
 	self assert: q result size equals: 1.
