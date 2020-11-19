@@ -5,7 +5,8 @@ Class {
 		'hitCount',
 		'capturePoints',
 		'breakpointsEncountered',
-		'timeIndex'
+		'timeIndex',
+		'cptFactory'
 	],
 	#category : #Inquisitor
 }
@@ -21,6 +22,7 @@ HitCheckQuestion >> askToInquisitor: anInquisitor [
 	hitCount := 0.
 	b := Breakpoint new node: node; always; install.
 	self breakpoints add: b.
+	cptFactory := CapturePointFactory new.
 	self runExecutionWithInquisitor: anInquisitor.
 ]
 
@@ -69,7 +71,7 @@ HitCheckQuestion >> resultDescription [
 HitCheckQuestion >> whenBreakpoint: aBreakpoint isHitForBreakException: aBreakException [
 	| cp | 
 	self breakpointsEncountered add: aBreakpoint.
-	cp := CapturePoint newForContext: (aBreakException signalerContext sender) andCapturedValue: nil andBreakpointsEncountered: self breakpointsEncountered copy.
+	cp := cptFactory newCapturePointForContext: (aBreakException signalerContext sender) andCapturedValue: nil andBreakpointsEncountered: self breakpointsEncountered copy.
 	cp timeIndex: self nextTimeIndex.
 	self capturePoints add: cp.
 	hitCount := hitCount + 1

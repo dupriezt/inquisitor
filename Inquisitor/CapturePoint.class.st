@@ -21,8 +21,14 @@ Class {
 }
 
 { #category : #'instance creation' }
-CapturePoint class >> newForContext: aContext andCapturedValue: aValue andBreakpointsEncountered: anOrderedCollection [
-	^ self new receiver: aContext receiver; methodInvocation: (MethodInvocation newForContext: aContext); capturedValue: aValue; breakpointsEncountered: anOrderedCollection; yourself
+CapturePoint class >> new [
+	self error: 'You should instanciate a CapturePointFactory and use it to instanciate CapturePoint'
+]
+
+{ #category : #'instance creation' }
+CapturePoint class >> privateNew [
+	"Private method, to be used by CapturePointFactory to instanciate this class"
+	^ super new
 ]
 
 { #category : #accessing }
