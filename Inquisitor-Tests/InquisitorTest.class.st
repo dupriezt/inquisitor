@@ -55,6 +55,12 @@ InquisitorTest >> dummyForTestVariableValueHistory_LocalVariable [
 ]
 
 { #category : #running }
+InquisitorTest >> removeBreakpoints [
+	breakpoints do: [ :brkpt | brkpt remove ].
+	breakpoints := OrderedCollection new.
+]
+
+{ #category : #running }
 InquisitorTest >> setUp [
 	super setUp.
 	inquisitor := Inquisitor new.
@@ -74,7 +80,7 @@ InquisitorTest >> setUpForInquisitedMethod: aCompiledMethod [
 InquisitorTest >> tearDown [
 	InquisitorTestVariableDummy clearInstances.
 	InquisitorTestMethodReturnDummy clearInstances.
-	breakpoints do: [ :brkpt | brkpt remove ]
+	self removeBreakpoints.
 ]
 
 { #category : #running }
