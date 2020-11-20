@@ -4,7 +4,9 @@ Class {
 	#instVars : [
 		'node',
 		'breakpoints',
-		'lastBreakpointHit'
+		'lastBreakpointHit',
+		'capturePoints',
+		'breakpointsEncountered'
 	],
 	#category : #Inquisitor
 }
@@ -24,6 +26,18 @@ InquisitorQuestion >> askToInquisitor: anInquisitor [
 InquisitorQuestion >> breakpoints [
 	breakpoints ifNil: [ breakpoints := OrderedCollection new ].
 	^ breakpoints
+]
+
+{ #category : #'as yet unclassified' }
+InquisitorQuestion >> breakpointsEncountered [
+	breakpointsEncountered ifNil: [ breakpointsEncountered := OrderedCollection new ].
+	^ breakpointsEncountered
+]
+
+{ #category : #'as yet unclassified' }
+InquisitorQuestion >> capturePoints [
+	capturePoints ifNil: [ capturePoints := OrderedCollection new ].
+	^ capturePoints
 ]
 
 { #category : #accessing }

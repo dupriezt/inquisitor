@@ -3,10 +3,7 @@ Class {
 	#superclass : #InquisitorQuestion,
 	#instVars : [
 		'hitCount',
-		'capturePoints',
-		'breakpointsEncountered',
-		'timeIndex',
-		'cptFactory'
+		'capturePointFactory'
 	],
 	#category : #Inquisitor
 }
@@ -22,31 +19,18 @@ HitCheckQuestion >> askToInquisitor: anInquisitor [
 	hitCount := 0.
 	b := Breakpoint new node: node; always; install.
 	self breakpoints add: b.
-	cptFactory := CapturePointFactory new.
 	self runExecutionWithInquisitor: anInquisitor.
 ]
 
 { #category : #'as yet unclassified' }
-HitCheckQuestion >> breakpointsEncountered [
-	breakpointsEncountered ifNil: [ breakpointsEncountered := OrderedCollection new ].
-	^ breakpointsEncountered
-]
-
-{ #category : #'as yet unclassified' }
-HitCheckQuestion >> capturePoints [
-	capturePoints ifNil: [ capturePoints := OrderedCollection new ].
-	^ capturePoints
+HitCheckQuestion >> capturePointFactory [
+	capturePointFactory ifNil: [ capturePointFactory := CapturePointFactory new ].
+	^ capturePointFactory
 ]
 
 { #category : #accessing }
 HitCheckQuestion >> hitCount [
 	^ hitCount
-]
-
-{ #category : #'as yet unclassified' }
-HitCheckQuestion >> nextTimeIndex [
-	timeIndex ifNil: [ timeIndex := 0 ] ifNotNil: [timeIndex := timeIndex + 1].
-	^ timeIndex
 ]
 
 { #category : #converting }
@@ -71,8 +55,7 @@ HitCheckQuestion >> resultDescription [
 HitCheckQuestion >> whenBreakpoint: aBreakpoint isHitForBreakException: aBreakException [
 	| cp | 
 	self breakpointsEncountered add: aBreakpoint.
-	cp := cptFactory newCapturePointForContext: (aBreakException signalerContext sender) andCapturedValue: nil andBreakpointsEncountered: self breakpointsEncountered copy.
-	cp timeIndex: self nextTimeIndex.
+	cp := self capturePointFactory newCapturePointForContext: (aBreakException signalerContext sender) andCapturedValue: nil andBreakpointsEncountered: self breakpointsEncountered copy.
 	self capturePoints add: cp.
 	hitCount := hitCount + 1
 ]
