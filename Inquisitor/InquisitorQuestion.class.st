@@ -6,7 +6,8 @@ Class {
 		'breakpoints',
 		'lastBreakpointHit',
 		'capturePoints',
-		'breakpointsEncountered'
+		'breakpointsEncountered',
+		'capturePointFactory'
 	],
 	#category : #Inquisitor
 }
@@ -32,6 +33,12 @@ InquisitorQuestion >> breakpoints [
 InquisitorQuestion >> breakpointsEncountered [
 	breakpointsEncountered ifNil: [ breakpointsEncountered := OrderedCollection new ].
 	^ breakpointsEncountered
+]
+
+{ #category : #'as yet unclassified' }
+InquisitorQuestion >> capturePointFactory [
+	capturePointFactory ifNil: [ capturePointFactory := CapturePointFactory new ].
+	^ capturePointFactory
 ]
 
 { #category : #'as yet unclassified' }

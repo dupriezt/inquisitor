@@ -88,13 +88,18 @@ MethodReturnQuestionTest >> testReturnNil [
 
 { #category : #tests }
 MethodReturnQuestionTest >> testReturnNonSpecialCase [
-	| question answer |
+	| question capturePoints questionedMethod |
 	self setUpForInquisitedMethod: MethodReturnQuestionTest>>#dummyForTestReturnNonSpecialCase.
 	
-	question := MethodReturnQuestion newForMethod: InquisitorTestMethodReturnDummy>>#nonSpecialReturn.
+	questionedMethod := InquisitorTestMethodReturnDummy>>#nonSpecialReturn.
+	question := MethodReturnQuestion newForMethod: questionedMethod.
 	question askToInquisitor: inquisitor.
-	answer := (inquisitor questionHistory last at: #a).
-	self assert: (answer at: #returnValue) equals: 42.
+	capturePoints := question capturePoints.
+	self assert: capturePoints size equals: 1.
+	self assert: capturePoints first capturedValue equals: 42.
+	self assert: capturePoints first breakpointsEncountered size equals: 1.
+	self assert: capturePoints first methodInvocation invokedMethod name equals: questionedMethod name. "The compiled methods are different because one contains bytecode for the breakpoint that was inserted into it"
+	
 ]
 
 { #category : #tests }

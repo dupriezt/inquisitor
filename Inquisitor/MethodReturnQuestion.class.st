@@ -2,7 +2,6 @@ Class {
 	#name : #MethodReturnQuestion,
 	#superclass : #InquisitorQuestion,
 	#instVars : [
-		'returnValueData',
 		'method'
 	],
 	#category : #Inquisitor
@@ -40,20 +39,14 @@ MethodReturnQuestion >> printOn: aStream [
 
 { #category : #'as yet unclassified' }
 MethodReturnQuestion >> result [
-	^ returnValueData
+	^ capturePoints
 ]
 
 { #category : #'as yet unclassified' }
 MethodReturnQuestion >> resultDescription [
 	self flag: 'todo'.
-	^ 'Todo'
+	^ 'Result description of MethodReturnQuestion Todo'
 "	^ 'The execution encountered this node ', hitCount asString, ' times'"
-]
-
-{ #category : #accessing }
-MethodReturnQuestion >> returnValueData [
-	returnValueData ifNil: [ returnValueData := Dictionary new ].
-	^ returnValueData
 ]
 
 { #category : #'as yet unclassified' }
@@ -72,7 +65,9 @@ MethodReturnQuestion >> returnValueOfNode: aReturnNode inContext: aContext [
 { #category : #'as yet unclassified' }
 MethodReturnQuestion >> whenBreakpoint: aBreakpoint isHitForBreakException: aBreakException [
 
-	| returnValue |
+	| returnValue cp |
+	self breakpointsEncountered add: aBreakpoint.
 	returnValue := self returnValueOfNode: aBreakpoint node inContext: aBreakException signalerContext sender.
-	self returnValueData at: #returnValue put: returnValue
+	cp := self capturePointFactory newCapturePointForContext: (aBreakException signalerContext sender)  andCapturedValue: returnValue andBreakpointsEncountered: self breakpointsEncountered copy.
+	self capturePoints add: cp.
 ]

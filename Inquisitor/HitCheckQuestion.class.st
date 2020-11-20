@@ -2,8 +2,7 @@ Class {
 	#name : #HitCheckQuestion,
 	#superclass : #InquisitorQuestion,
 	#instVars : [
-		'hitCount',
-		'capturePointFactory'
+		'hitCount'
 	],
 	#category : #Inquisitor
 }
@@ -20,12 +19,6 @@ HitCheckQuestion >> askToInquisitor: anInquisitor [
 	b := Breakpoint new node: node; always; install.
 	self breakpoints add: b.
 	self runExecutionWithInquisitor: anInquisitor.
-]
-
-{ #category : #'as yet unclassified' }
-HitCheckQuestion >> capturePointFactory [
-	capturePointFactory ifNil: [ capturePointFactory := CapturePointFactory new ].
-	^ capturePointFactory
 ]
 
 { #category : #accessing }
