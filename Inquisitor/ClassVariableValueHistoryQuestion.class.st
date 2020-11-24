@@ -10,12 +10,12 @@ ClassVariableValueHistoryQuestion >> getVariableValueAndVariableOwnerInContext: 
 	| result |
 	result := Dictionary new.
 	result at: #varOwner put: aContext receiver class.
-	result at: #varValue put: (aContext receiver class classVarNamed: node name).
+	result at: #varValue put: (aContext receiver classVarNamed: node name).
 	^ result
 ]
 
 { #category : #'as yet unclassified' }
 ClassVariableValueHistoryQuestion >> placeWriteBreakpointOnVariable [
 	"Must return the breakpoint it placed"
-	^ VariableBreakpoint watchVariableWrites: node name inClass: method methodClass
+	^ VariableBreakpoint watchVariableWrites: node name inClass: method methodClass soleInstance
 ]

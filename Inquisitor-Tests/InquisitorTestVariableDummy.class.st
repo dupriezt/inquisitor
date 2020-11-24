@@ -5,7 +5,8 @@ Class {
 		'myInstanceVariable'
 	],
 	#classVars : [
-		'instances'
+		'instances',
+		'myClassVariable'
 	],
 	#category : #'Inquisitor-Tests'
 }
@@ -27,6 +28,11 @@ InquisitorTestVariableDummy class >> new [
 	result := super new.
 	self instances add: result.
 	^ result
+]
+
+{ #category : #initialization }
+InquisitorTestVariableDummy class >> setClassVariableTo: aValue [
+	myClassVariable := aValue
 ]
 
 { #category : #initialization }
