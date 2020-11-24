@@ -21,26 +21,11 @@ VariableValueHistoryQuestion class >> newForNode: aRBProgramNode andMethod: aCom
 
 { #category : #'as yet unclassified' }
 VariableValueHistoryQuestion >> askToInquisitor: anInquisitor [
-	| b varValueAndVarOwner varValue varOwner methodInvocation |
-	node isVariable ifFalse: [ self inform: 'Node is not a variable'. ^ self ].
+	| b |
+	node isVariable ifFalse: [ self error: 'Node is not a variable' ].
 	b := self placeWriteBreakpointOnVariable.
-	"methodOrClass := node isLocalVariable
-		ifTrue: [ method ]
-		ifFalse: [ method methodClass ].
-	b := VariableBreakpoint watchVariableWrites: node name inClass: methodOrClass."
-	[anInquisitor runExecution] on: Break do: [ :ex| 
-		varValueAndVarOwner := self getVariableValueAndVariableOwnerInContext: ex signalerContext sender.
-		varValue := varValueAndVarOwner at: #varValue.
-		varOwner := varValueAndVarOwner at: #varOwner.
-		methodInvocation := MethodInvocation newForContext: (ex signalerContext sender).
-		self data at: varOwner ifAbsentPut: [ Dictionary new ].
-		(self data at: varOwner) at: methodInvocation ifAbsentPut: [ OrderedCollection new ].
-		((self data at: varOwner) at: methodInvocation) add: varValue.
-		"self objectToValueHistoryDictionary at: varOwner ifAbsentPut: [ OrderedCollection new ].
-		(self objectToValueHistoryDictionary at: varOwner) add: varValue."
-		ex resume.
-	].
-	b remove.
+	self breakpoints add: b.
+	self runExecutionWithInquisitor: anInquisitor.
 ]
 
 { #category : #'as yet unclassified' }
@@ -89,9 +74,11 @@ VariableValueHistoryQuestion >> placeWriteBreakpointOnVariable [
 
 { #category : #converting }
 VariableValueHistoryQuestion >> printOn: aStream [
-	aStream
+	self flag: 'todo'.
+	aStream nextPutAll: 'Todo'.
+"	aStream
 		nextPutAll: self variableName;
-		nextPutAll: ': Variable Value History'
+		nextPutAll: ': Variable Value History'"
 ]
 
 { #category : #accessing }
@@ -103,13 +90,26 @@ VariableValueHistoryQuestion >> result [
 { #category : #'as yet unclassified' }
 VariableValueHistoryQuestion >> resultDescription [
 	| varOwnerCount varValueChangeCount |
-	varOwnerCount := 0.
+	self flag: 'todo'.
+	^ 'Result description of VariableValueHistory Todo'
+	"varOwnerCount := 0.
 	varValueChangeCount := 0.
 	self data associationsDo: [ :assoc | varOwnerCount := varOwnerCount + 1. varValueChangeCount := varValueChangeCount + (assoc value size) ].
-	^ varValueChangeCount asString, ' value changes, over ', varOwnerCount asString, ' objects'
+	^ varValueChangeCount asString, ' value changes, over ', varOwnerCount asString, ' objects'"
 ]
 
 { #category : #accessing }
 VariableValueHistoryQuestion >> variableName [
 	^ node name
+]
+
+{ #category : #'as yet unclassified' }
+VariableValueHistoryQuestion >> whenBreakpoint: aBreakpoint isHitForBreakException: aBreakException [
+		| varValueAndVarOwner varValue cp |
+	self breakpointsEncountered add: aBreakpoint.
+	varValueAndVarOwner := self getVariableValueAndVariableOwnerInContext: aBreakException signalerContext sender.
+		varValue := varValueAndVarOwner at: #varValue.
+		"varOwner := varValueAndVarOwner at: #varOwner."
+		cp := self capturePointFactory newCapturePointForContext: (aBreakException signalerContext sender) andCapturedValue: varValue andBreakpointsEncountered: self breakpointsEncountered copy.
+		self capturePoints add: cp.
 ]

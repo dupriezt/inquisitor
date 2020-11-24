@@ -15,7 +15,7 @@ MethodReturnQuestion class >> newForMethod: aCompiledMethod [
 { #category : #'as yet unclassified' }
 MethodReturnQuestion >> askToInquisitor: anInquisitor [
 	| returnNodes |
-	method ast lastIsReturn ifTrue: [ "add breakpoint to handle implicit return statement" ].
+	method ast lastIsReturn ifTrue: [ self flag: 'Todo' "add breakpoint to handle implicit return statement" ].
 	returnNodes := (method ast allChildren select: [:astNode | astNode isReturn]).
 	"Install breakpoints on all return nodes and store them"
 	self breakpoints addAll: (returnNodes collect: [ :retNode | Breakpoint new node: retNode; always; install; yourself ]).
