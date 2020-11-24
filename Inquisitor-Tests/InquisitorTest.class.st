@@ -30,13 +30,6 @@ InquisitorTest >> checkFormatOf: aCollection accordingTo: aTemplate [
 ]
 
 { #category : #running }
-InquisitorTest >> dummyForTestHitCheck [
-	| i |
-	i := 4.
-	[ i = 0 ] whileFalse: [ i := i - 1 ].
-]
-
-{ #category : #running }
 InquisitorTest >> dummyForTestVariableValueHistory_ArgumentVariables [
 	InquisitorTestVariableDummy new methodWithArgument: 0; methodWithArgument: 1.
 	InquisitorTestVariableDummy new methodWithArgument: 10.
@@ -81,44 +74,6 @@ InquisitorTest >> tearDown [
 	InquisitorTestVariableDummy clearInstances.
 	InquisitorTestMethodReturnDummy clearInstances.
 	self removeBreakpoints.
-]
-
-{ #category : #running }
-InquisitorTest >> testHitCheckNotAffectedByOtherBreakpoints [
-	| oneHitNode fourHitNode q b |
-	self setUpForInquisitedMethod: InquisitorTest>>#dummyForTestHitCheck.
-	
-	fourHitNode := ((inquisitedMethod ast body statements at: 2) arguments at: 1) body statements at: 1.
-	"Install breakpoint on another node of the method, as if the user had set a manual breakpoint there"
-	b := Breakpoint new node: fourHitNode; always; install.
-	breakpoints add: b.
-	
-	oneHitNode := inquisitedMethod ast body statements at: 1.
-	q := HitCheckQuestion newForNode: oneHitNode.
-	q askToInquisitor: inquisitor.
-	self assert: q result size equals: 1.
-]
-
-{ #category : #running }
-InquisitorTest >> testHitCheck_FourHit [
-	| fourHitNode q |
-	self setUpForInquisitedMethod: InquisitorTest>>#dummyForTestHitCheck.
-	
-	fourHitNode :=  ((inquisitedMethod ast body statements at: 2) arguments at: 1) body statements at: 1. "'i := i - 1' assignment node"
-	q := HitCheckQuestion newForNode: fourHitNode.
-	q askToInquisitor: inquisitor.
-	self assert: q result size equals: 4.
-]
-
-{ #category : #running }
-InquisitorTest >> testHitCheck_OneHit [
-	| oneHitNode q |
-	self setUpForInquisitedMethod: InquisitorTest>>#dummyForTestHitCheck.
-	
-	oneHitNode := inquisitedMethod ast body statements at: 1. "'i := 4' assignment node"
-	q := HitCheckQuestion newForNode: oneHitNode.
-	q askToInquisitor: inquisitor.
-	self assert: q result size equals: 1.
 ]
 
 { #category : #running }

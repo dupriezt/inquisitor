@@ -41,55 +41,73 @@ MethodReturnQuestionTest >> dummyForTestReturnTrue [
 
 { #category : #tests }
 MethodReturnQuestionTest >> testImplicitReturnSelf [
-	| question answer receiverInstance |
-	self setUpForInquisitedMethod: MethodReturnQuestionTest>>#dummyForTestReturnImplicitSelf.
+	| question capturePoints questionedMethod receiverInstance |
+	self setUpForInquisitedMethod: (self class)>>#dummyForTestReturnImplicitSelf.
 	
-	question := MethodReturnQuestion newForMethod: InquisitorTestMethodReturnDummy>>#returnImplicitSelf.
+	questionedMethod := InquisitorTestMethodReturnDummy>>#returnImplicitSelf.
+	question := MethodReturnQuestion newForMethod: questionedMethod.
 	question askToInquisitor: inquisitor.
-	answer := (inquisitor questionHistory last at: #a).
 	receiverInstance := InquisitorTestMethodReturnDummy instances at: 1.
-	self assert: (answer at: #returnValue) equals: receiverInstance.
+	capturePoints := question capturePoints.
+	self assert: capturePoints size equals: 1.
+	self assert: capturePoints first capturedValue equals: receiverInstance.
+	self assert: capturePoints first breakpointsEncountered size equals: 1.
+	self assert: capturePoints first methodInvocation invokedMethod name equals: questionedMethod name. "The compiled methods are different because one contains bytecode for the breakpoint that was inserted into it"
+	
 ]
 
 { #category : #tests }
 MethodReturnQuestionTest >> testReturnFalse [
-	| question answer |
-	self setUpForInquisitedMethod: MethodReturnQuestionTest>>#dummyForTestReturnFalse.
+	| question capturePoints questionedMethod |
+	self setUpForInquisitedMethod: (self class)>>#dummyForTestReturnFalse.
 	
-	question := MethodReturnQuestion newForMethod: InquisitorTestMethodReturnDummy>>#returnFalse.
+	questionedMethod := InquisitorTestMethodReturnDummy>>#returnFalse.
+	question := MethodReturnQuestion newForMethod: questionedMethod.
 	question askToInquisitor: inquisitor.
-	answer := (inquisitor questionHistory last at: #a).
-	self assert: (answer at: #returnValue) equals: false.
+	capturePoints := question capturePoints.
+	self assert: capturePoints size equals: 1.
+	self assert: capturePoints first capturedValue equals: false.
+	self assert: capturePoints first breakpointsEncountered size equals: 1.
+	self assert: capturePoints first methodInvocation invokedMethod name equals: questionedMethod name. "The compiled methods are different because one contains bytecode for the breakpoint that was inserted into it"
+	
 ]
 
 { #category : #tests }
 MethodReturnQuestionTest >> testReturnInBlock [
-	| question answer receiverInstance |
-	self setUpForInquisitedMethod: MethodReturnQuestionTest>>#dummyForTestReturnInBlock.
+	| question capturePoints questionedMethod |
+	self setUpForInquisitedMethod: (self class)>>#dummyForTestReturnInBlock.
 	
-	question := MethodReturnQuestion newForMethod: InquisitorTestMethodReturnDummy>>#returnInBlock.
+	questionedMethod := InquisitorTestMethodReturnDummy>>#returnInBlock.
+	question := MethodReturnQuestion newForMethod: questionedMethod.
 	question askToInquisitor: inquisitor.
-	answer := (inquisitor questionHistory last at: #a).
-	receiverInstance := InquisitorTestMethodReturnDummy instances at: 1.
-	self assert: (answer at: #returnValue) equals: 42.
+	capturePoints := question capturePoints.
+	self assert: capturePoints size equals: 1.
+	self assert: capturePoints first capturedValue equals: 42.
+	self assert: capturePoints first breakpointsEncountered size equals: 1.
+	self assert: capturePoints first methodInvocation invokedMethod name equals: questionedMethod name. "The compiled methods are different because one contains bytecode for the breakpoint that was inserted into it"
+	
 ]
 
 { #category : #tests }
 MethodReturnQuestionTest >> testReturnNil [
-	| question answer receiverInstance |
-	self setUpForInquisitedMethod: MethodReturnQuestionTest>>#dummyForTestReturnNil.
+	| question capturePoints questionedMethod |
+	self setUpForInquisitedMethod: (self class)>>#dummyForTestReturnNil.
 	
-	question := MethodReturnQuestion newForMethod: InquisitorTestMethodReturnDummy>>#returnNil.
+	questionedMethod := InquisitorTestMethodReturnDummy>>#returnNil.
+	question := MethodReturnQuestion newForMethod: questionedMethod.
 	question askToInquisitor: inquisitor.
-	answer := (inquisitor questionHistory last at: #a).
-	receiverInstance := InquisitorTestMethodReturnDummy instances at: 1.
-	self assert: (answer at: #returnValue) equals: nil.
+	capturePoints := question capturePoints.
+	self assert: capturePoints size equals: 1.
+	self assert: capturePoints first capturedValue equals: nil.
+	self assert: capturePoints first breakpointsEncountered size equals: 1.
+	self assert: capturePoints first methodInvocation invokedMethod name equals: questionedMethod name. "The compiled methods are different because one contains bytecode for the breakpoint that was inserted into it"
+	
 ]
 
 { #category : #tests }
 MethodReturnQuestionTest >> testReturnNonSpecialCase [
 	| question capturePoints questionedMethod |
-	self setUpForInquisitedMethod: MethodReturnQuestionTest>>#dummyForTestReturnNonSpecialCase.
+	self setUpForInquisitedMethod: (self class)>>#dummyForTestReturnNonSpecialCase.
 	
 	questionedMethod := InquisitorTestMethodReturnDummy>>#nonSpecialReturn.
 	question := MethodReturnQuestion newForMethod: questionedMethod.
@@ -104,24 +122,33 @@ MethodReturnQuestionTest >> testReturnNonSpecialCase [
 
 { #category : #tests }
 MethodReturnQuestionTest >> testReturnSelf [
-	| question answer receiverInstance |
-	self setUpForInquisitedMethod: MethodReturnQuestionTest>>#dummyForTestReturnSelf.
+	| question capturePoints questionedMethod receiverInstance |
+	self setUpForInquisitedMethod: (self class)>>#dummyForTestReturnSelf.
 	
-	question := MethodReturnQuestion newForMethod: InquisitorTestMethodReturnDummy>>#returnSelf.
+	questionedMethod := InquisitorTestMethodReturnDummy>>#returnSelf.
+	question := MethodReturnQuestion newForMethod: questionedMethod.
 	question askToInquisitor: inquisitor.
-	answer := (inquisitor questionHistory last at: #a).
 	receiverInstance := InquisitorTestMethodReturnDummy instances at: 1.
-	self assert: (answer at: #returnValue) equals: receiverInstance.
+	capturePoints := question capturePoints.
+	self assert: capturePoints size equals: 1.
+	self assert: capturePoints first capturedValue equals: receiverInstance.
+	self assert: capturePoints first breakpointsEncountered size equals: 1.
+	self assert: capturePoints first methodInvocation invokedMethod name equals: questionedMethod name. "The compiled methods are different because one contains bytecode for the breakpoint that was inserted into it"
+	
 ]
 
 { #category : #tests }
 MethodReturnQuestionTest >> testReturnTrue [
-	| question answer receiverInstance |
-	self setUpForInquisitedMethod: MethodReturnQuestionTest>>#dummyForTestReturnTrue.
+	| question capturePoints questionedMethod |
+	self setUpForInquisitedMethod: (self class)>>#dummyForTestReturnTrue.
 	
-	question := MethodReturnQuestion newForMethod: InquisitorTestMethodReturnDummy>>#returnTrue.
+	questionedMethod := InquisitorTestMethodReturnDummy>>#returnTrue.
+	question := MethodReturnQuestion newForMethod: questionedMethod.
 	question askToInquisitor: inquisitor.
-	answer := (inquisitor questionHistory last at: #a).
-	receiverInstance := InquisitorTestMethodReturnDummy instances at: 1.
-	self assert: (answer at: #returnValue) equals: true.
+	capturePoints := question capturePoints.
+	self assert: capturePoints size equals: 1.
+	self assert: capturePoints first capturedValue equals: true.
+	self assert: capturePoints first breakpointsEncountered size equals: 1.
+	self assert: capturePoints first methodInvocation invokedMethod name equals: questionedMethod name. "The compiled methods are different because one contains bytecode for the breakpoint that was inserted into it"
+	
 ]
