@@ -40,11 +40,7 @@ Inquisitor class >> newOnCodeBlock: aBlockClosure [
 
 { #category : #'question management' }
 Inquisitor >> addAnsweredQuestion: anInquisitorQuestion [
-	| entry |
-	entry := Dictionary new.
-	entry at: #q put: anInquisitorQuestion.
-	entry at: #a put: anInquisitorQuestion result.
-	self questionHistory add: entry.
+	self questionHistory add: anInquisitorQuestion.
 	self displayResultOfQuestion: anInquisitorQuestion
 ]
 
@@ -68,7 +64,7 @@ Inquisitor >> codeBlockToExecute: aBlockClosure [
 Inquisitor >> displayResultOfQuestion: anInquisitorQuestion [
 	self isSilent ifTrue: [ ^ self ].
 	self inform: anInquisitorQuestion resultDescription.
-	anInquisitorQuestion result inspect.
+	anInquisitorQuestion capturePoints inspect.
 ]
 
 { #category : #'question management' }

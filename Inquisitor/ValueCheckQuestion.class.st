@@ -26,32 +26,16 @@ ValueCheckQuestion >> expression: aString [
 	expression := aString
 ]
 
-{ #category : #converting }
-ValueCheckQuestion >> printOn: aStream [
-	self flag: 'todo'.
-	aStream nextPutAll: 'Value Check printOn TODO'.
-
-"	aStream
-		nextPutAll: 'Registered ';
-		nextPutAll: valueHistory size asString;
-		nextPutAll: ' values for expression ""';
-		nextPutAll: expression;
-		nextPutAll: '"" on node ';
-		nextPutAll: node asString"
-]
-
-{ #category : #'as yet unclassified' }
-ValueCheckQuestion >> result [
-	^ valueHistory
-]
-
 { #category : #'as yet unclassified' }
 ValueCheckQuestion >> resultDescription [
-	| vh |
-	self flag: 'todo'.
-	^ 'ValueCheck resultDescription TODO'.
-"	vh := self valueHistory.
-	^ '', (vh size asString), ' values: ', (vh at: 1 ifAbsent: [ '' ]) asString, ' ', (vh at: 2 ifAbsent: [ '' ]) asString, ' ', (vh at: 3 ifAbsent: [ '' ]) asString, ' ', ((vh size > 3) ifTrue: [ '...' ] ifFalse: [ '' ])"
+	"Only shows the first 5 values"
+	| numberOfValuesShown valuesString threeDots |
+	numberOfValuesShown := 5.
+	valuesString := ',' join: ((self keepFirst: numberOfValuesShown ofCollection: self capturePoints) collect: [ :cp | cp capturedValue asString ]).
+	threeDots := self capturePoints size > numberOfValuesShown ifTrue: [ '...' ] ifFalse: [ '' ].
+	^ self capturePoints size asString, ' values: ', valuesString, threeDots, ' of ', expression, ' in ', self fullMethodNameOfNode 
+	
+	
 ]
 
 { #category : #'as yet unclassified' }

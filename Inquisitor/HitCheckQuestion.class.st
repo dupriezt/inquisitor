@@ -1,9 +1,6 @@
 Class {
 	#name : #HitCheckQuestion,
 	#superclass : #InquisitorQuestion,
-	#instVars : [
-		'hitCount'
-	],
 	#category : #Inquisitor
 }
 
@@ -15,33 +12,14 @@ HitCheckQuestion class >> newForNode: aRBProgramNode [
 { #category : #'as yet unclassified' }
 HitCheckQuestion >> askToInquisitor: anInquisitor [
 	| b |
-	hitCount := 0.
 	b := Breakpoint new node: node; always; install.
 	self breakpoints add: b.
 	self runExecutionWithInquisitor: anInquisitor.
 ]
 
-{ #category : #accessing }
-HitCheckQuestion >> hitCount [
-	^ hitCount
-]
-
-{ #category : #converting }
-HitCheckQuestion >> printOn: aStream [
-	aStream
-		nextPutAll: hitCount asString;
-		nextPutAll: ' hits on node ';
-		nextPutAll: node asString
-]
-
-{ #category : #'as yet unclassified' }
-HitCheckQuestion >> result [
-	^ capturePoints
-]
-
 { #category : #'as yet unclassified' }
 HitCheckQuestion >> resultDescription [
-	^ 'The execution encountered this node ', capturePoints size asString, ' times'
+	^ self capturePoints size asString, ' hits of ''', node sourceCode asString, ''' in ', self fullMethodNameOfNode
 ]
 
 { #category : #'as yet unclassified' }
@@ -50,5 +28,4 @@ HitCheckQuestion >> whenBreakpoint: aBreakpoint isHitForBreakException: aBreakEx
 	self breakpointsEncountered add: aBreakpoint.
 	cp := self capturePointFactory newCapturePointForContext: (aBreakException signalerContext sender) andCapturedValue: nil andBreakpointsEncountered: self breakpointsEncountered copy.
 	self capturePoints add: cp.
-	hitCount := hitCount + 1
 ]

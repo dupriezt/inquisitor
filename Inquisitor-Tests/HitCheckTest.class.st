@@ -24,7 +24,7 @@ HitCheckTest >> testHitCheckNotAffectedByOtherBreakpoints [
 	oneHitNode := inquisitedMethod ast body statements at: 1.
 	q := HitCheckQuestion newForNode: oneHitNode.
 	q askToInquisitor: inquisitor.
-	self assert: q result size equals: 1.
+	self assert: q capturePoints size equals: 1.
 ]
 
 { #category : #running }
@@ -35,7 +35,7 @@ HitCheckTest >> testHitCheck_FourHit [
 	fourHitNode :=  ((inquisitedMethod ast body statements at: 2) arguments at: 1) body statements at: 1. "'i := i - 1' assignment node"
 	q := HitCheckQuestion newForNode: fourHitNode.
 	q askToInquisitor: inquisitor.
-	self assert: q result size equals: 4.
+	self assert: q capturePoints size equals: 4.
 ]
 
 { #category : #running }
@@ -46,5 +46,5 @@ HitCheckTest >> testHitCheck_OneHit [
 	oneHitNode := inquisitedMethod ast body statements at: 1. "'i := 4' assignment node"
 	q := HitCheckQuestion newForNode: oneHitNode.
 	q askToInquisitor: inquisitor.
-	self assert: q result size equals: 1.
+	self assert: q capturePoints size equals: 1.
 ]

@@ -72,30 +72,14 @@ VariableValueHistoryQuestion >> placeWriteBreakpointOnVariable [
 	self subclassResponsibility 
 ]
 
-{ #category : #converting }
-VariableValueHistoryQuestion >> printOn: aStream [
-	self flag: 'todo'.
-	aStream nextPutAll: 'Todo'.
-"	aStream
-		nextPutAll: self variableName;
-		nextPutAll: ': Variable Value History'"
-]
-
-{ #category : #accessing }
-VariableValueHistoryQuestion >> result [
-	^ self data
-	"^ objectToValueHistoryDictionary"
-]
-
 { #category : #'as yet unclassified' }
 VariableValueHistoryQuestion >> resultDescription [
-	| varOwnerCount varValueChangeCount |
-	self flag: 'todo'.
-	^ 'Result description of VariableValueHistory Todo'
-	"varOwnerCount := 0.
-	varValueChangeCount := 0.
-	self data associationsDo: [ :assoc | varOwnerCount := varOwnerCount + 1. varValueChangeCount := varValueChangeCount + (assoc value size) ].
-	^ varValueChangeCount asString, ' value changes, over ', varOwnerCount asString, ' objects'"
+	"Only shows the first 5 returned values"
+	| returnValueString threeDots numberOfValuesShown |
+	numberOfValuesShown := 5.
+	returnValueString := ',' join: ((self keepFirst: numberOfValuesShown ofCollection: self capturePoints) collect: [ :cp | cp capturedValue asString ]).
+	threeDots := self capturePoints size > numberOfValuesShown ifTrue: [ '...' ] ifFalse: [ '' ].
+	^ self capturePoints size asString, ' values: ', returnValueString, threeDots, ' for var ', self variableName , ' in ', self fullMethodNameOfNode.
 ]
 
 { #category : #accessing }

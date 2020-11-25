@@ -9,7 +9,7 @@ Class {
 
 { #category : #'instance creation' }
 MethodReturnQuestion class >> newForMethod: aCompiledMethod [
-	^ self new method: aCompiledMethod; yourself
+	^ self new method: aCompiledMethod; node: aCompiledMethod ast; yourself
 ]
 
 { #category : #'as yet unclassified' }
@@ -27,26 +27,14 @@ MethodReturnQuestion >> method: aCompiledMethod [
 	method := aCompiledMethod
 ]
 
-{ #category : #converting }
-MethodReturnQuestion >> printOn: aStream [
-	self flag: 'todo'.
-	aStream nextPutAll: 'todo'.
-	"aStream
-		nextPutAll: hitCount asString;
-		nextPutAll: ' hits on node ';
-		nextPutAll: node asString"
-]
-
-{ #category : #'as yet unclassified' }
-MethodReturnQuestion >> result [
-	^ capturePoints
-]
-
 { #category : #'as yet unclassified' }
 MethodReturnQuestion >> resultDescription [
-	self flag: 'todo'.
-	^ 'Result description of MethodReturnQuestion Todo'
-"	^ 'The execution encountered this node ', hitCount asString, ' times'"
+	"Only shows the first 5 returned values"
+	| returnValueString threeDots numberOfValuesShown |
+	numberOfValuesShown := 5.
+	returnValueString := ',' join: ((self keepFirst: numberOfValuesShown ofCollection: self capturePoints) collect: [ :cp | cp capturedValue asString ]).
+	threeDots := self capturePoints size > numberOfValuesShown ifTrue: [ '...' ] ifFalse: [ '' ].
+	^ self capturePoints size asString, ' returns: ', returnValueString, threeDots, ' in ', self fullMethodNameOfNode.
 ]
 
 { #category : #'as yet unclassified' }

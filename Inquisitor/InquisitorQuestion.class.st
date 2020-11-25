@@ -47,6 +47,18 @@ InquisitorQuestion >> capturePoints [
 	^ capturePoints
 ]
 
+{ #category : #'as yet unclassified' }
+InquisitorQuestion >> fullMethodNameOfNode [
+	^ node methodNode methodClass asString, '>>#', node methodNode selector asString
+]
+
+{ #category : #'as yet unclassified' }
+InquisitorQuestion >> keepFirst: anInteger ofCollection: aCollection [
+	"Returns a copy of @aCollection containing its first @anInteger elements. If @aCollection has less elements, return a copy of the whole collection (Unlike SequenceableCollection>>#first: which signals an error in this case)"
+	(aCollection size > anInteger) ifTrue: [ ^ aCollection first: anInteger ].
+	^ aCollection copy
+]
+
 { #category : #accessing }
 InquisitorQuestion >> node [
 	^ node
@@ -55,6 +67,15 @@ InquisitorQuestion >> node [
 { #category : #accessing }
 InquisitorQuestion >> node: aRBProgramNode [
 	node := aRBProgramNode 
+]
+
+{ #category : #'as yet unclassified' }
+InquisitorQuestion >> printOn: aStream [
+	super printOn: aStream.
+	aStream
+		nextPutAll: '(';
+		nextPutAll: self resultDescription;
+		nextPutAll: ')'
 ]
 
 { #category : #'as yet unclassified' }
