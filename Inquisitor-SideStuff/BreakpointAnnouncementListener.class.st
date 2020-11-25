@@ -1,7 +1,7 @@
 Class {
 	#name : #BreakpointAnnouncementListener,
 	#superclass : #Object,
-	#category : #Inquisitor
+	#category : #'Inquisitor-SideStuff'
 }
 
 { #category : #accessing }

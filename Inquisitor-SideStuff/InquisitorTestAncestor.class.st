@@ -1,7 +1,7 @@
 Class {
 	#name : #InquisitorTestAncestor,
 	#superclass : #TestCase,
-	#category : #Inquisitor
+	#category : #'Inquisitor-SideStuff'
 }
 
 { #category : #'as yet unclassified' }

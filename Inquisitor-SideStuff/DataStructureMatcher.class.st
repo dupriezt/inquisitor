@@ -37,7 +37,7 @@ Usage example:
 Class {
 	#name : #DataStructureMatcher,
 	#superclass : #Object,
-	#category : #'Inquisitor-Tests'
+	#category : #'Inquisitor-SideStuff'
 }
 
 { #category : #'as yet unclassified' }

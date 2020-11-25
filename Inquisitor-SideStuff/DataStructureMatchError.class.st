@@ -1,5 +1,5 @@
 Class {
 	#name : #DataStructureMatchError,
 	#superclass : #Error,
-	#category : #'Inquisitor-Tests'
+	#category : #'Inquisitor-SideStuff'
 }

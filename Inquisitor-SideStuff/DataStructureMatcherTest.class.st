@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'dsm'
 	],
-	#category : #'Inquisitor-Tests'
+	#category : #'Inquisitor-SideStuff'
 }
 
 { #category : #running }

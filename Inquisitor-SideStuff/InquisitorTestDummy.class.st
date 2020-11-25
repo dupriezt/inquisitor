@@ -7,7 +7,7 @@ Class {
 	#classVars : [
 		'myClassVariable'
 	],
-	#category : #Inquisitor
+	#category : #'Inquisitor-SideStuff'
 }
 
 { #category : #tests }

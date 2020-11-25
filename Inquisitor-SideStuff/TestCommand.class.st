@@ -1,7 +1,7 @@
 Class {
 	#name : #TestCommand,
 	#superclass : #CmdCommand,
-	#category : #Inquisitor
+	#category : #'Inquisitor-SideStuff'
 }
 
 { #category : #activation }
