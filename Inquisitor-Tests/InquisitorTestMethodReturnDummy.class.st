@@ -1,30 +1,8 @@
 Class {
 	#name : #InquisitorTestMethodReturnDummy,
-	#superclass : #Object,
-	#classVars : [
-		'instances'
-	],
+	#superclass : #InquisitorTestAssistClass,
 	#category : #'Inquisitor-Tests'
 }
-
-{ #category : #'instance creation' }
-InquisitorTestMethodReturnDummy class >> clearInstances [
-	instances := nil
-]
-
-{ #category : #'instance creation' }
-InquisitorTestMethodReturnDummy class >> instances [
-	instances ifNil: [ instances := OrderedCollection new ].
-	^ instances
-]
-
-{ #category : #'instance creation' }
-InquisitorTestMethodReturnDummy class >> new [
-	| result |
-	result := super new.
-	self instances add: result.
-	^ result
-]
 
 { #category : #'as yet unclassified' }
 InquisitorTestMethodReturnDummy >> evaluateBlock: aBlock [

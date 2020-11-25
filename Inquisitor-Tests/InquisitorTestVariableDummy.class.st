@@ -1,34 +1,14 @@
 Class {
 	#name : #InquisitorTestVariableDummy,
-	#superclass : #Object,
+	#superclass : #InquisitorTestAssistClass,
 	#instVars : [
 		'myInstanceVariable'
 	],
 	#classVars : [
-		'instances',
 		'myClassVariable'
 	],
 	#category : #'Inquisitor-Tests'
 }
-
-{ #category : #'as yet unclassified' }
-InquisitorTestVariableDummy class >> clearInstances [
-	instances := nil
-]
-
-{ #category : #'as yet unclassified' }
-InquisitorTestVariableDummy class >> instances [
-	instances ifNil: [ instances := OrderedCollection new ].
-	^ instances
-]
-
-{ #category : #'as yet unclassified' }
-InquisitorTestVariableDummy class >> new [
-	| result |
-	result := super new.
-	self instances add: result.
-	^ result
-]
 
 { #category : #initialization }
 InquisitorTestVariableDummy class >> setClassVariableTo: aValue [

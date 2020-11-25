@@ -10,6 +10,33 @@ Class {
 }
 
 { #category : #running }
+InquisitorTest >> assertCapturePoint: aCapturePoint value: aValue receiver: anObject method: aCompiledMethod nbBreakpoints: anInteger [
+	self assert: aCapturePoint capturedValue equals: aValue.
+	self assert: aCapturePoint receiver equals: anObject.
+	"Checking equality on the names of the methods; and not on the methods themselves, because the compiled methods are sometimes different just because one contains bytecode for the breakpoint that was inserted into it"
+	self assert: aCapturePoint methodInvocation invokedMethod name equals: aCompiledMethod name.
+	self assert: aCapturePoint breakpointsEncountered size equals: anInteger
+	
+]
+
+{ #category : #running }
+InquisitorTest >> assertCollection: aCollection matchesPattern: patternCollection [
+	"Asserts that @aCollection matches the pattern of @patternCollection.
+	For example, collection { 1. 2. 2. 3 } matches the pattern: { #a. #b. #b. #c }.
+	Both collections need to be ordered, and the elements of @patternCollection must be usable as keys in a dictionary
+	"
+	| patternAssignment pattern |
+	patternAssignment := Dictionary new.
+	self assert: aCollection size equals: patternCollection size.
+	aCollection doWithIndex: [ :el :i | 
+		pattern := patternCollection at: i.
+		patternAssignment	at: pattern ifPresent: [:v | self assert: el equals: v ] ifAbsent: [ patternAssignment at: pattern put: el ]
+	]
+	
+	
+]
+
+{ #category : #running }
 InquisitorTest >> checkFormatOf: aCollection accordingTo: aTemplate [
 	
 	| templateIsDictionary assignment |
@@ -40,7 +67,6 @@ InquisitorTest >> setUp [
 	super setUp.
 	inquisitor := Inquisitor new.
 	inquisitor isSilent: true.
-	InquisitorTestVariableDummy clearInstances.
 	breakpoints := OrderedCollection new
 ]
 
@@ -53,7 +79,5 @@ InquisitorTest >> setUpForInquisitedMethod: aCompiledMethod [
 
 { #category : #running }
 InquisitorTest >> tearDown [
-	InquisitorTestVariableDummy clearInstances.
-	InquisitorTestMethodReturnDummy clearInstances.
 	self removeBreakpoints.
 ]
