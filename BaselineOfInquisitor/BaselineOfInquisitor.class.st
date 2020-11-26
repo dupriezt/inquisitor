@@ -11,6 +11,8 @@ BaselineOfInquisitor >> baseline: spec [
 		"Dependency on another baseline"
 		"spec baseline: 'Sindarin' with: [spec repository: 'github://dupriezt/ScriptableDebugger']."
 		spec package: 'Inquisitor'.
-		spec package: 'Inquisitor-Tests'
+		spec package: 'Inquisitor-Tests'.
+		spec package: 'Inquisitor-SideStuff'.
+		spec package: 'Inquisitor-UI'.
 	].
 ]
