@@ -19,5 +19,5 @@ ClyInquisitorSourceCodeCommand class >> sourceCodeMenuActivation [
     <classAnnotation>
 	"Right-click in the source code pane of calypso"
     ^SycDebuggingMenuActivation 
-        byItemOf: InquisitorMenuGroup order: self contextMenuOrder for: ClyMethodSourceCodeContext
+        byItemOf: InqInquisitorMenuGroup order: self contextMenuOrder for: ClyMethodSourceCodeContext
 ]

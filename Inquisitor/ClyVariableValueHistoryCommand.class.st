@@ -19,19 +19,19 @@ ClyVariableValueHistoryCommand class >> contextMenuOrder [
 ClyVariableValueHistoryCommand >> createQuestion [
 
 	sourceNode isTempVariable ifTrue: [ 
-		^ LocalVariableValueHistoryQuestion
+		^ InqLocalVariableValueHistoryQuestion
 			  newForNode: sourceNode
 			  andMethod: method ].
 	sourceNode isArgumentVariable ifTrue: [ 
-		^ ArgumentVariableValueHistoryQuestion
+		^ InqArgumentVariableValueHistoryQuestion
 			  newForNode: sourceNode
 			  andMethod: method ].
 	sourceNode isInstanceVariable ifTrue: [ 
-		^ InstanceVariableValueHistoryQuestion
+		^ InqInstanceVariableValueHistoryQuestion
 			  newForNode: sourceNode
 			  andMethod: method ].
 	sourceNode isClassVariable ifTrue: [ 
-		^ ClassVariableValueHistoryQuestion
+		^ InqClassVariableValueHistoryQuestion
 			  newForNode: sourceNode
 			  andMethod: method ].
 	self error: 'Unsupported variable type'
@@ -49,5 +49,5 @@ ClyVariableValueHistoryCommand >> defaultMenuItemName [
 
 { #category : #accessing }
 ClyVariableValueHistoryCommand >> execute [
-	Inquisitor askQuestion: self createQuestion
+	InqInquisitor askQuestion: self createQuestion
 ]

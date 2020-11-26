@@ -24,5 +24,5 @@ ClyValueCheckCommand >> execute [
 	| dict |
 	dict := Dictionary new.
 	dict at: #node put: sourceNode.
-	(ValueCheckPopup on: dict) openWithSpec
+	(InqValueCheckPopup on: dict) openWithSpec
 ]
