@@ -85,12 +85,6 @@ InquisitorQuestion >> registerBreakpointHit: aBreakpointHit [
 ]
 
 { #category : #'as yet unclassified' }
-InquisitorQuestion >> result [
-	"Must return the result of the question: the data object (whatever it is) describing the answer to this question"
-	self subclassResponsibility 
-]
-
-{ #category : #'as yet unclassified' }
 InquisitorQuestion >> resultDescription [
 	"Returns a string describing the result of this question"
 	^ self subclassResponsibility

@@ -1,6 +1,9 @@
 Class {
 	#name : #VariableValueHistoryQuestion,
 	#superclass : #InquisitorQuestion,
+	#instVars : [
+		'method'
+	],
 	#category : #Inquisitor
 }
 
@@ -36,6 +39,11 @@ VariableValueHistoryQuestion >> getVariableValueInContext: aContext [
 	varValue := varIsLocal
 		ifTrue: [ aContext tempNamed: node name ]
 		ifFalse: [ aContext receiver var ]
+]
+
+{ #category : #accessing }
+VariableValueHistoryQuestion >> method: aCompiledMethod [
+	method := aCompiledMethod
 ]
 
 { #category : #'as yet unclassified' }
