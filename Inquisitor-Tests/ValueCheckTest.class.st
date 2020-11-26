@@ -32,7 +32,7 @@ ValueCheckTest >> testValueCheck [
 	| questionedMethod targetNode question cps qMeth inst2 inst1 |
 	self setUpForInquisitedMethod: (self class)>>#dummyForTestValueCheck.
 	questionedMethod :=(self assistClass)>>#incrementArgument:.
-	targetNode := questionedMethod ast body statements at: 1.
+	targetNode := questionedMethod ast body statements at: 1. "targetNode = 'self flag: 'targetNode'"
 	question := ValueCheckQuestion newForNode: targetNode andExpression: 'anInteger isPrime'.
 	question askToInquisitor: inquisitor.
 	cps := question capturePoints.

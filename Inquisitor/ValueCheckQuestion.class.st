@@ -2,8 +2,7 @@ Class {
 	#name : #ValueCheckQuestion,
 	#superclass : #InquisitorQuestion,
 	#instVars : [
-		'expression',
-		'valueHistory'
+		'expression'
 	],
 	#category : #Inquisitor
 }
@@ -36,12 +35,6 @@ ValueCheckQuestion >> resultDescription [
 	^ self capturePoints size asString, ' values: ', valuesString, threeDots, ' of ', expression, ' in ', self fullMethodNameOfNode 
 	
 	
-]
-
-{ #category : #'as yet unclassified' }
-ValueCheckQuestion >> valueHistory [
-	valueHistory ifNil: [ valueHistory := OrderedCollection new ].
-	^ valueHistory
 ]
 
 { #category : #'as yet unclassified' }
