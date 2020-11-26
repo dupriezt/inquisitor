@@ -2,9 +2,7 @@ Class {
 	#name : #VariableValueHistoryQuestion,
 	#superclass : #InquisitorQuestion,
 	#instVars : [
-		'method',
-		'objectToValueHistoryDictionary',
-		'data'
+		'method'
 	],
 	#category : #Inquisitor
 }
@@ -29,18 +27,6 @@ VariableValueHistoryQuestion >> askToInquisitor: anInquisitor [
 ]
 
 { #category : #'as yet unclassified' }
-VariableValueHistoryQuestion >> data [
-	"Dictionary<1:Object, Dictionary<2:MethodInvocation, 3:OrderedCollection<value>>
-	Stores the values a variable has during the execution.
-	1: owner of the variable (instance of the class where the variable is defined)
-	2: a method invocation during which the value of the variable is changed
-	3: the list of values the variable takes during the method invocation used as key
-	"
-	data ifNil: [ data := Dictionary new ].
-	^ data
-]
-
-{ #category : #'as yet unclassified' }
 VariableValueHistoryQuestion >> getVariableValueAndVariableOwnerInContext: aContext [
 	"Must return a dictionary of the form: #varValue -> value of the watched variable, #varOwner -> object or class owning the variable"
 	self subclassResponsibility 
@@ -58,12 +44,6 @@ VariableValueHistoryQuestion >> getVariableValueInContext: aContext [
 { #category : #accessing }
 VariableValueHistoryQuestion >> method: aCompiledMethod [
 	method := aCompiledMethod
-]
-
-{ #category : #'as yet unclassified' }
-VariableValueHistoryQuestion >> objectToValueHistoryDictionary [
-	objectToValueHistoryDictionary ifNil: [ objectToValueHistoryDictionary := Dictionary new ].
-	^ objectToValueHistoryDictionary
 ]
 
 { #category : #'as yet unclassified' }
