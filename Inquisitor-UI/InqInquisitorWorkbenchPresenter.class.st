@@ -196,7 +196,7 @@ InqInquisitorWorkbenchPresenter >> initializeWindow: aWindowPresenter [
 	super initializeWindow: aWindowPresenter.
 	aWindowPresenter
 		title: 'Inquisitor Workbench';
-		initialExtent: 500@280; "initial width@height of the window"
+		initialExtent: 860@655; "initial width@height of the window" "Size of a calypso browser"
 		windowIcon: (self iconManager iconNamed: #home) "Icon that will be shown in the bottom windowbar for this window"
 ]
 
