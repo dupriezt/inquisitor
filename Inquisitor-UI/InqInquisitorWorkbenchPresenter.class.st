@@ -12,7 +12,8 @@ Class {
 		'questionDropList',
 		'questionDetail',
 		'capturePointsNotebook',
-		'capturePointsPlayground'
+		'capturePointsPlayground',
+		'constraints'
 	],
 	#category : #'Inquisitor-UI'
 }
@@ -80,22 +81,53 @@ InqInquisitorWorkbenchPresenter >> connectPresenters [
 ]
 
 { #category : #specs }
+InqInquisitorWorkbenchPresenter >> constraints [
+	"Layout constraints for the elements defined in defaultSpec_ method"
+	| dropListHeight actionBarHeight |
+	constraints ifNotNil: [ ^ constraints ].
+	"If constraints is nil:"
+	dropListHeight := 30.
+	actionBarHeight := 30.
+	constraints := Dictionary new.
+	constraints at: #inquisitorDropList put: [ :c | c height: dropListHeight].
+	constraints at: #inquisitorActionBar put: [ :c | c height: actionBarHeight].
+	constraints at: #inquisitorExecutionCode put: [ :c | ].
+	constraints at: #questionDropList put: [ :c | c height: dropListHeight].
+	constraints at: #questionDetail put: [ :c | ].
+	constraints at: #capturePointsNotebook put: [ :c | ].
+	constraints at: #capturePointsPlayground put: [ :c | ].
+	constraints at: #leftPanel put: [ :c | ].
+	constraints at: #rightPanel put: [ :c | ].
+	^ constraints
+	
+	
+	      
+	
+]
+
+{ #category : #specs }
+InqInquisitorWorkbenchPresenter >> cstrAt: aKey [
+	"Shorthand to make defaultSpec_ method more concise"
+	^ self constraints at: aKey
+]
+
+{ #category : #specs }
 InqInquisitorWorkbenchPresenter >> defaultSpec_ [
 	
 	^ SpPanedLayout newHorizontal
 		add: (SpBoxLayout newVertical "Left side"
-			add: #inquisitorDropList;
-			add: #inquisitorActionBar;
-			add: #inquisitorExecutionCode;
-			add: #questionDropList;
-			add: #questionDetail;
+			add: #inquisitorDropList withConstraints: (self cstrAt: #inquisitorDropList);
+			add: #inquisitorActionBar withConstraints: (self cstrAt: #inquisitorActionBar);
+			add: #inquisitorExecutionCode withConstraints: (self cstrAt: #inquisitorExecutionCode);
+			add: #questionDropList withConstraints: (self cstrAt: #questionDropList);
+			add: #questionDetail withConstraints: (self cstrAt: #questionDetail);
 			yourself
-		);
+		) withConstraints: (self cstrAt: #leftPanel);
 		add: (SpBoxLayout newVertical
-			add: #capturePointsNotebook;
-			add: #capturePointsPlayground;
+			add: #capturePointsNotebook withConstraints: (self cstrAt: #capturePointsNotebook);
+			add: #capturePointsPlayground withConstraints: (self cstrAt: #capturePointsPlayground);
 			yourself
-		); "Right side"
+		) withConstraints: (self cstrAt: #rightPanel); "Right side"
 		yourself.
 
 
