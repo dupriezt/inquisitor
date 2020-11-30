@@ -109,7 +109,7 @@ InqCapturePointTest >> testOpenCapturePoint [
 	
 	self should: [[inquisitor openExecutionOnCapturePoint: capturePoint] on: Break do: [ :ex |
 		debuggerContext := ex signalerContext sender. "Context on which the debugger opens"
-		self assert: debuggerContext method name equals: 'CapturePointTest>>#dummyMethodA2'.
+		self assert: debuggerContext method name equals: 'InqCapturePointTest>>#dummyMethodA2'.
 		breakNode := debuggerContext currentNode. "Current AST node being executed by debuggerContext. It should be the #breakInContext:node: message node introduced into the method by the breakpoint"
 		self assert: breakNode isMessage.
 		self assert: breakNode selector = #breakInContext:node:.
