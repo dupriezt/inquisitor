@@ -65,7 +65,7 @@ InqInquisitorTest >> removeBreakpoints [
 { #category : #running }
 InqInquisitorTest >> setUp [
 	super setUp.
-	inquisitor := InqInquisitor new.
+	inquisitor := InqInquisitorForTest newWithoutRegisteringInstance.
 	inquisitor isSilent: true.
 	breakpoints := OrderedCollection new
 ]

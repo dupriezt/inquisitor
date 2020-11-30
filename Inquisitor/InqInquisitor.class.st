@@ -2,14 +2,13 @@ Class {
 	#name : #InqInquisitor,
 	#superclass : #Object,
 	#instVars : [
-		'testMethodName',
-		'testClass',
 		'questionHistory',
 		'isSilent',
 		'lastBreakpointHit',
 		'codeBlockToExecute'
 	],
 	#classVars : [
+		'instances',
 		'mainInstance'
 	],
 	#category : #Inquisitor
@@ -18,6 +17,19 @@ Class {
 { #category : #'as yet unclassified' }
 InqInquisitor class >> askQuestion: anInquisitorQuestion [
 	self mainInstance ifNil: [ self error: 'Undefined main instance of Inquisitor' ] ifNotNil: [ :mnInst | mnInst askQuestion: anInquisitorQuestion ]
+]
+
+{ #category : #'instance creation' }
+InqInquisitor class >> clearInstances [
+	<script>
+	instances := nil.
+	mainInstance := nil
+]
+
+{ #category : #'instance creation' }
+InqInquisitor class >> instances [
+	instances ifNil: [ instances := OrderedCollection new ].
+	^ instances
 ]
 
 { #category : #'as yet unclassified' }
@@ -31,17 +43,37 @@ InqInquisitor class >> mainInstance: anInstance [
 ]
 
 { #category : #'instance creation' }
+InqInquisitor class >> new [
+	| result |
+	result := self newWithoutRegisteringInstance.
+	self instances add: result.
+	^ result
+]
+
+{ #category : #'instance creation' }
 InqInquisitor class >> newOnCodeBlock: aBlockClosure [
-	| i |
-	i := self new codeBlockToExecute: aBlockClosure; yourself.
-	InqInquisitor mainInstance: i.
-	i inspect
+	^ self new codeBlockToExecute: aBlockClosure; yourself.
+]
+
+{ #category : #'instance creation' }
+InqInquisitor class >> newWithoutRegisteringInstance [
+	^ super new
+]
+
+{ #category : #'instance creation' }
+InqInquisitor class >> removeInstance: anInquisitor [
+	self instances remove: anInquisitor
 ]
 
 { #category : #'question management' }
 InqInquisitor >> addAnsweredQuestion: anInquisitorQuestion [
 	self questionHistory add: anInquisitorQuestion.
 	self displayResultOfQuestion: anInquisitorQuestion
+]
+
+{ #category : #converting }
+InqInquisitor >> asStringForClyCommand [
+	^ 'Inquisitor on block: ', codeBlockToExecute sourceNode sourceCode
 ]
 
 { #category : #'question management' }
@@ -52,6 +84,7 @@ InqInquisitor >> askQuestion: anInquisitorQuestion [
 
 { #category : #accessing }
 InqInquisitor >> codeBlockToExecute [
+	codeBlockToExecute ifNil: [ codeBlockToExecute := [ ] ].
 	^ codeBlockToExecute
 ]
 
@@ -112,41 +145,12 @@ InqInquisitor >> questionHistory [
 
 { #category : #utility }
 InqInquisitor >> runExecution [
-	| testInstance executionBlock |
-	self codeBlockToExecute ifNil: [ 
-		"This Inquisitor is not a specific code block, but rather on a test method"	
-		testInstance := testClass new.
-		testInstance setUp.
-		executionBlock := [testInstance perform: testMethodName]
-	] ifNotNil: [ :cdblk | "This inquisitor is on a specific code block"
-		executionBlock := cdblk
-	].
-	executionBlock on: TestFailure do: [ :ex| self inform: 'Inquisitor execution stopped at: ', ex asString ]
+	self runExecutionBlock: codeBlockToExecute
 ]
 
-{ #category : #accessing }
-InqInquisitor >> testClass [
-	^ testClass
-]
-
-{ #category : #accessing }
-InqInquisitor >> testClass: anObject [
-	testClass := anObject
-]
-
-{ #category : #tests }
-InqInquisitor >> testMethodFullName [
-	^ self testClass asString, '>>#', self testMethodName asString
-]
-
-{ #category : #accessing }
-InqInquisitor >> testMethodName [
-	^ testMethodName
-]
-
-{ #category : #accessing }
-InqInquisitor >> testMethodName: anObject [
-	testMethodName := anObject
+{ #category : #utility }
+InqInquisitor >> runExecutionBlock: aBlock [
+	aBlock on: Error do: [ :ex| self inform: 'Inquisitor execution stopped at: ', ex asString ]
 ]
 
 { #category : #'as yet unclassified' }

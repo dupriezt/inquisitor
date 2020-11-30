@@ -27,7 +27,7 @@ ClyCreateInquisitor >> defaultMenuItemName [
 { #category : #accessing }
 ClyCreateInquisitor >> execute [
 	| i |
-	i := InqInquisitor new testClass: method methodClass; testMethodName: method selector.
+	i := InqInquisitorForTest newForTestMethodName: method selector onTestClass: method methodClass.
 	InqInquisitor mainInstance: i.
 	i inspect
 ]

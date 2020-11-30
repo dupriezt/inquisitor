@@ -166,7 +166,8 @@ InqInquisitorWorkbenchPresenter >> initializePresenters [
 		
 	inquisitorDropList := SpDropListPresenter new
 		help: 'Select an Inquisitor';
-		items: (OrderedCollection new add: 1; yourself);
+		items: (InqInquisitor instances);
+		display: [ :anInquisitor | anInquisitor asStringForClyCommand ]
 		yourself.
 		
 	inquisitorActionBar := SpActionBarPresenter new
@@ -191,7 +192,7 @@ InqInquisitorWorkbenchPresenter >> initializePresenters [
 	
 	questionDropList := SpDropListPresenter new
 		help: 'Select a question';
-		items: (OrderedCollection new add: 1; yourself);
+		items: (OrderedCollection new);
 		yourself.
 		
 	questionDetail := SpTablePresenter new.
