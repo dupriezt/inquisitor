@@ -75,8 +75,8 @@ InqInquisitorWorkbenchPresenter >> collectionOfPoints [
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> connectPresenters [
 	"The method connectPresenters defines the interactions between the dif- ferent widgets. By connecting the behaviors of the different widgets it speci- fies the overall presentation, i.e., how the overall UI responds to interactions by the user. Usually this method consists of specifications of actions to per- form when a certain event is received by a widget. The whole interaction flow of the UI then emerges from the propagation of those events."
-	inspectButton action: [ self inspectSelectedItem ].
-	executeButton action: [ self inform: 'Todo' ]
+	"inspectButton action: [ self inspectSelectedItem ].
+	executeButton action: [ self inform: 'Todo' ]"
 ]
 
 { #category : #specs }
@@ -131,7 +131,6 @@ InqInquisitorWorkbenchPresenter >> initializePresenters [
 		• widget instantiation
 		• widget configuration specification
 		• specification of focus order"
-		
 		
 	inquisitorDropList := SpDropListPresenter new
 		help: 'Select an Inquisitor';
