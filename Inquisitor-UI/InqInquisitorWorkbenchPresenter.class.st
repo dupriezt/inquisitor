@@ -5,7 +5,14 @@ Class {
 		'pointTable',
 		'textField',
 		'executeButton',
-		'inspectButton'
+		'inspectButton',
+		'inquisitorDropList',
+		'inquisitorActionBar',
+		'inquisitorExecutionCode',
+		'questionDropList',
+		'questionDetail',
+		'capturePointsNotebook',
+		'capturePointsPlayground'
 	],
 	#category : #'Inquisitor-UI'
 }
@@ -20,6 +27,24 @@ InqInquisitorWorkbenchPresenter class >> defaultSpec [
 InqInquisitorWorkbenchPresenter class >> open [
 	<script>
 	(self on: nil "model object, will be used as argument in #setModelBeforeInitialization:") openWithSpec.
+]
+
+{ #category : #'button action' }
+InqInquisitorWorkbenchPresenter >> buttonActionAddInquisitor [
+	self flag: 'finish'.
+	self inform: 'add inquisitor'
+]
+
+{ #category : #'button action' }
+InqInquisitorWorkbenchPresenter >> buttonActionRemoveInquisitor [
+	self flag: 'Todo: finish'.
+	self inform: 'remove inquisitor'
+]
+
+{ #category : #'button action' }
+InqInquisitorWorkbenchPresenter >> buttonActionSetMainInquisitor [
+	self flag: 'Todo: finish'.
+	self inform: 'set main inquisitor'
 ]
 
 { #category : #specs }
@@ -56,8 +81,25 @@ InqInquisitorWorkbenchPresenter >> connectPresenters [
 
 { #category : #specs }
 InqInquisitorWorkbenchPresenter >> defaultSpec_ [
+	
+	^ SpPanedLayout newHorizontal
+		add: (SpBoxLayout newVertical "Left side"
+			add: #inquisitorDropList;
+			add: #inquisitorActionBar;
+			add: #inquisitorExecutionCode;
+			add: #questionDropList;
+			add: #questionDetail;
+			yourself
+		);
+		add: (SpBoxLayout newVertical
+			add: #capturePointsNotebook;
+			add: #capturePointsPlayground;
+			yourself
+		); "Right side"
+		yourself.
 
-	^ SpBoxLayout newVertical
+
+"	^ SpBoxLayout newVertical
 		add: (SpPanedLayout newHorizontal
 			add: #pointTable;
 			add: #textField;
@@ -68,7 +110,7 @@ InqInquisitorWorkbenchPresenter >> defaultSpec_ [
 			add: #executeButton withConstraints: self buttonConstraints;
 			yourself	
 		) withConstraints: [ :cstr | cstr height: 30 ];
-		yourself.
+		yourself."
 ]
 
 { #category : #'button action' }
@@ -90,25 +132,63 @@ InqInquisitorWorkbenchPresenter >> initializePresenters [
 		• widget configuration specification
 		• specification of focus order"
 		
-	| indexColumn xColumn yColumn |
-	pointTable := self newTable. "SpTablePresenter"
+		
+	inquisitorDropList := SpDropListPresenter new
+		help: 'Select an Inquisitor';
+		items: (OrderedCollection new add: 1; yourself);
+		yourself.
+		
+	inquisitorActionBar := SpActionBarPresenter new
+		add: (self newButton
+			icon: (self iconManager iconNamed: #smallAdd);
+			action: [ self buttonActionAddInquisitor ];
+			yourself
+		);
+		add: (self newButton
+			icon: (self iconManager iconNamed: #smallDelete);
+			action: [ self buttonActionRemoveInquisitor ];
+			yourself
+		);
+		add: (self newButton
+			icon: (self iconManager iconNamed: #smallHome);
+			action: [ self buttonActionSetMainInquisitor ];
+			yourself
+		);
+		yourself.
+	
+	inquisitorExecutionCode := SpCodePresenter new.
+	
+	questionDropList := SpDropListPresenter new
+		help: 'Select a question';
+		items: (OrderedCollection new add: 1; yourself);
+		yourself.
+		
+	questionDetail := SpTablePresenter new.
+	
+	capturePointsNotebook := SpNotebookPresenter new.
+	
+	capturePointsPlayground := StPlayground new.
+	
+	self flag: 'Todo: remove comment'
+	"| indexColumn xColumn yColumn |
+	pointTable := self newTable. ""SpTablePresenter""
 	indexColumn := SpIndexTableColumn new width: 40; title: 'Index'; yourself.
 	xColumn := SpStringTableColumn new evaluated: [:item | item x]; title: 'X'; width: 60; yourself.
 	yColumn := SpStringTableColumn new evaluated: [:item | item y]; title: 'Y'; width: 60; yourself.
 	pointTable addColumn: indexColumn; addColumn: xColumn; addColumn: yColumn.
 	pointTable items: self collectionOfPoints.
 		
-	textField := self newText. "SpTextPresenter"
-	textField placeholder: 'placeholder text'; autoAccept: true. "You cans et something to happen when the user 'accepts' the code (ctrl-s, like to save a method)"
+	textField := self newText. ""SpTextPresenter""
+	textField placeholder: 'placeholder text'; autoAccept: true. ""You cans et something to happen when the user 'accepts' the code (ctrl-s, like to save a method)""
 	
-	"These two buttons get their actions assigned in #connectPresenters"
-	inspectButton := self newButton. "SpButtonPresenter"
+	""These two buttons get their actions assigned in #connectPresenters""
+	inspectButton := self newButton. ""SpButtonPresenter""
 	inspectButton label: 'Inspect Selected'; icon: (self iconManager iconNamed: #glamorousInspect).
 	
-	executeButton := self newButton. "SpButtonPresenter"
+	executeButton := self newButton. ""SpButtonPresenter""
 	executeButton label: 'Execute'; icon: (self iconManager iconNamed: #glamorousGo).
 	
-	"I don't know how to do focus order"
+	""I don't know how to do focus order"""
 ]
 
 { #category : #initialization }
@@ -116,7 +196,7 @@ InqInquisitorWorkbenchPresenter >> initializeWindow: aWindowPresenter [
 	
 	super initializeWindow: aWindowPresenter.
 	aWindowPresenter
-		title: 'Spec App Skeleton';
+		title: 'Inquisitor Workbench';
 		initialExtent: 500@280; "initial width@height of the window"
 		windowIcon: (self iconManager iconNamed: #home) "Icon that will be shown in the bottom windowbar for this window"
 ]
