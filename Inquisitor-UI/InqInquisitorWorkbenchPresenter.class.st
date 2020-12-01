@@ -13,7 +13,8 @@ Class {
 		'questionDetail',
 		'capturePointsNotebook',
 		'capturePointsPlayground',
-		'constraints'
+		'constraints',
+		'questionActionBar'
 	],
 	#category : #'Inquisitor-UI'
 }
@@ -39,6 +40,11 @@ InqInquisitorWorkbenchPresenter >> buttonActionAddInquisitor [
 { #category : #'button action' }
 InqInquisitorWorkbenchPresenter >> buttonActionInspectInquisitor [
 	inquisitorDropList selectedItem inspect
+]
+
+{ #category : #'button action' }
+InqInquisitorWorkbenchPresenter >> buttonActionInspectQuestion [
+	questionDropList selectedItem inspect
 ]
 
 { #category : #'button action' }
@@ -85,7 +91,8 @@ InqInquisitorWorkbenchPresenter >> connectPresenters [
 		newQuestionHistory := newlySelectedInquisitor questionHistory.
 		questionDropList items: newQuestionHistory.
 		newQuestionHistory isEmpty ifFalse: [ questionDropList selectIndex: 1]
-	]
+	].
+	inquisitorDropList items isEmpty ifFalse: [ inquisitorDropList selectIndex: 1 ]. "After everything is initialised, to trigger a refresh of the Ui as if the user had selected the first inquisitor in the list."
 ]
 
 { #category : #specs }
@@ -101,6 +108,7 @@ InqInquisitorWorkbenchPresenter >> constraints [
 	constraints at: #inquisitorActionBar put: [ :c | c height: actionBarHeight].
 	constraints at: #inquisitorExecutionCode put: [ :c | ].
 	constraints at: #questionDropList put: [ :c | c height: dropListHeight].
+	constraints at: #questionActionBar put: [ :c | c height: actionBarHeight].
 	constraints at: #questionDetail put: [ :c | ].
 	constraints at: #capturePointsNotebook put: [ :c | ].
 	constraints at: #capturePointsPlayground put: [ :c | ].
@@ -128,6 +136,7 @@ InqInquisitorWorkbenchPresenter >> defaultSpec_ [
 			add: #inquisitorActionBar withConstraints: (self cstrAt: #inquisitorActionBar);
 			add: #inquisitorExecutionCode withConstraints: (self cstrAt: #inquisitorExecutionCode);
 			add: #questionDropList withConstraints: (self cstrAt: #questionDropList);
+			add: #questionActionBar withConstraints: (self cstrAt: #questionActionBar);
 			add: #questionDetail withConstraints: (self cstrAt: #questionDetail);
 			yourself
 		) withConstraints: (self cstrAt: #leftPanel);
@@ -171,7 +180,6 @@ InqInquisitorWorkbenchPresenter >> initializePresenters [
 		• widget instantiation
 		• widget configuration specification
 		• specification of focus order"
-		
 	inquisitorDropList := SpDropListPresenter new
 		help: 'Select an Inquisitor';
 		items: (InqInquisitor instances);
@@ -206,6 +214,14 @@ InqInquisitorWorkbenchPresenter >> initializePresenters [
 	questionDropList := SpDropListPresenter new
 		help: 'Select a question';
 		items: (OrderedCollection new);
+		yourself.
+		
+	questionActionBar := SpActionBarPresenter new
+		add: (self newButton
+			icon: (self iconManager iconNamed: #smallInspectIt);
+			action: [ self buttonActionInspectQuestion ];
+			yourself
+		);
 		yourself.
 		
 	questionDetail := SpTablePresenter new.
