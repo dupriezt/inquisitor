@@ -107,6 +107,15 @@ InqInquisitorTestDummy >> testDummyCallingMethodWithArguments [
 	self assert: true.
 ]
 
+{ #category : #'as yet unclassified' }
+InqInquisitorTestDummy >> testDummyFull [
+
+	| i |
+	i := 4.
+	[ i = 0 ] whileFalse: [ i := i - 1. self flag: 'hitCheckTargetNode' ].
+	self assert: true.
+]
+
 { #category : #tests }
 InqInquisitorTestDummy >> testDummyReturnFalseStatement [
 	Point x:2y:3.

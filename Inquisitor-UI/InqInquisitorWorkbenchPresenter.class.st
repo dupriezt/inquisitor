@@ -37,6 +37,11 @@ InqInquisitorWorkbenchPresenter >> buttonActionAddInquisitor [
 ]
 
 { #category : #'button action' }
+InqInquisitorWorkbenchPresenter >> buttonActionInspectInquisitor [
+	inquisitorDropList selectedItem inspect
+]
+
+{ #category : #'button action' }
 InqInquisitorWorkbenchPresenter >> buttonActionRemoveInquisitor [
 	self flag: 'Todo: finish'.
 	self inform: 'remove inquisitor'
@@ -76,8 +81,11 @@ InqInquisitorWorkbenchPresenter >> collectionOfPoints [
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> connectPresenters [
 	"The method connectPresenters defines the interactions between the dif- ferent widgets. By connecting the behaviors of the different widgets it speci- fies the overall presentation, i.e., how the overall UI responds to interactions by the user. Usually this method consists of specifications of actions to per- form when a certain event is received by a widget. The whole interaction flow of the UI then emerges from the propagation of those events."
-	"inspectButton action: [ self inspectSelectedItem ].
-	executeButton action: [ self inform: 'Todo' ]"
+	inquisitorDropList whenSelectedItemChangedDo: [ :newlySelectedInquisitor ||newQuestionHistory|
+		newQuestionHistory := newlySelectedInquisitor questionHistory.
+		questionDropList items: newQuestionHistory.
+		newQuestionHistory isEmpty ifFalse: [ questionDropList selectIndex: 1]
+	]
 ]
 
 { #category : #specs }
@@ -184,6 +192,11 @@ InqInquisitorWorkbenchPresenter >> initializePresenters [
 		add: (self newButton
 			icon: (self iconManager iconNamed: #smallHome);
 			action: [ self buttonActionSetMainInquisitor ];
+			yourself
+		);
+		add: (self newButton
+			icon: (self iconManager iconNamed: #smallInspectIt);
+			action: [ self buttonActionInspectInquisitor ];
 			yourself
 		);
 		yourself.
