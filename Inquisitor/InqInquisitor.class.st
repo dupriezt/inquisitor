@@ -5,7 +5,9 @@ Class {
 		'questionHistory',
 		'isSilent',
 		'lastBreakpointHit',
-		'codeBlockToExecute'
+		'codeBlockToExecute',
+		'setupCode',
+		'executionCode'
 	],
 	#classVars : [
 		'instances',
@@ -51,8 +53,8 @@ InqInquisitor class >> new [
 ]
 
 { #category : #'instance creation' }
-InqInquisitor class >> newOnCodeBlock: aBlockClosure [
-	^ self new codeBlockToExecute: aBlockClosure; yourself.
+InqInquisitor class >> newForCode: aString withSetupCode: aString2 [
+	^ self new executionCode: aString; setupCode: aString2; yourself.
 ]
 
 { #category : #'instance creation' }
@@ -73,7 +75,7 @@ InqInquisitor >> addAnsweredQuestion: anInquisitorQuestion [
 
 { #category : #converting }
 InqInquisitor >> asStringForClyCommand [
-	^ 'Inquisitor on block: ', codeBlockToExecute sourceNode sourceCode
+	^ 'Inquisitor on block: ', executionCode "codeBlockToExecute sourceNode sourceCode"
 ]
 
 { #category : #'question management' }
@@ -98,6 +100,11 @@ InqInquisitor >> displayResultOfQuestion: anInquisitorQuestion [
 	self isSilent ifTrue: [ ^ self ].
 	self inform: anInquisitorQuestion resultDescription.
 	anInquisitorQuestion capturePoints inspect.
+]
+
+{ #category : #'question management' }
+InqInquisitor >> executionCode: aString [
+	executionCode := aString
 ]
 
 { #category : #'question management' }
@@ -145,12 +152,21 @@ InqInquisitor >> questionHistory [
 
 { #category : #utility }
 InqInquisitor >> runExecution [
-	self runExecutionBlock: codeBlockToExecute
+	| sourceCode |
+	sourceCode := setupCode, '.
+	[', executionCode, '] on: Error do: [ :ex| self inform: ''Inquisitor execution stopped at: '', ex asString ]'.
+	OpalCompiler new source: sourceCode; evaluate.
+	"self runExecutionBlock: codeBlockToExecute"
 ]
 
 { #category : #utility }
 InqInquisitor >> runExecutionBlock: aBlock [
 	aBlock on: Error do: [ :ex| self inform: 'Inquisitor execution stopped at: ', ex asString ]
+]
+
+{ #category : #'question management' }
+InqInquisitor >> setupCode: aString [
+	setupCode := aString
 ]
 
 { #category : #'as yet unclassified' }

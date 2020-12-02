@@ -5,6 +5,17 @@ Class {
 }
 
 { #category : #printing }
+InqEmptyInquisitor >> asStringForClyCommand [
+	^ 'No Inquisitor exist'
+]
+
+{ #category : #initialization }
+InqEmptyInquisitor >> initialize [
+	self executionCode: 'No execution code'.
+	self setupCode: 'No setup code'.
+]
+
+{ #category : #printing }
 InqEmptyInquisitor >> printOn: aStream [
 
 	aStream nextPutAll: 'No Inquisitor'

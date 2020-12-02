@@ -13,10 +13,7 @@ Class {
 
 { #category : #'instance creation' }
 InqInquisitorForTest class >> newForTestMethodName: aSymbol onTestClass: aClass [
-	| result |
-	result := self new.
-	result testMethodName: aSymbol; testClass: aClass.
-	^ result
+	^ self new testMethodName: aSymbol; testClass: aClass; yourself
 	
 ]
 
@@ -27,15 +24,18 @@ InqInquisitorForTest >> asStringForClyCommand [
 
 { #category : #utility }
 InqInquisitorForTest >> runExecution [
-	| testInstance |
+	super runExecution.
+"	| testInstance |
 	testInstance := testClass new.
 	testInstance setUp.
-	self runExecutionBlock: [ testInstance perform: testMethodName ]
+	self runExecutionBlock: [ testInstance perform: testMethodName ]"
 ]
 
 { #category : #accessing }
-InqInquisitorForTest >> testClass: anObject [
-	testClass := anObject
+InqInquisitorForTest >> testClass: aClass [
+	testClass := aClass.
+	self setupCode: '	testInstance := ',aClass name,' new.
+	testInstance setUp.'
 ]
 
 { #category : #accessing }
@@ -44,6 +44,8 @@ InqInquisitorForTest >> testMethodFullName [
 ]
 
 { #category : #accessing }
-InqInquisitorForTest >> testMethodName: anObject [
-	testMethodName := anObject
+InqInquisitorForTest >> testMethodName: aSymbol [
+	"example of @aSymbol: #new"
+	testMethodName := aSymbol.
+	self executionCode: 'testInstance perform: #', aSymbol.
 ]
