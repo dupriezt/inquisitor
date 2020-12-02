@@ -245,7 +245,7 @@ InqInquisitorWorkbenchPresenter >> presenterNamed: aSymbol fromUISection: aUISec
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> setItemsOfInquisitorDropList: anOrderedCollection [
 	"Change the inquisitor list shown in inquisitorDropList. If the new inquisitor list is empty, instead put a list containing an empty inquisitor in order to prevent inquisitorDropList from being empty."
-	anOrderedCollection isEmpty ifFalse: [inquisitorDropList items: anOrderedCollection] ifTrue: [ inquisitorDropList items: (OrderedCollection new add: InqEmptyInquisitor new; yourself) ].
+	anOrderedCollection isEmpty ifFalse: [inquisitorDropList items: anOrderedCollection] ifTrue: [ inquisitorDropList items: (OrderedCollection new add: InqEmptyInquisitor newWithoutRegisteringInstance; yourself) ].
 	inquisitorDropList selectIndex: 1.
 ]
 

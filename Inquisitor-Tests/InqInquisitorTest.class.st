@@ -103,3 +103,13 @@ InqInquisitorTest >> testDummy [
 	"Do nothing. Used by other tests"
 	Point new
 ]
+
+{ #category : #tests }
+InqInquisitorTest >> testSetupCodeShouldNotProduceCapturePoints [
+	"Test that when asking a question to an inquisitor, no capture points are created when the setup code is executed."
+	| inq q |
+	inq := (InqInquisitor newWithoutRegisteringInstanceForCode: 'InqInquisitorTestAssistClass new doNothing' withSetupCode: 'InqInquisitorTestAssistClass new doNothing') isSilent: true; yourself.
+	q := InqHitCheckQuestion newForNode: ((InqInquisitorTestAssistClass>>#doNothing) ast body statements first).
+	inq askQuestion: q.
+	self assert: q capturePoints size equals: 1.
+]

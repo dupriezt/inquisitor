@@ -28,3 +28,9 @@ InqInquisitorTestAssistClass class >> new [
 	self instances add: result.
 	^ result
 ]
+
+{ #category : #'as yet unclassified' }
+InqInquisitorTestAssistClass >> doNothing [
+	"Used for tests"
+	Point new
+]

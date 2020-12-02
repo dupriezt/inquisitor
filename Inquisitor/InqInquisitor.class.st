@@ -63,6 +63,11 @@ InqInquisitor class >> newWithoutRegisteringInstance [
 ]
 
 { #category : #'instance creation' }
+InqInquisitor class >> newWithoutRegisteringInstanceForCode: aString withSetupCode: aString2 [
+	^ self newWithoutRegisteringInstance executionCode: aString; setupCode: aString2; yourself.
+]
+
+{ #category : #'instance creation' }
 InqInquisitor class >> removeInstance: anInquisitor [
 	self instances remove: anInquisitor
 ]
@@ -153,7 +158,8 @@ InqInquisitor >> questionHistory [
 { #category : #utility }
 InqInquisitor >> runExecution [
 	| sourceCode |
-	sourceCode := setupCode, '.
+	"There is a handler for Break around the setupCode, that ignores the Break and resumes the execution. These Break likely come from the breakpoints inserted by the question, and we do not want the question to see them trigger in the setup code"
+	sourceCode := '[', setupCode, '] on: Break do: [:ex | ex resume].
 	[', executionCode, '] on: Error do: [ :ex| self inform: ''Inquisitor execution stopped at: '', ex asString ]'.
 	OpalCompiler new source: sourceCode; evaluate.
 	"self runExecutionBlock: codeBlockToExecute"
