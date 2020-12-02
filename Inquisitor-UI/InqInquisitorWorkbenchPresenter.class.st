@@ -2,19 +2,22 @@ Class {
 	#name : #InqInquisitorWorkbenchPresenter,
 	#superclass : #SpPresenter,
 	#instVars : [
-		'pointTable',
-		'textField',
-		'executeButton',
-		'inspectButton',
 		'inquisitorDropList',
 		'inquisitorActionBar',
-		'inquisitorExecutionCode',
 		'questionDropList',
 		'questionDetail',
 		'capturePointsNotebook',
 		'capturePointsPlayground',
 		'constraints',
-		'questionActionBar'
+		'questionActionBar',
+		'inquisitorSection',
+		'questionSection',
+		'capturePointsSection',
+		'inquisitorSectionHolder',
+		'questionSectionHolder',
+		'capturePointsSectionHolder',
+		'capturePointsActionBar',
+		'capturePointsPagesDictionary'
 	],
 	#category : #'Inquisitor-UI'
 }
@@ -35,6 +38,18 @@ InqInquisitorWorkbenchPresenter class >> open [
 InqInquisitorWorkbenchPresenter >> buttonActionAddInquisitor [
 	self flag: 'finish'.
 	self inform: 'add inquisitor'
+]
+
+{ #category : #'button action' }
+InqInquisitorWorkbenchPresenter >> buttonActionEditInquisitor [
+	self flag: 'TODO'.
+	self inform: 'Edit Inquisitor'
+]
+
+{ #category : #'button action' }
+InqInquisitorWorkbenchPresenter >> buttonActionInspectCapturePoint [
+	self flag: 'TODO'.
+	self inform: 'buttonActionInspectCapturePoint'
 ]
 
 { #category : #'button action' }
@@ -66,22 +81,10 @@ InqInquisitorWorkbenchPresenter >> buttonConstraints [
 	
 ]
 
-{ #category : #data }
-InqInquisitorWorkbenchPresenter >> collectionOfPoints [
-	| c |
-	c := OrderedCollection new.
-	c add: (Point x: 1 y: 5).
-	c add: (Point x: 48 y: 1).
-	c add: (Point x: 5 y: 6).
-	c add: (Point x: 1 y: 48).
-	c add: (Point x: 3 y: 92).
-	c add: (Point x: 4 y: 67).
-	c add: (Point x: 8 y: 5).
-	c add: (Point x: 16 y: 22).
-	c add: (Point x: 22 y: 21).
-	c add: (Point x: 2 y: 31).
-	c add: (Point x: 43 y: 2).
-	^ c
+{ #category : #accessing }
+InqInquisitorWorkbenchPresenter >> capturePointsPagesDictionary [
+	capturePointsPagesDictionary ifNil: [ capturePointsPagesDictionary := Dictionary new ].
+	^ capturePointsPagesDictionary
 ]
 
 { #category : #initialization }
@@ -89,10 +92,12 @@ InqInquisitorWorkbenchPresenter >> connectPresenters [
 	"The method connectPresenters defines the interactions between the dif- ferent widgets. By connecting the behaviors of the different widgets it speci- fies the overall presentation, i.e., how the overall UI responds to interactions by the user. Usually this method consists of specifications of actions to per- form when a certain event is received by a widget. The whole interaction flow of the UI then emerges from the propagation of those events."
 	inquisitorDropList whenSelectedItemChangedDo: [ :newlySelectedInquisitor ||newQuestionHistory|
 		newQuestionHistory := newlySelectedInquisitor questionHistory.
-		questionDropList items: newQuestionHistory.
-		newQuestionHistory isEmpty ifFalse: [ questionDropList selectIndex: 1]
+		self setItemsOfQuestionDropList: newQuestionHistory.
 	].
-	inquisitorDropList items isEmpty ifFalse: [ inquisitorDropList selectIndex: 1 ]. "After everything is initialised, to trigger a refresh of the Ui as if the user had selected the first inquisitor in the list."
+	questionDropList whenSelectedItemChangedDo: [ :newlySelectedQuestion |
+		self whenQuestionIsSelected: newlySelectedQuestion.
+	].
+	self postInitialisation.
 ]
 
 { #category : #specs }
@@ -130,8 +135,17 @@ InqInquisitorWorkbenchPresenter >> cstrAt: aKey [
 { #category : #specs }
 InqInquisitorWorkbenchPresenter >> defaultSpec_ [
 	
-	^ SpPanedLayout newHorizontal
-		add: (SpBoxLayout newVertical "Left side"
+	^ SpBoxLayout newVertical
+		add: (SpBoxLayout newHorizontal
+			add: #inquisitorSectionHolder;
+			add: #questionSectionHolder;
+			yourself
+		);
+		add: #capturePointsSectionHolder;
+		yourself.
+	
+	"^ SpPanedLayout newHorizontal
+		add: (SpBoxLayout newVertical ""Left side""
 			add: #inquisitorDropList withConstraints: (self cstrAt: #inquisitorDropList);
 			add: #inquisitorActionBar withConstraints: (self cstrAt: #inquisitorActionBar);
 			add: #inquisitorExecutionCode withConstraints: (self cstrAt: #inquisitorExecutionCode);
@@ -144,8 +158,8 @@ InqInquisitorWorkbenchPresenter >> defaultSpec_ [
 			add: #capturePointsNotebook withConstraints: (self cstrAt: #capturePointsNotebook);
 			add: #capturePointsPlayground withConstraints: (self cstrAt: #capturePointsPlayground);
 			yourself
-		) withConstraints: (self cstrAt: #rightPanel); "Right side"
-		yourself.
+		) withConstraints: (self cstrAt: #rightPanel); ""Right side""
+		yourself."
 
 
 "	^ SpBoxLayout newVertical
@@ -180,76 +194,29 @@ InqInquisitorWorkbenchPresenter >> initializePresenters [
 		• widget instantiation
 		• widget configuration specification
 		• specification of focus order"
-	inquisitorDropList := SpDropListPresenter new
-		help: 'Select an Inquisitor';
-		items: (InqInquisitor instances);
-		display: [ :anInquisitor | anInquisitor asStringForClyCommand ]
-		yourself.
+	
+	inquisitorSection := InqUISectionInquisitor on: self.
+	inquisitorSectionHolder := self newNotebook addPageTitle: 'Inquisitor' provider: [ 
+		inquisitorSection
+	].
+	questionSection := InqUISectionQuestion on: self.
+	questionSectionHolder := self newNotebook addPageTitle: 'Question' provider: [ 
+		questionSection
+	].
+	capturePointsSection := InqUISectionCapturePoints on: self.
+	capturePointsSectionHolder := self newNotebook addPageTitle: 'Capture Points' provider: [ 
+		capturePointsSection
+	].
 		
-	inquisitorActionBar := SpActionBarPresenter new
-		add: (self newButton
-			icon: (self iconManager iconNamed: #smallAdd);
-			action: [ self buttonActionAddInquisitor ];
-			yourself
-		);
-		add: (self newButton
-			icon: (self iconManager iconNamed: #smallDelete);
-			action: [ self buttonActionRemoveInquisitor ];
-			yourself
-		);
-		add: (self newButton
-			icon: (self iconManager iconNamed: #smallHome);
-			action: [ self buttonActionSetMainInquisitor ];
-			yourself
-		);
-		add: (self newButton
-			icon: (self iconManager iconNamed: #smallInspectIt);
-			action: [ self buttonActionInspectInquisitor ];
-			yourself
-		);
-		yourself.
+	inquisitorDropList := self presenterNamed: #inquisitorDropList fromUISection: inquisitorSection.		
+	inquisitorActionBar := self presenterNamed: #inquisitorActionBar fromUISection: inquisitorSection.		
+	questionDropList := self presenterNamed: #questionDropList fromUISection: questionSection.
+	questionActionBar := self presenterNamed: #questionActionBar fromUISection: questionSection.
+	capturePointsNotebook := self presenterNamed: #capturePointsNotebook fromUISection: capturePointsSection.
+	capturePointsActionBar := self presenterNamed: #capturePointsActionBar fromUISection: capturePointsSection.
+	capturePointsPlayground := self presenterNamed: #capturePointsPlayground fromUISection: capturePointsSection.
 	
-	inquisitorExecutionCode := SpCodePresenter new.
-	
-	questionDropList := SpDropListPresenter new
-		help: 'Select a question';
-		items: (OrderedCollection new);
-		yourself.
-		
-	questionActionBar := SpActionBarPresenter new
-		add: (self newButton
-			icon: (self iconManager iconNamed: #smallInspectIt);
-			action: [ self buttonActionInspectQuestion ];
-			yourself
-		);
-		yourself.
-		
-	questionDetail := SpTablePresenter new.
-	
-	capturePointsNotebook := SpNotebookPresenter new.
-	
-	capturePointsPlayground := StPlayground new.
-	
-	self flag: 'Todo: remove comment'
-	"| indexColumn xColumn yColumn |
-	pointTable := self newTable. ""SpTablePresenter""
-	indexColumn := SpIndexTableColumn new width: 40; title: 'Index'; yourself.
-	xColumn := SpStringTableColumn new evaluated: [:item | item x]; title: 'X'; width: 60; yourself.
-	yColumn := SpStringTableColumn new evaluated: [:item | item y]; title: 'Y'; width: 60; yourself.
-	pointTable addColumn: indexColumn; addColumn: xColumn; addColumn: yColumn.
-	pointTable items: self collectionOfPoints.
-		
-	textField := self newText. ""SpTextPresenter""
-	textField placeholder: 'placeholder text'; autoAccept: true. ""You cans et something to happen when the user 'accepts' the code (ctrl-s, like to save a method)""
-	
-	""These two buttons get their actions assigned in #connectPresenters""
-	inspectButton := self newButton. ""SpButtonPresenter""
-	inspectButton label: 'Inspect Selected'; icon: (self iconManager iconNamed: #glamorousInspect).
-	
-	executeButton := self newButton. ""SpButtonPresenter""
-	executeButton label: 'Execute'; icon: (self iconManager iconNamed: #glamorousGo).
-	
-	""I don't know how to do focus order"""
+	self setItemsOfInquisitorDropList: InqInquisitor instances.
 ]
 
 { #category : #initialization }
@@ -262,9 +229,31 @@ InqInquisitorWorkbenchPresenter >> initializeWindow: aWindowPresenter [
 		windowIcon: (self iconManager iconNamed: #home) "Icon that will be shown in the bottom windowbar for this window"
 ]
 
-{ #category : #'button action' }
-InqInquisitorWorkbenchPresenter >> inspectSelectedItem [
-	pointTable selectedItems inspect.
+{ #category : #initialization }
+InqInquisitorWorkbenchPresenter >> postInitialisation [
+	"Executed after #initializePresenters and #connectPresenters"
+	inquisitorDropList items isEmpty ifFalse: [ inquisitorDropList selectIndex: 1 ]. "After everything is initialised, to trigger a refresh of the Ui as if the user had selected the first inquisitor in the list."
+]
+
+{ #category : #initialization }
+InqInquisitorWorkbenchPresenter >> presenterNamed: aSymbol fromUISection: aUISection [
+	"Retrieve individual elements of the UIsection objects"
+	^ aUISection instVarNamed: aSymbol. 
+"	^ aUISection pages first retrievePresenter "
+]
+
+{ #category : #initialization }
+InqInquisitorWorkbenchPresenter >> setItemsOfInquisitorDropList: anOrderedCollection [
+	"Change the inquisitor list shown in inquisitorDropList. If the new inquisitor list is empty, instead put a list containing an empty inquisitor in order to prevent inquisitorDropList from being empty."
+	anOrderedCollection isEmpty ifFalse: [inquisitorDropList items: anOrderedCollection] ifTrue: [ inquisitorDropList items: (OrderedCollection new add: InqEmptyInquisitor new; yourself) ].
+	inquisitorDropList selectIndex: 1.
+]
+
+{ #category : #initialization }
+InqInquisitorWorkbenchPresenter >> setItemsOfQuestionDropList: anOrderedCollection [
+	"Change the question list shown in questionDropList. If the new question list is empty, instead put a list containing an empty question in order to prevent questionDropList from being empty"
+	anOrderedCollection isEmpty ifFalse: [questionDropList items: anOrderedCollection] ifTrue: [ questionDropList items: (OrderedCollection new add: InqEmptyQuestion new; yourself) ].
+	questionDropList selectIndex: 1.
 ]
 
 { #category : #initialization }
@@ -273,4 +262,20 @@ InqInquisitorWorkbenchPresenter >> setModelBeforeInitialization: anObject [
 	@anObject is the argument provided to the #on: call. It typically contains all the values to be put into the instance variables"
 	
 	"instanceVariable1 := anObject getValueForInstanceVariable1"
+]
+
+{ #category : #initialization }
+InqInquisitorWorkbenchPresenter >> whenQuestionIsSelected: anInqInquisitorQuestion [
+	capturePointsNotebook removeAll.
+	capturePointsPagesDictionary := nil.
+	InqCapturePointsAbstractPresenter allSubclassesDo: [ :cpPresenterClass | 
+		(cpPresenterClass canHandle: anInqInquisitorQuestion) ifTrue: [ 
+			capturePointsNotebook addPageTitle: (cpPresenterClass pageName) provider: [ 
+				self capturePointsPagesDictionary at: cpPresenterClass 	ifAbsentPut: [
+					cpPresenterClass on: anInqInquisitorQuestion
+				]
+			]
+		]	
+	].
+	capturePointsNotebook selectPageIndex: 1.
 ]

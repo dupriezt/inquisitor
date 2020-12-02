@@ -113,6 +113,8 @@ InqInquisitorTestDummy >> testDummyFull [
 	| i |
 	i := 4.
 	[ i = 0 ] whileFalse: [ i := i - 1. self flag: 'hitCheckTargetNode' ].
+	(InqPointDummy x: 1 y: 2) sum; sum.
+	(InqPointDummy x:2 y: 2) sum.
 	self assert: true.
 ]
 

@@ -12,6 +12,9 @@ InqCreateInquisitorWithQuestions class >> create [
 	inq isSilent: true.
 	hitCheckTargetNode := self findFlagNode: 'hitCheckTargetNode' inMethod: (InqInquisitorTestDummy>>#testDummyFull).
 	inq askQuestion: (InqHitCheckQuestion newForNode: hitCheckTargetNode).
+	
+	inq askQuestion: (InqMethodReturnQuestion newForMethod: (InqPointDummy>>#sum)).
+	
 ]
 
 { #category : #operations }
