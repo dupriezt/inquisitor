@@ -81,3 +81,25 @@ InqInquisitorTest >> setUpForInquisitedMethod: aCompiledMethod [
 InqInquisitorTest >> tearDown [
 	self removeBreakpoints.
 ]
+
+{ #category : #tests }
+InqInquisitorTest >> testCreateInquisitorOnCustomCodeAndRunExecution [
+	"Test that creating an inquisitor on a custom execution and running it works"
+	| inq |
+	inq := InqInquisitor newForCode: 'Point x: 1 y: var' withSetupCode: 'var := 2'.
+	inq runExecution.
+]
+
+{ #category : #tests }
+InqInquisitorTest >> testCreateInquisitorOnTestAndRunExecution [
+	"Test that creating an inquisitor on a test and running it works"
+	| inq |
+	inq := InqInquisitorForTest newForTestMethodName: #testDummy onTestClass: self class.
+	inq runExecution.
+]
+
+{ #category : #tests }
+InqInquisitorTest >> testDummy [
+	"Do nothing. Used by other tests"
+	Point new
+]

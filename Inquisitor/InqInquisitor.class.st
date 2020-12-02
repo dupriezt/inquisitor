@@ -159,11 +159,6 @@ InqInquisitor >> runExecution [
 	"self runExecutionBlock: codeBlockToExecute"
 ]
 
-{ #category : #utility }
-InqInquisitor >> runExecutionBlock: aBlock [
-	aBlock on: Error do: [ :ex| self inform: 'Inquisitor execution stopped at: ', ex asString ]
-]
-
 { #category : #'question management' }
 InqInquisitor >> setupCode: aString [
 	setupCode := aString
