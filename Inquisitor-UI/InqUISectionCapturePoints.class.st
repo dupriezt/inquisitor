@@ -1,12 +1,7 @@
 Class {
 	#name : #InqUISectionCapturePoints,
-	#superclass : #SpPresenter,
+	#superclass : #InqUISection,
 	#instVars : [
-		'workbench',
-		'inquisitorDropList',
-		'inquisitorActionBar',
-		'setupCode',
-		'executionCode',
 		'capturePointsActionBar',
 		'capturePointsPlayground',
 		'capturePointsNotebook'
@@ -28,9 +23,9 @@ InqUISectionCapturePoints >> connectPresenters [
 { #category : #initialization }
 InqUISectionCapturePoints >> defaultSpec_ [
 	^ SpBoxLayout newVertical
-		add: #capturePointsNotebook;
-		add: #capturePointsActionBar;
-		add: #capturePointsPlayground;
+		add: #capturePointsNotebook withConstraints: (self cstrAt: #capturePointsNotebook);
+		add: #capturePointsActionBar withConstraints: (self cstrAt: #capturePointsActionBar);
+		add: #capturePointsPlayground withConstraints: (self cstrAt: #capturePointsPlayground);
 		yourself
 ]
 

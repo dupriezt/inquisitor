@@ -108,6 +108,11 @@ InqInquisitor >> displayResultOfQuestion: anInquisitorQuestion [
 ]
 
 { #category : #'question management' }
+InqInquisitor >> executionCode [
+	^ executionCode
+]
+
+{ #category : #'question management' }
 InqInquisitor >> executionCode: aString [
 	executionCode := aString
 ]
@@ -162,7 +167,11 @@ InqInquisitor >> runExecution [
 	sourceCode := '[', setupCode, '] on: Break do: [:ex | ex resume].
 	[', executionCode, '] on: Error do: [ :ex| self inform: ''Inquisitor execution stopped at: '', ex asString ]'.
 	OpalCompiler new source: sourceCode; evaluate.
-	"self runExecutionBlock: codeBlockToExecute"
+]
+
+{ #category : #'question management' }
+InqInquisitor >> setupCode [
+	^ setupCode
 ]
 
 { #category : #'question management' }

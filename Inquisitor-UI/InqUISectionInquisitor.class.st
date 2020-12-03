@@ -1,12 +1,11 @@
 Class {
 	#name : #InqUISectionInquisitor,
-	#superclass : #SpPresenter,
+	#superclass : #InqUISection,
 	#instVars : [
-		'workbench',
 		'inquisitorDropList',
 		'inquisitorActionBar',
-		'setupCode',
-		'executionCode'
+		'setupCodeField',
+		'executionCodeField'
 	],
 	#category : #'Inquisitor-UI'
 }
@@ -26,13 +25,13 @@ InqUISectionInquisitor >> connectPresenters [
 { #category : #initialization }
 InqUISectionInquisitor >> defaultSpec_ [
 	^ SpBoxLayout newVertical
-		add: #inquisitorDropList;
-		add: #inquisitorActionBar;
+		add: #inquisitorDropList withConstraints: (self cstrAt: #inquisitorDropList);
+		add: #inquisitorActionBar withConstraints: (self cstrAt: #inquisitorActionBar);
 		add: (SpGridLayout new
 			add: 'Setup' at: 1@1;
-			add: #setupCode at: 2@1;
+			add: #setupCodeField at: 2@1;
 			add: 'Execution' at: 1@2;
-			add: #executionCode at: 2@2;
+			add: #executionCodeField at: 2@2;
 			yourself
 		);
 		yourself
@@ -93,8 +92,8 @@ InqUISectionInquisitor >> initializePresenters [
 		);
 		yourself.
 		
-	setupCode := self newCode.
-	executionCode := self newCode
+	setupCodeField := self newCode.
+	executionCodeField := self newCode
 ]
 
 { #category : #initialization }

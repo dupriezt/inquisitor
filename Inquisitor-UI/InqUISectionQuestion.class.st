@@ -1,12 +1,7 @@
 Class {
 	#name : #InqUISectionQuestion,
-	#superclass : #SpPresenter,
+	#superclass : #InqUISection,
 	#instVars : [
-		'workbench',
-		'inquisitorDropList',
-		'inquisitorActionBar',
-		'setupCode',
-		'executionCode',
 		'questionDropList',
 		'questionActionBar',
 		'questionTable'

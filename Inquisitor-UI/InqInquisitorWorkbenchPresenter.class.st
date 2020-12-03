@@ -17,7 +17,9 @@ Class {
 		'questionSectionHolder',
 		'capturePointsSectionHolder',
 		'capturePointsActionBar',
-		'capturePointsPagesDictionary'
+		'capturePointsPagesDictionary',
+		'setupCodeField',
+		'executionCodeField'
 	],
 	#category : #'Inquisitor-UI'
 }
@@ -90,9 +92,8 @@ InqInquisitorWorkbenchPresenter >> capturePointsPagesDictionary [
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> connectPresenters [
 	"The method connectPresenters defines the interactions between the dif- ferent widgets. By connecting the behaviors of the different widgets it speci- fies the overall presentation, i.e., how the overall UI responds to interactions by the user. Usually this method consists of specifications of actions to per- form when a certain event is received by a widget. The whole interaction flow of the UI then emerges from the propagation of those events."
-	inquisitorDropList whenSelectedItemChangedDo: [ :newlySelectedInquisitor ||newQuestionHistory|
-		newQuestionHistory := newlySelectedInquisitor questionHistory.
-		self setItemsOfQuestionDropList: newQuestionHistory.
+	inquisitorDropList whenSelectedItemChangedDo: [ :newlySelectedInquisitor |
+		self whenInquisitorIsSelected: newlySelectedInquisitor.
 	].
 	questionDropList whenSelectedItemChangedDo: [ :newlySelectedQuestion |
 		self whenQuestionIsSelected: newlySelectedQuestion.
@@ -111,14 +112,20 @@ InqInquisitorWorkbenchPresenter >> constraints [
 	constraints := Dictionary new.
 	constraints at: #inquisitorDropList put: [ :c | c height: dropListHeight].
 	constraints at: #inquisitorActionBar put: [ :c | c height: actionBarHeight].
-	constraints at: #inquisitorExecutionCode put: [ :c | ].
+	constraints at: #inquisitorSetupCodeField put: [ :c | ].
+	constraints at: #inquisitorExecutionCodeField put: [ :c | ].
+	
 	constraints at: #questionDropList put: [ :c | c height: dropListHeight].
 	constraints at: #questionActionBar put: [ :c | c height: actionBarHeight].
-	constraints at: #questionDetail put: [ :c | ].
+	constraints at: #questionTable put: [ :c | ].
+
+	constraints at: #capturePointsActionBar put: [ :c | ].	
 	constraints at: #capturePointsNotebook put: [ :c | ].
 	constraints at: #capturePointsPlayground put: [ :c | ].
-	constraints at: #leftPanel put: [ :c | ].
-	constraints at: #rightPanel put: [ :c | ].
+	
+	constraints at: #inquisitorSection put: [ :c | ].
+	constraints at: #questionSection put: [ :c | ].
+	constraints at: #capturePointsSection put: [ :c | ].
 	^ constraints
 	
 	
@@ -209,7 +216,9 @@ InqInquisitorWorkbenchPresenter >> initializePresenters [
 	].
 		
 	inquisitorDropList := self presenterNamed: #inquisitorDropList fromUISection: inquisitorSection.		
-	inquisitorActionBar := self presenterNamed: #inquisitorActionBar fromUISection: inquisitorSection.		
+	inquisitorActionBar := self presenterNamed: #inquisitorActionBar fromUISection: inquisitorSection.
+	setupCodeField := self presenterNamed: #setupCodeField fromUISection: inquisitorSection.
+	executionCodeField := self presenterNamed: #executionCodeField fromUISection: inquisitorSection.
 	questionDropList := self presenterNamed: #questionDropList fromUISection: questionSection.
 	questionActionBar := self presenterNamed: #questionActionBar fromUISection: questionSection.
 	capturePointsNotebook := self presenterNamed: #capturePointsNotebook fromUISection: capturePointsSection.
@@ -262,6 +271,14 @@ InqInquisitorWorkbenchPresenter >> setModelBeforeInitialization: anObject [
 	@anObject is the argument provided to the #on: call. It typically contains all the values to be put into the instance variables"
 	
 	"instanceVariable1 := anObject getValueForInstanceVariable1"
+]
+
+{ #category : #initialization }
+InqInquisitorWorkbenchPresenter >> whenInquisitorIsSelected: anInquisitor [
+	self setItemsOfQuestionDropList: anInquisitor questionHistory.
+	setupCodeField text: anInquisitor setupCode.
+	executionCodeField text: anInquisitor executionCode.
+	
 ]
 
 { #category : #initialization }
