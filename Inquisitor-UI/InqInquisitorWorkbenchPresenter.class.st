@@ -63,8 +63,7 @@ InqInquisitorWorkbenchPresenter >> buttonActionEditInquisitor [
 
 { #category : #'button action' }
 InqInquisitorWorkbenchPresenter >> buttonActionInspectCapturePoint [
-	self flag: 'TODO'.
-	self inform: 'buttonActionInspectCapturePoint'
+	capturePointsNotebook selectedPage activePresenter selectedCapturePoint inspect
 ]
 
 { #category : #'button action' }
@@ -137,7 +136,7 @@ InqInquisitorWorkbenchPresenter >> constraints [
 	csts at: #questionActionBar put: [ :c | c height: actionBarHeight].
 	csts at: #questionTable put: [ :c | c ].
 
-	csts at: #capturePointsActionBar put: [ :c | c ].	
+	csts at: #capturePointsActionBar put: [ :c | c height: actionBarHeight ].	
 	csts at: #capturePointsNotebook put: [ :c | c ].
 	csts at: #capturePointsPlayground put: [ :c | c ].
 	

@@ -48,6 +48,7 @@ InqUISectionCapturePoints >> initializePresenters [
 			add: (self newButton
 				icon: (self iconManager iconNamed: #smallInspectIt);
 				action: [ workbench buttonActionInspectCapturePoint ];
+				help: 'Inspect selected Capture Point';
 				yourself
 			);
 			yourself.

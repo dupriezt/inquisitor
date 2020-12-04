@@ -55,3 +55,9 @@ InqDefaultCapturePointsPresenter >> initializePresenters [
 	
 		
 ]
+
+{ #category : #'as yet unclassified' }
+InqDefaultCapturePointsPresenter >> selectedCapturePoint [
+ "Must return the currently selected capture point. Nil if there is none"
+	^ capturePointsTable selectedItem
+]

@@ -24,6 +24,12 @@ InqCapturePointsAbstractPresenter class >> pageName [
 	^ self subclassResponsibility
 ]
 
+{ #category : #'as yet unclassified' }
+InqCapturePointsAbstractPresenter >> selectedCapturePoint [
+ "Must return the currently selected capture point. Nil if there is none"
+	self subclassResponsibility
+]
+
 { #category : #'accessing model' }
 InqCapturePointsAbstractPresenter >> setModelBeforeInitialization: anObject [
 	"This method is called before the initialisation methods (like #initializePresenters), when this presenter instance is created by sending #on: to its class. It is typically used to fill the instance variables of this presenter instance before the initilisation methods get called.
