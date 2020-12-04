@@ -117,6 +117,11 @@ InqInquisitor >> executionCode: aString [
 	executionCode := aString
 ]
 
+{ #category : #testing }
+InqInquisitor >> isEmptyInquisitor [ 
+	^ false
+]
+
 { #category : #'question management' }
 InqInquisitor >> isSilent [
 	isSilent ifNil: [ isSilent := false ].

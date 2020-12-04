@@ -5,7 +5,12 @@ Class {
 		'inquisitorDropList',
 		'inquisitorActionBar',
 		'setupCodeField',
-		'executionCodeField'
+		'executionCodeField',
+		'addInquisitorButton',
+		'removeInquisitorButton',
+		'setMainInquisitorButton',
+		'inspectInquisitorButton',
+		'editInquisitorButton'
 	],
 	#category : #'Inquisitor-UI'
 }
@@ -65,34 +70,34 @@ InqUISectionInquisitor >> initializePresenters [
 		iconBlock: [ :inq | (inq == InqInquisitor mainInstance) ifTrue: [ self iconManager iconNamed: #smallHome ] ifFalse: [ self iconManager iconNamed: #blank ]  ];
 		display: [ :anInquisitor | anInquisitor asStringForClyCommand ]
 		yourself.
-		
-	inquisitorActionBar := SpActionBarPresenter new
-		add: (self newButton
+	
+	addInquisitorButton := self newButton
 			icon: (self iconManager iconNamed: #smallAdd);
 			action: [ workbench buttonActionAddInquisitor ];
-			yourself
-		);
-		add: (self newButton
+			yourself.
+	removeInquisitorButton := self newButton
 			icon: (self iconManager iconNamed: #smallDelete);
 			action: [ workbench buttonActionRemoveInquisitor ];
-			yourself
-		);
-		add: (self newButton
+			yourself.
+	setMainInquisitorButton := self newButton
 			icon: (self iconManager iconNamed: #smallHome);
 			action: [ workbench buttonActionSetMainInquisitor ];
-			yourself
-		);
-		add: (self newButton
+			yourself.
+	inspectInquisitorButton := self newButton
 			icon: (self iconManager iconNamed: #smallInspectIt);
 			action: [ workbench buttonActionInspectInquisitor ];
-			yourself
-		);
-		add: (self newButton
+			yourself.
+	editInquisitorButton := self newButton
 			icon: (self iconManager iconNamed: #smallCogInitialState);
 			action: [ workbench buttonActionEditInquisitor ];
-			yourself
-		);
-		flag: 'TODO: remove this button';
+			yourself.
+	inquisitorActionBar := SpActionBarPresenter new
+		add: addInquisitorButton;
+		add: removeInquisitorButton;
+		add: setMainInquisitorButton;
+		add: inspectInquisitorButton;
+		add: editInquisitorButton;
+		flag: 'TODO: remove this button vvv';
 		add: (self newButton
 			icon: (self iconManager iconNamed: #smallInspectIt);
 			action: [ workbench inspect ];

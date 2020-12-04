@@ -18,7 +18,13 @@ Class {
 		'capturePointsActionBar',
 		'capturePointsPagesDictionary',
 		'setupCodeField',
-		'executionCodeField'
+		'executionCodeField',
+		'questionQuickViewTable',
+		'addInquisitorButton',
+		'removeInquisitorButton',
+		'setMainInquisitorButton',
+		'inspectInquisitorButton',
+		'editInquisitorButton'
 	],
 	#classVars : [
 		'constraints'
@@ -78,8 +84,7 @@ InqInquisitorWorkbenchPresenter >> buttonActionInspectQuestion [
 
 { #category : #'button action' }
 InqInquisitorWorkbenchPresenter >> buttonActionRemoveInquisitor [
-	self flag: 'Todo: finish'.
-	self inform: 'remove inquisitor'
+	InqInquisitor removeInstance: inquisitorDropList selectedItem
 ]
 
 { #category : #'button action' }
@@ -134,7 +139,7 @@ InqInquisitorWorkbenchPresenter >> constraints [
 	
 	csts at: #questionDropList put: [ :c | c height: dropListHeight].
 	csts at: #questionActionBar put: [ :c | c height: actionBarHeight].
-	csts at: #questionTable put: [ :c | c ].
+	csts at: #questionQuickViewTable put: [ :c | c ].
 
 	csts at: #capturePointsActionBar put: [ :c | c height: actionBarHeight ].	
 	csts at: #capturePointsNotebook put: [ :c | c ].
@@ -234,10 +239,16 @@ InqInquisitorWorkbenchPresenter >> initializePresenters [
 		
 	inquisitorDropList := self presenterNamed: #inquisitorDropList fromUISection: inquisitorSection.		
 	inquisitorActionBar := self presenterNamed: #inquisitorActionBar fromUISection: inquisitorSection.
+	addInquisitorButton := self presenterNamed: #addInquisitorButton fromUISection: inquisitorSection.
+	removeInquisitorButton := self presenterNamed: #removeInquisitorButton fromUISection: inquisitorSection.
+	setMainInquisitorButton := self presenterNamed: #setMainInquisitorButton fromUISection: inquisitorSection.
+	inspectInquisitorButton := self presenterNamed: #inspectInquisitorButton fromUISection: inquisitorSection.
+	editInquisitorButton := self presenterNamed: #editInquisitorButton fromUISection: inquisitorSection.
 	setupCodeField := self presenterNamed: #setupCodeField fromUISection: inquisitorSection.
 	executionCodeField := self presenterNamed: #executionCodeField fromUISection: inquisitorSection.
 	questionDropList := self presenterNamed: #questionDropList fromUISection: questionSection.
 	questionActionBar := self presenterNamed: #questionActionBar fromUISection: questionSection.
+	questionQuickViewTable := self presenterNamed: #questionQuickViewTable fromUISection: questionSection.
 	capturePointsNotebook := self presenterNamed: #capturePointsNotebook fromUISection: capturePointsSection.
 	capturePointsActionBar := self presenterNamed: #capturePointsActionBar fromUISection: capturePointsSection.
 	capturePointsPlayground := self presenterNamed: #capturePointsPlayground fromUISection: capturePointsSection.
@@ -295,18 +306,24 @@ InqInquisitorWorkbenchPresenter >> whenInquisitorIsSelected: anInquisitor [
 	self setItemsOfQuestionDropList: anInquisitor questionHistory.
 	setupCodeField text: anInquisitor setupCode.
 	executionCodeField text: anInquisitor executionCode.
+	removeInquisitorButton enabled: (anInquisitor isEmptyInquisitor not)
+	
 	
 ]
 
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> whenQuestionIsSelected: anInqInquisitorQuestion [
+	| selectedQuestion |
+	selectedQuestion := anInqInquisitorQuestion.
+	selectedQuestion ifNil: [ selectedQuestion := InqEmptyQuestion new ].
+	questionQuickViewTable items: selectedQuestion quickView.
 	capturePointsNotebook removeAll.
 	capturePointsPagesDictionary := nil.
 	InqCapturePointsAbstractPresenter allSubclassesDo: [ :cpPresenterClass | 
-		(cpPresenterClass canHandle: anInqInquisitorQuestion) ifTrue: [ 
+		(cpPresenterClass canHandle: selectedQuestion) ifTrue: [ 
 			capturePointsNotebook addPageTitle: (cpPresenterClass pageName) provider: [ 
 				self capturePointsPagesDictionary at: cpPresenterClass 	ifAbsentPut: [
-					cpPresenterClass on: anInqInquisitorQuestion
+					cpPresenterClass on: selectedQuestion
 				]
 			]
 		]	

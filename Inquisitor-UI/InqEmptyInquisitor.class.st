@@ -15,6 +15,11 @@ InqEmptyInquisitor >> initialize [
 	self setupCode: 'No setup code'.
 ]
 
+{ #category : #testing }
+InqEmptyInquisitor >> isEmptyInquisitor [
+	^ true
+]
+
 { #category : #printing }
 InqEmptyInquisitor >> printOn: aStream [
 

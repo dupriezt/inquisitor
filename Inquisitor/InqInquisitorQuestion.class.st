@@ -79,6 +79,17 @@ InqInquisitorQuestion >> printOn: aStream [
 ]
 
 { #category : #'as yet unclassified' }
+InqInquisitorQuestion >> quickView [
+	"Returns a list of associations propertyName->propertyValue about this question. To be used to display its important properties"
+	| result |
+	result := OrderedCollection new.
+	result add: #node->(self node sourceCode);
+		add: #method -> (self node methodNode methodClass asString, '>>', self node methodNode selector);
+		add: #capturePoints -> (self capturePoints size).
+	^ result
+]
+
+{ #category : #'as yet unclassified' }
 InqInquisitorQuestion >> registerBreakpointHit: aBreakpointHit [
 	"Called by the announcer of BreakpointHit announcement"
 	lastBreakpointHit := aBreakpointHit breakpoint

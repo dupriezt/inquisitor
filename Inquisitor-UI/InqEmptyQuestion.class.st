@@ -16,6 +16,11 @@ InqEmptyQuestion >> printOn: aStream [
 ]
 
 { #category : #'as yet unclassified' }
+InqEmptyQuestion >> quickView [
+	^ OrderedCollection new
+]
+
+{ #category : #'as yet unclassified' }
 InqEmptyQuestion >> resultDescription [
 	"Returns a string describing the result of this question"
 	^ 'Empty question'

@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'questionDropList',
 		'questionActionBar',
-		'questionTable'
+		'questionQuickViewTable'
 	],
 	#category : #'Inquisitor-UI'
 }
@@ -25,7 +25,7 @@ InqUISectionQuestion >> defaultSpec_ [
 	^ SpBoxLayout newVertical
 		add: #questionDropList withConstraints: (self cstrAt: #questionDropList);
 		add: #questionActionBar withConstraints: (self cstrAt: #questionActionBar);
-		add: #questionTable withConstraints: (self cstrAt: #questionTable);
+		add: #questionQuickViewTable withConstraints: (self cstrAt: #questionQuickViewTable);
 		yourself
 ]
 
@@ -52,11 +52,15 @@ InqUISectionQuestion >> initializePresenters [
 		add: (self newButton
 			icon: (self iconManager iconNamed: #smallInspectIt);
 			action: [ workbench buttonActionInspectQuestion ];
+			help: 'Inspect question';
 			yourself
 		);
 		yourself.
 
-	questionTable := self newTable
+	questionQuickViewTable := self newTable
+		addColumn: ((SpStringTableColumn evaluated: #key) width: 80);
+		addColumn: (SpStringTableColumn evaluated: #value);
+		yourself
 ]
 
 { #category : #initialization }
