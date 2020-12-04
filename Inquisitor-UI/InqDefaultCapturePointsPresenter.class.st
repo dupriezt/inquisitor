@@ -49,7 +49,7 @@ InqDefaultCapturePointsPresenter >> initializePresenters [
 		items: self capturePoints;
 		addColumn: ((SpStringTableColumn title: 'TimeIndex' evaluated: #timeIndex) width: 70; yourself);
 		addColumn: ((SpStringTableColumn title: 'Value' evaluated: [:cp | cp capturedValue]) width: 150; yourself);
-		addColumn: ((SpStringTableColumn title: 'MethodInvocation' evaluated: [:cp | cp methodInvocation]) width: 150; yourself);
+		addColumn: ((SpStringTableColumn title: 'MethodInvocation' evaluated: [:cp | cp methodInvocation asStringForCapturePointsTable]) width: 150; yourself);
 		addColumn: ((SpStringTableColumn title: 'Receiver' evaluated: [:cp | cp receiver]) width: 150; yourself);
 		yourself.
 	

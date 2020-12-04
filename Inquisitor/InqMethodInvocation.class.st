@@ -14,6 +14,16 @@ InqMethodInvocation class >> newForContext: aContext [
 	^ self new add: aContext hash; add: aContext method; yourself
 ]
 
+{ #category : #converting }
+InqMethodInvocation >> asStringForCapturePointsTable [
+	"Returns a string describing me"
+	^ String streamContents: [ :stream | stream
+		nextPutAll: (self contextHash asString);
+		nextPutAll: ' '.
+		self invokedMethod printOn: stream	
+	]
+]
+
 { #category : #accessing }
 InqMethodInvocation >> contextHash [
 	^ self at: 1

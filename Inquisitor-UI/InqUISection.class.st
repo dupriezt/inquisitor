@@ -8,9 +8,14 @@ Class {
 }
 
 { #category : #accessing }
+InqUISection >> constraintClass [
+	^ InqInquisitorWorkbenchPresenter
+]
+
+{ #category : #accessing }
 InqUISection >> cstrAt: aKey [
 	"Shorthand to make defaultSpec_ method more concise"
-	^ workbench cstrAt: aKey
+	^ self constraintClass cstrAt: aKey
 ]
 
 { #category : #'accessing model' }

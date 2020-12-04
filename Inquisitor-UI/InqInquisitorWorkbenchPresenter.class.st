@@ -8,7 +8,6 @@ Class {
 		'questionDetail',
 		'capturePointsNotebook',
 		'capturePointsPlayground',
-		'constraints',
 		'questionActionBar',
 		'inquisitorSection',
 		'questionSection',
@@ -21,8 +20,22 @@ Class {
 		'setupCodeField',
 		'executionCodeField'
 	],
+	#classVars : [
+		'constraints'
+	],
 	#category : #'Inquisitor-UI'
 }
+
+{ #category : #'as yet unclassified' }
+InqInquisitorWorkbenchPresenter class >> constraints: aDictionary [
+	constraints := aDictionary
+]
+
+{ #category : #accessing }
+InqInquisitorWorkbenchPresenter class >> cstrAt: aSymbol [
+	"Can maybe be optimised by creating an instance and keeping it around to answer #cstrAt: calls, instead of recreating an instance every time"
+	^ constraints at: aSymbol
+]
 
 { #category : #specs }
 InqInquisitorWorkbenchPresenter class >> defaultSpec [
@@ -104,29 +117,34 @@ InqInquisitorWorkbenchPresenter >> connectPresenters [
 { #category : #specs }
 InqInquisitorWorkbenchPresenter >> constraints [
 	"Layout constraints for the elements defined in defaultSpec_ method"
-	| dropListHeight actionBarHeight |
-	constraints ifNotNil: [ ^ constraints ].
+	| csts dropListHeight actionBarHeight |
 	"If constraints is nil:"
 	dropListHeight := 30.
 	actionBarHeight := 30.
-	constraints := Dictionary new.
-	constraints at: #inquisitorDropList put: [ :c | c height: dropListHeight].
-	constraints at: #inquisitorActionBar put: [ :c | c height: actionBarHeight].
-	constraints at: #inquisitorSetupCodeField put: [ :c | ].
-	constraints at: #inquisitorExecutionCodeField put: [ :c | ].
+	csts := Dictionary new.
+	csts at: #inquisitorDropList put: [ :c | c height: dropListHeight].
+	csts at: #inquisitorActionBar put: [ :c | c height: actionBarHeight].
+	csts at: #inquisitorSetupLabel put: [ :c | c position: 1@1].
+	csts at: #inquisitorSetupCodeField put: [ :c | c position: 2@1].
+	csts at: #inquisitorExecutionLabel put: [ :c | c position: 1@2].
+	csts at: #inquisitorExecutionCodeField put: [ :c | c position: 2@2].
+	csts at: #inquisitorLabelColumn put: [ :c | c beNotExpand].
+	csts at: #inquisitorCodeColumn put: [ :c | c beExpand].
+	csts at: #inquisitorSetupRow put: [ :c | c ].
+	csts at: #inquisitorExecutionRow put: [ :c | c ].
 	
-	constraints at: #questionDropList put: [ :c | c height: dropListHeight].
-	constraints at: #questionActionBar put: [ :c | c height: actionBarHeight].
-	constraints at: #questionTable put: [ :c | ].
+	csts at: #questionDropList put: [ :c | c height: dropListHeight].
+	csts at: #questionActionBar put: [ :c | c height: actionBarHeight].
+	csts at: #questionTable put: [ :c | c ].
 
-	constraints at: #capturePointsActionBar put: [ :c | ].	
-	constraints at: #capturePointsNotebook put: [ :c | ].
-	constraints at: #capturePointsPlayground put: [ :c | ].
+	csts at: #capturePointsActionBar put: [ :c | c ].	
+	csts at: #capturePointsNotebook put: [ :c | c ].
+	csts at: #capturePointsPlayground put: [ :c | c ].
 	
-	constraints at: #inquisitorSection put: [ :c | ].
-	constraints at: #questionSection put: [ :c | ].
-	constraints at: #capturePointsSection put: [ :c | ].
-	^ constraints
+	csts at: #inquisitorSection put: [ :c | ].
+	csts at: #questionSection put: [ :c | ].
+	csts at: #capturePointsSection put: [ :c | ].
+	^ csts
 	
 	
 	      
@@ -134,14 +152,14 @@ InqInquisitorWorkbenchPresenter >> constraints [
 ]
 
 { #category : #specs }
-InqInquisitorWorkbenchPresenter >> cstrAt: aKey [
+InqInquisitorWorkbenchPresenter >> cstrAt: aSymbol [
 	"Shorthand to make defaultSpec_ method more concise"
-	^ self constraints at: aKey
+	^ self class cstrAt: aSymbol
 ]
 
 { #category : #specs }
 InqInquisitorWorkbenchPresenter >> defaultSpec_ [
-	
+	self class constraints: self constraints.
 	^ SpBoxLayout newVertical
 		add: (SpBoxLayout newHorizontal
 			add: #inquisitorSectionHolder;

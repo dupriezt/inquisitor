@@ -23,9 +23,9 @@ InqUISectionQuestion >> connectPresenters [
 { #category : #initialization }
 InqUISectionQuestion >> defaultSpec_ [
 	^ SpBoxLayout newVertical
-		add: #questionDropList;
-		add: #questionActionBar;
-		add: #questionTable;
+		add: #questionDropList withConstraints: (self cstrAt: #questionDropList);
+		add: #questionActionBar withConstraints: (self cstrAt: #questionActionBar);
+		add: #questionTable withConstraints: (self cstrAt: #questionTable);
 		yourself
 ]
 

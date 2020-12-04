@@ -28,10 +28,18 @@ InqUISectionInquisitor >> defaultSpec_ [
 		add: #inquisitorDropList withConstraints: (self cstrAt: #inquisitorDropList);
 		add: #inquisitorActionBar withConstraints: (self cstrAt: #inquisitorActionBar);
 		add: (SpGridLayout new
-			add: 'Setup' at: 1@1;
+			"add: 'Setup' at: 1@1;
 			add: #setupCodeField at: 2@1;
 			add: 'Execution' at: 1@2;
-			add: #executionCodeField at: 2@2;
+			add: #executionCodeField at: 2@2;"
+			add: 'Setup' withConstraints: (self cstrAt: #inquisitorSetupLabel);
+			add: #setupCodeField withConstraints: (self cstrAt: #inquisitorSetupCodeField);
+			add: 'Execution' withConstraints: (self cstrAt: #inquisitorExecutionLabel);
+			add: #executionCodeField withConstraints: (self cstrAt: #inquisitorExecutionCodeField);
+			column: 1 withConstraints: (self cstrAt: #inquisitorLabelColumn);
+			column: 2 withConstraints: (self cstrAt: #inquisitorCodeColumn);
+			row: 1 withConstraints: (self cstrAt: #inquisitorSetupRow);
+			row: 2 withConstraints: (self cstrAt: #inquisitorExecutionRow);
 			yourself
 		);
 		yourself
