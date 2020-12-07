@@ -101,7 +101,7 @@ InqInquisitor >> announceUpdate [
 
 { #category : #converting }
 InqInquisitor >> asStringForClyCommand [
-	^ 'Inquisitor on block: ', executionCode "codeBlockToExecute sourceNode sourceCode"
+	^ 'Inquisitor on block: ', self executionCode "codeBlockToExecute sourceNode sourceCode"
 ]
 
 { #category : #'question management' }

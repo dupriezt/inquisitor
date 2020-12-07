@@ -34,8 +34,8 @@ InqInquisitorForTest >> runExecution [
 { #category : #accessing }
 InqInquisitorForTest >> testClass: aClass [
 	testClass := aClass.
-	self setupCode: '	testInstance := ',aClass name,' new.
-	testInstance setUp.'
+	self setupCode: 'testInstance := ',aClass name,' new.
+testInstance setUp.'
 ]
 
 { #category : #accessing }

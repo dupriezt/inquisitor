@@ -24,7 +24,9 @@ Class {
 		'removeInquisitorButton',
 		'setMainInquisitorButton',
 		'inspectInquisitorButton',
-		'editInquisitorButton'
+		'editInquisitorButton',
+		'inquisitorCodeFieldsMuted',
+		'eventLog'
 	],
 	#classVars : [
 		'constraints'
@@ -57,8 +59,7 @@ InqInquisitorWorkbenchPresenter class >> open [
 
 { #category : #'button action' }
 InqInquisitorWorkbenchPresenter >> buttonActionAddInquisitor [
-	self flag: 'finish'.
-	self inform: 'add inquisitor'
+	InqInquisitor newForCode: '' withSetupCode: ''
 ]
 
 { #category : #'button action' }
@@ -132,12 +133,12 @@ InqInquisitorWorkbenchPresenter >> constraints [
 	csts := Dictionary new.
 	csts at: #inquisitorDropList put: [ :c | c height: dropListHeight].
 	csts at: #inquisitorActionBar put: [ :c | c height: actionBarHeight].
-	csts at: #inquisitorSetupLabel put: [ :c | c position: 1@1].
-	csts at: #inquisitorSetupCodeField put: [ :c | c position: 2@1].
-	csts at: #inquisitorExecutionLabel put: [ :c | c position: 1@2].
-	csts at: #inquisitorExecutionCodeField put: [ :c | c position: 2@2].
-	csts at: #inquisitorLabelColumn put: [ :c | c beNotExpand].
-	csts at: #inquisitorCodeColumn put: [ :c | c beExpand].
+	csts at: #inquisitorSetupLabel put: [ :c | c "position: 1@1"].
+	csts at: #inquisitorSetupCodeField put: [ :c | c padding: 1" position: 2@1"].
+	csts at: #inquisitorExecutionLabel put: [ :c | c "position: 1@2"].
+	csts at: #inquisitorExecutionCodeField put: [ :c | c "position: 2@2"].
+	csts at: #inquisitorLabelColumn put: [ :c | c expand: false; padding: 5].
+	csts at: #inquisitorCodeColumn put: [ :c | c expand: true].
 	csts at: #inquisitorSetupRow put: [ :c | c ].
 	csts at: #inquisitorExecutionRow put: [ :c | c ].
 	
@@ -149,8 +150,9 @@ InqInquisitorWorkbenchPresenter >> constraints [
 	csts at: #capturePointsNotebook put: [ :c | c ].
 	csts at: #capturePointsPlayground put: [ :c | c ].
 	
-	csts at: #inquisitorSection put: [ :c | ].
-	csts at: #questionSection put: [ :c | ].
+	csts at: #inquisitorSection put: [ :c | c "expand: false" ].
+	csts at: #questionSection put: [ :c | c "expand: false"].
+	csts at: #topSection put: [ :c | c ]. "inquisitorSection + questionSection"
 	csts at: #capturePointsSection put: [ :c | ].
 	^ csts
 	
@@ -170,11 +172,11 @@ InqInquisitorWorkbenchPresenter >> defaultSpec_ [
 	self class constraints: self constraints.
 	^ SpPanedLayout newVertical
 		add: (SpBoxLayout newHorizontal
-			add: #inquisitorSectionHolder;
-			add: #questionSectionHolder;
+			add: #inquisitorSectionHolder withConstraints: (self cstrAt: #inquisitorSection);
+			add: #questionSectionHolder withConstraints: (self cstrAt: #questionSection);
 			yourself
-		);
-		add: #capturePointsSectionHolder;
+		) withConstraints: (self cstrAt: #topSection);
+		add: #capturePointsSectionHolder withConstraints: (self cstrAt: #capturePointsSection);
 		yourself.
 	
 	"^ SpPanedLayout newHorizontal
@@ -211,8 +213,8 @@ InqInquisitorWorkbenchPresenter >> defaultSpec_ [
 
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> eventInquisitorAdded: anInqInquisitorAdded [
-	self inform: 'added'.
-	inquisitorDropList items: InqInquisitor instances.
+	self eventLog add: anInqInquisitorAdded.
+	self setItemsOfInquisitorDropList: InqInquisitor instances.
 	anInqInquisitorAdded inquisitor updateAnnouncer weak when: InqInquisitorUpdated send: #eventInquisitorUpdated: to: self.
 	inquisitorDropList selectItem: anInqInquisitorAdded inquisitor
 ]
@@ -220,35 +222,44 @@ InqInquisitorWorkbenchPresenter >> eventInquisitorAdded: anInqInquisitorAdded [
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> eventInquisitorMainInstanceChanged: anInqInquisitorMainInstanceChanged [
 	| selected |
+	self eventLog add: anInqInquisitorMainInstanceChanged.
 	selected := inquisitorDropList selectedItem.
-	inquisitorDropList items: InqInquisitor instances.
+	self setItemsOfInquisitorDropList: InqInquisitor instances.
 	selected ifNotNil: [inquisitorDropList selectItem: selected].
 ]
 
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> eventInquisitorRemoved: anInqInquisitorRemoved [
 	| selected |
+	self eventLog add: anInqInquisitorRemoved.
 	anInqInquisitorRemoved inquisitor updateAnnouncer unsubscribe: self.
 	selected := inquisitorDropList selectedItem.
 	inquisitorDropList resetSelection.
 	"If the removed inquisitor was not the last, simply update the list. It is was the list, replace the list with a list containing a single empty inquisitor"
-	(inquisitorDropList items size > 1) ifTrue: [ inquisitorDropList items: InqInquisitor instances] ifFalse: [ inquisitorDropList items: ((OrderedCollection new) add: InqEmptyInquisitor new; yourself) ].
+	(inquisitorDropList items size > 1) ifTrue: [
+		self setItemsOfInquisitorDropList: InqInquisitor instances
+	] ifFalse: [
+		self setItemsOfInquisitorDropList: ((OrderedCollection new) add: InqEmptyInquisitor new; yourself)
+	].
 	(selected == anInqInquisitorRemoved inquisitor) ifFalse: [inquisitorDropList selectItem: selected].
 ]
 
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> eventInquisitorUpdated: anInqInquisitorUpdated [
 	| selected |
+	self eventLog add: anInqInquisitorUpdated.
 	selected := inquisitorDropList selectedItem.
-	inquisitorDropList items: InqInquisitor instances.
+	self setItemsOfInquisitorDropList: InqInquisitor instances.
 	selected ifNotNil: [inquisitorDropList selectItem: selected].
 	self flag: 'todo'.
 	"update question list. Maybe not needed because the selected inquisitor is reselected"
 	
 ]
 
-{ #category : #'button action' }
-InqInquisitorWorkbenchPresenter >> executeCode [
+{ #category : #accessing }
+InqInquisitorWorkbenchPresenter >> eventLog [
+	eventLog ifNil: [ eventLog := OrderedCollection new ].
+	^ eventLog
 ]
 
 { #category : #icon }
@@ -308,6 +319,13 @@ InqInquisitorWorkbenchPresenter >> initializeWindow: aWindowPresenter [
 		windowIcon: (self iconManager iconNamed: #home) "Icon that will be shown in the bottom windowbar for this window"
 ]
 
+{ #category : #accessing }
+InqInquisitorWorkbenchPresenter >> inquisitorCodeFieldsMuted [
+	"If true, disables the #whenTextChangedDo: of the setupCodeField and executionCodeField"
+	inquisitorCodeFieldsMuted ifNil: [ inquisitorCodeFieldsMuted := false ].
+	^ inquisitorCodeFieldsMuted
+]
+
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> postInitialisation [
 	"Executed after #initializePresenters and #connectPresenters"
@@ -327,7 +345,7 @@ InqInquisitorWorkbenchPresenter >> presenterNamed: aSymbol fromUISection: aUISec
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> setItemsOfInquisitorDropList: anOrderedCollection [
 	"Change the inquisitor list shown in inquisitorDropList. If the new inquisitor list is empty, instead put a list containing an empty inquisitor in order to prevent inquisitorDropList from being empty."
-	anOrderedCollection isEmpty ifFalse: [inquisitorDropList items: anOrderedCollection] ifTrue: [ inquisitorDropList items: (OrderedCollection new add: InqEmptyInquisitor newWithoutRegisteringInstance; yourself) ].
+	anOrderedCollection isEmpty ifFalse: [inquisitorDropList items: anOrderedCollection] ifTrue: [ inquisitorDropList items: (OrderedCollection new add: InqEmptyInquisitor new; yourself) ].
 	inquisitorDropList selectIndex: 1.
 ]
 
@@ -348,15 +366,17 @@ InqInquisitorWorkbenchPresenter >> setModelBeforeInitialization: anObject [
 
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> whenInquisitorIsSelected: anInquisitor [
-	| selectedInquisitor |
-	selectedInquisitor := anInquisitor.
-	selectedInquisitor ifNil: [ selectedInquisitor := InqEmptyInquisitor new ]. "Sometimes, the inquisitorDropList selects nil. This line avoids series of 'X was sent to nil' ensuing from that"
-	self setItemsOfQuestionDropList: selectedInquisitor questionHistory.
-	setupCodeField text: selectedInquisitor setupCode.
-	executionCodeField text: selectedInquisitor executionCode.
-	removeInquisitorButton enabled: (selectedInquisitor isEmptyInquisitor not).
-	setMainInquisitorButton enabled: ((selectedInquisitor isEmptyInquisitor not) and: [InqInquisitor mainInstance ~= selectedInquisitor]).
-	
+	anInquisitor ifNil: [ ^ self ].
+	inquisitorCodeFieldsMuted := true.
+	[
+	self setItemsOfQuestionDropList: anInquisitor questionHistory.
+	setupCodeField text: anInquisitor setupCode.
+	setupCodeField editable: (anInquisitor isEmptyInquisitor not).
+	executionCodeField text: anInquisitor executionCode.
+	executionCodeField editable: (anInquisitor isEmptyInquisitor not).
+	removeInquisitorButton enabled: (anInquisitor isEmptyInquisitor not).
+	setMainInquisitorButton enabled: ((anInquisitor isEmptyInquisitor not) and: [InqInquisitor mainInstance ~= anInquisitor])
+	] ensure: [ inquisitorCodeFieldsMuted := false ]
 	
 ]
 

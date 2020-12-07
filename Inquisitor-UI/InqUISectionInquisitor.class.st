@@ -32,11 +32,27 @@ InqUISectionInquisitor >> defaultSpec_ [
 	^ SpBoxLayout newVertical
 		add: #inquisitorDropList withConstraints: (self cstrAt: #inquisitorDropList);
 		add: #inquisitorActionBar withConstraints: (self cstrAt: #inquisitorActionBar);
-		add: (SpGridLayout new
-			"add: 'Setup' at: 1@1;
+		add: (SpBoxLayout newHorizontal
+			add: (SpBoxLayout newVertical
+				add: 'Setup' withConstraints: (self cstrAt: #inquisitorSetupLabel);
+				add: 'Execution' withConstraints: (self cstrAt: #inquisitorExecutionLabel);
+				yourself
+			) withConstraints: (self cstrAt: #inquisitorLabelColumn);
+			add: (SpBoxLayout newVertical
+				add: #setupCodeField withConstraints: (self cstrAt: #inquisitorSetupCodeField);
+				add: #executionCodeField withConstraints: (self cstrAt: #inquisitorExecutionCodeField);
+				yourself
+			) withConstraints: (self cstrAt: #inquisitorCodeColumn);
+			yourself
+		);
+		yourself.
+"		add: (SpGridLayout new
+			beColumnNotHomogeneous;
+			""beRowNotHomogeneous;""
+			""add: 'Setup' at: 1@1;
 			add: #setupCodeField at: 2@1;
 			add: 'Execution' at: 1@2;
-			add: #executionCodeField at: 2@2;"
+			add: #executionCodeField at: 2@2;""
 			add: 'Setup' withConstraints: (self cstrAt: #inquisitorSetupLabel);
 			add: #setupCodeField withConstraints: (self cstrAt: #inquisitorSetupCodeField);
 			add: 'Execution' withConstraints: (self cstrAt: #inquisitorExecutionLabel);
@@ -47,7 +63,7 @@ InqUISectionInquisitor >> defaultSpec_ [
 			row: 2 withConstraints: (self cstrAt: #inquisitorExecutionRow);
 			yourself
 		);
-		yourself
+		yourself"
 ]
 
 { #category : #initialization }
@@ -74,22 +90,27 @@ InqUISectionInquisitor >> initializePresenters [
 	addInquisitorButton := self newButton
 			icon: (self iconManager iconNamed: #smallAdd);
 			action: [ workbench buttonActionAddInquisitor ];
+			help: 'Create inquisitor';
 			yourself.
 	removeInquisitorButton := self newButton
 			icon: (self iconManager iconNamed: #smallDelete);
 			action: [ workbench buttonActionRemoveInquisitor ];
+			help: 'Delete selected inquisitor';
 			yourself.
 	setMainInquisitorButton := self newButton
 			icon: (self iconManager iconNamed: #smallHome);
 			action: [ workbench buttonActionSetMainInquisitor ];
+			help: 'Set selected inquisitor as Main Inquisitor';
 			yourself.
 	inspectInquisitorButton := self newButton
 			icon: (self iconManager iconNamed: #smallInspectIt);
 			action: [ workbench buttonActionInspectInquisitor ];
+			help: 'Inspect selected inquisitor';
 			yourself.
 	editInquisitorButton := self newButton
 			icon: (self iconManager iconNamed: #smallCogInitialState);
 			action: [ workbench buttonActionEditInquisitor ];
+			help: 'Edit selected inquisitor';
 			yourself.
 	inquisitorActionBar := SpActionBarPresenter new
 		add: addInquisitorButton;
@@ -101,12 +122,17 @@ InqUISectionInquisitor >> initializePresenters [
 		add: (self newButton
 			icon: (self iconManager iconNamed: #smallInspectIt);
 			action: [ workbench inspect ];
+			help: 'Inspect workbench';
 			yourself
 		);
 		yourself.
 		
-	setupCodeField := self newCode.
+	setupCodeField := self newCode
+		whenTextChangedDo: [ :newText | workbench inquisitorCodeFieldsMuted ifFalse: [ inquisitorDropList selectedItem setupCode: newText ]];
+		yourself.
 	executionCodeField := self newCode
+		whenTextChangedDo: [ :newText | workbench inquisitorCodeFieldsMuted ifFalse: [ inquisitorDropList selectedItem executionCode: newText ]];
+		yourself
 ]
 
 { #category : #initialization }
