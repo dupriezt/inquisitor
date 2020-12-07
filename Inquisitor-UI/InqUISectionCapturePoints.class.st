@@ -51,6 +51,12 @@ InqUISectionCapturePoints >> initializePresenters [
 				help: 'Inspect selected Capture Point';
 				yourself
 			);
+			add: (self newButton
+				icon: (self iconManager iconNamed: #smallInspectIt);
+				action: [ workbench buttonActionInspectAllCapturePoints ];
+				help: 'Inspect all Capture Points';
+				yourself
+			);
 			yourself.
 		capturePointsPlayground := StPlayground new.
 ]

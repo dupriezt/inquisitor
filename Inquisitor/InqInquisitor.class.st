@@ -5,11 +5,12 @@ Class {
 		'questionHistory',
 		'isSilent',
 		'lastBreakpointHit',
-		'codeBlockToExecute',
 		'setupCode',
-		'executionCode'
+		'executionCode',
+		'updateAnnouncer'
 	],
 	#classVars : [
+		'instanceLogAnnouncer',
 		'instances',
 		'mainInstance'
 	],
@@ -24,8 +25,18 @@ InqInquisitor class >> askQuestion: anInquisitorQuestion [
 { #category : #'instance creation' }
 InqInquisitor class >> clearInstances [
 	<script>
-	instances := nil.
-	mainInstance := nil
+	| oldInstances |
+	oldInstances := instances copy.
+"	instances := nil.
+	mainInstance := nil."
+	oldInstances do: [ :inq | self removeInstance: inq ].
+"	self instanceLogAnnouncer announce: InqInquisitorAllRemoved new"
+]
+
+{ #category : #'as yet unclassified' }
+InqInquisitor class >> instanceLogAnnouncer [
+	instanceLogAnnouncer ifNil: [ instanceLogAnnouncer := Announcer new ].
+	^ instanceLogAnnouncer
 ]
 
 { #category : #'instance creation' }
@@ -41,7 +52,10 @@ InqInquisitor class >> mainInstance [
 
 { #category : #'as yet unclassified' }
 InqInquisitor class >> mainInstance: anInstance [
-	mainInstance := anInstance
+	| oldMainInstance |
+	oldMainInstance := anInstance.
+	mainInstance := anInstance.
+	self instanceLogAnnouncer announce: (InqInquisitorMainInstanceChanged newForOldMainInstance: oldMainInstance andNewMainInstance: anInstance)
 ]
 
 { #category : #'instance creation' }
@@ -49,6 +63,7 @@ InqInquisitor class >> new [
 	| result |
 	result := self newWithoutRegisteringInstance.
 	self instances add: result.
+	self instanceLogAnnouncer announce: (InqInquisitorAdded newFor: result).
 	^ result
 ]
 
@@ -69,13 +84,19 @@ InqInquisitor class >> newWithoutRegisteringInstanceForCode: aString withSetupCo
 
 { #category : #'instance creation' }
 InqInquisitor class >> removeInstance: anInquisitor [
-	self instances remove: anInquisitor
+	self instances remove: anInquisitor.
+	self instanceLogAnnouncer announce: (InqInquisitorRemoved newFor: anInquisitor)
 ]
 
 { #category : #'question management' }
 InqInquisitor >> addAnsweredQuestion: anInquisitorQuestion [
 	self questionHistory add: anInquisitorQuestion.
 	self displayResultOfQuestion: anInquisitorQuestion
+]
+
+{ #category : #accessing }
+InqInquisitor >> announceUpdate [
+	self updateAnnouncer announce: (InqInquisitorUpdated newFor: self)
 ]
 
 { #category : #converting }
@@ -87,17 +108,7 @@ InqInquisitor >> asStringForClyCommand [
 InqInquisitor >> askQuestion: anInquisitorQuestion [
 	anInquisitorQuestion askToInquisitor: self.
 	self addAnsweredQuestion: anInquisitorQuestion.
-]
-
-{ #category : #accessing }
-InqInquisitor >> codeBlockToExecute [
-	codeBlockToExecute ifNil: [ codeBlockToExecute := [ ] ].
-	^ codeBlockToExecute
-]
-
-{ #category : #accessing }
-InqInquisitor >> codeBlockToExecute: aBlockClosure [
-	codeBlockToExecute := aBlockClosure
+	self announceUpdate
 ]
 
 { #category : #'question management' }
@@ -109,12 +120,14 @@ InqInquisitor >> displayResultOfQuestion: anInquisitorQuestion [
 
 { #category : #'question management' }
 InqInquisitor >> executionCode [
+	executionCode ifNil: [ executionCode := '' ].
 	^ executionCode
 ]
 
 { #category : #'question management' }
 InqInquisitor >> executionCode: aString [
-	executionCode := aString
+	executionCode := aString.
+	self announceUpdate
 ]
 
 { #category : #testing }
@@ -176,20 +189,18 @@ InqInquisitor >> runExecution [
 
 { #category : #'question management' }
 InqInquisitor >> setupCode [
+	setupCode ifNil: [ setupCode := '' ].
 	^ setupCode
 ]
 
 { #category : #'question management' }
 InqInquisitor >> setupCode: aString [
-	setupCode := aString
+	setupCode := aString.
+	self announceUpdate
 ]
 
-{ #category : #'as yet unclassified' }
-InqInquisitor >> update: aNotification [
-	"If this object has been registered as an observer to the Breakpoint class, this method will be called when a breakpoint is hit/added/removed."
-	self flag: 'debug code'.
-	self inform: 'notification:', aNotification asString.
-	aNotification isBreakpointHitNotification ifFalse: [ ^ self ]. "Notification is not a breakpoint hit"
-	(aNotification nodes size >= 2) ifTrue: [ self error: 'Unexpected case: breakpoint hit notification contains more than one node'  ].
-	lastBreakpointHit := aNotification breakpoint.
+{ #category : #accessing }
+InqInquisitor >> updateAnnouncer [
+	updateAnnouncer ifNil: [ updateAnnouncer := Announcer new ].
+	^ updateAnnouncer
 ]

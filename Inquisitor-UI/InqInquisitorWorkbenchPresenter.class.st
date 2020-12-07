@@ -68,6 +68,11 @@ InqInquisitorWorkbenchPresenter >> buttonActionEditInquisitor [
 ]
 
 { #category : #'button action' }
+InqInquisitorWorkbenchPresenter >> buttonActionInspectAllCapturePoints [
+	questionDropList selectedItem capturePoints inspect
+]
+
+{ #category : #'button action' }
 InqInquisitorWorkbenchPresenter >> buttonActionInspectCapturePoint [
 	capturePointsNotebook selectedPage activePresenter selectedCapturePoint inspect
 ]
@@ -89,8 +94,7 @@ InqInquisitorWorkbenchPresenter >> buttonActionRemoveInquisitor [
 
 { #category : #'button action' }
 InqInquisitorWorkbenchPresenter >> buttonActionSetMainInquisitor [
-	self flag: 'Todo: finish'.
-	self inform: 'set main inquisitor'
+	InqInquisitor mainInstance: inquisitorDropList selectedItem
 ]
 
 { #category : #specs }
@@ -164,7 +168,7 @@ InqInquisitorWorkbenchPresenter >> cstrAt: aSymbol [
 { #category : #specs }
 InqInquisitorWorkbenchPresenter >> defaultSpec_ [
 	self class constraints: self constraints.
-	^ SpBoxLayout newVertical
+	^ SpPanedLayout newVertical
 		add: (SpBoxLayout newHorizontal
 			add: #inquisitorSectionHolder;
 			add: #questionSectionHolder;
@@ -203,6 +207,44 @@ InqInquisitorWorkbenchPresenter >> defaultSpec_ [
 			yourself	
 		) withConstraints: [ :cstr | cstr height: 30 ];
 		yourself."
+]
+
+{ #category : #initialization }
+InqInquisitorWorkbenchPresenter >> eventInquisitorAdded: anInqInquisitorAdded [
+	self inform: 'added'.
+	inquisitorDropList items: InqInquisitor instances.
+	anInqInquisitorAdded inquisitor updateAnnouncer weak when: InqInquisitorUpdated send: #eventInquisitorUpdated: to: self.
+	inquisitorDropList selectItem: anInqInquisitorAdded inquisitor
+]
+
+{ #category : #initialization }
+InqInquisitorWorkbenchPresenter >> eventInquisitorMainInstanceChanged: anInqInquisitorMainInstanceChanged [
+	| selected |
+	selected := inquisitorDropList selectedItem.
+	inquisitorDropList items: InqInquisitor instances.
+	selected ifNotNil: [inquisitorDropList selectItem: selected].
+]
+
+{ #category : #initialization }
+InqInquisitorWorkbenchPresenter >> eventInquisitorRemoved: anInqInquisitorRemoved [
+	| selected |
+	anInqInquisitorRemoved inquisitor updateAnnouncer unsubscribe: self.
+	selected := inquisitorDropList selectedItem.
+	inquisitorDropList resetSelection.
+	"If the removed inquisitor was not the last, simply update the list. It is was the list, replace the list with a list containing a single empty inquisitor"
+	(inquisitorDropList items size > 1) ifTrue: [ inquisitorDropList items: InqInquisitor instances] ifFalse: [ inquisitorDropList items: ((OrderedCollection new) add: InqEmptyInquisitor new; yourself) ].
+	(selected == anInqInquisitorRemoved inquisitor) ifFalse: [inquisitorDropList selectItem: selected].
+]
+
+{ #category : #initialization }
+InqInquisitorWorkbenchPresenter >> eventInquisitorUpdated: anInqInquisitorUpdated [
+	| selected |
+	selected := inquisitorDropList selectedItem.
+	inquisitorDropList items: InqInquisitor instances.
+	selected ifNotNil: [inquisitorDropList selectItem: selected].
+	self flag: 'todo'.
+	"update question list. Maybe not needed because the selected inquisitor is reselected"
+	
 ]
 
 { #category : #'button action' }
@@ -270,6 +312,9 @@ InqInquisitorWorkbenchPresenter >> initializeWindow: aWindowPresenter [
 InqInquisitorWorkbenchPresenter >> postInitialisation [
 	"Executed after #initializePresenters and #connectPresenters"
 	inquisitorDropList items isEmpty ifFalse: [ inquisitorDropList selectIndex: 1 ]. "After everything is initialised, to trigger a refresh of the Ui as if the user had selected the first inquisitor in the list."
+	InqInquisitor instanceLogAnnouncer weak when: InqInquisitorAdded send: #eventInquisitorAdded: to: self.
+	InqInquisitor instanceLogAnnouncer weak when: InqInquisitorRemoved send: #eventInquisitorRemoved: to: self.
+	InqInquisitor instanceLogAnnouncer weak when: InqInquisitorMainInstanceChanged send: #eventInquisitorMainInstanceChanged: to: self.
 ]
 
 { #category : #initialization }
@@ -303,10 +348,14 @@ InqInquisitorWorkbenchPresenter >> setModelBeforeInitialization: anObject [
 
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> whenInquisitorIsSelected: anInquisitor [
-	self setItemsOfQuestionDropList: anInquisitor questionHistory.
-	setupCodeField text: anInquisitor setupCode.
-	executionCodeField text: anInquisitor executionCode.
-	removeInquisitorButton enabled: (anInquisitor isEmptyInquisitor not)
+	| selectedInquisitor |
+	selectedInquisitor := anInquisitor.
+	selectedInquisitor ifNil: [ selectedInquisitor := InqEmptyInquisitor new ]. "Sometimes, the inquisitorDropList selects nil. This line avoids series of 'X was sent to nil' ensuing from that"
+	self setItemsOfQuestionDropList: selectedInquisitor questionHistory.
+	setupCodeField text: selectedInquisitor setupCode.
+	executionCodeField text: selectedInquisitor executionCode.
+	removeInquisitorButton enabled: (selectedInquisitor isEmptyInquisitor not).
+	setMainInquisitorButton enabled: ((selectedInquisitor isEmptyInquisitor not) and: [InqInquisitor mainInstance ~= selectedInquisitor]).
 	
 	
 ]
@@ -329,4 +378,10 @@ InqInquisitorWorkbenchPresenter >> whenQuestionIsSelected: anInqInquisitorQuesti
 		]	
 	].
 	capturePointsNotebook selectPageIndex: 1.
+]
+
+{ #category : #initialization }
+InqInquisitorWorkbenchPresenter >> windowIsClosing [
+	super windowIsClosing.
+	InqInquisitor instanceLogAnnouncer unsubscribe: self
 ]

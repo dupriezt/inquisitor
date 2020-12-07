@@ -4,6 +4,11 @@ Class {
 	#category : #'Inquisitor-UI'
 }
 
+{ #category : #'instance creation' }
+InqEmptyInquisitor class >> new [
+	^ super newWithoutRegisteringInstance
+]
+
 { #category : #printing }
 InqEmptyInquisitor >> asStringForClyCommand [
 	^ 'No Inquisitor exist'
