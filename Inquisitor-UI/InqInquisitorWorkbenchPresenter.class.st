@@ -89,6 +89,18 @@ InqInquisitorWorkbenchPresenter >> buttonActionInspectQuestion [
 ]
 
 { #category : #'button action' }
+InqInquisitorWorkbenchPresenter >> buttonActionOpenCapturePoint [
+	self flag: 'TODO'.
+	self inform: 'Open Capture point'
+]
+
+{ #category : #'button action' }
+InqInquisitorWorkbenchPresenter >> buttonActionReAskQuestion [
+	self flag: 'TODO'.
+	self inform: 'Re-ask selected question'
+]
+
+{ #category : #'button action' }
 InqInquisitorWorkbenchPresenter >> buttonActionRemoveInquisitor [
 	InqInquisitor removeInstance: inquisitorDropList selectedItem
 ]
@@ -324,6 +336,12 @@ InqInquisitorWorkbenchPresenter >> inquisitorCodeFieldsMuted [
 	"If true, disables the #whenTextChangedDo: of the setupCodeField and executionCodeField"
 	inquisitorCodeFieldsMuted ifNil: [ inquisitorCodeFieldsMuted := false ].
 	^ inquisitorCodeFieldsMuted
+]
+
+{ #category : #accessing }
+InqInquisitorWorkbenchPresenter >> inquisitorCodeFieldsMuted: aBoolean [
+	"If true, disables the #whenTextChangedDo: of the setupCodeField and executionCodeField"
+	inquisitorCodeFieldsMuted := aBoolean
 ]
 
 { #category : #initialization }

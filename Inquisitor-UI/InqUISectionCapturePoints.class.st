@@ -52,6 +52,12 @@ InqUISectionCapturePoints >> initializePresenters [
 				yourself
 			);
 			add: (self newButton
+				icon: (self iconManager iconNamed: #smallDebug);
+				action: [ workbench buttonActionOpenCapturePoint ];
+				help: 'Re-run execution to open selected capture point in a debugger';
+				yourself
+			);
+			add: (self newButton
 				icon: (self iconManager iconNamed: #smallInspectIt);
 				action: [ workbench buttonActionInspectAllCapturePoints ];
 				help: 'Inspect all Capture Points';

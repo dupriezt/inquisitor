@@ -55,6 +55,12 @@ InqUISectionQuestion >> initializePresenters [
 			help: 'Inspect question';
 			yourself
 		);
+		add: (self newButton
+			icon: (self iconManager iconNamed: #glamorousRestart);
+			action: [ workbench buttonActionReAskQuestion ];
+			help: 'Re-ask selected question';
+			yourself
+		);
 		yourself.
 
 	questionQuickViewTable := self newTable
