@@ -127,10 +127,10 @@ InqInquisitorWorkbenchPresenter >> capturePointsPagesDictionary [
 InqInquisitorWorkbenchPresenter >> connectPresenters [
 	"The method connectPresenters defines the interactions between the dif- ferent widgets. By connecting the behaviors of the different widgets it speci- fies the overall presentation, i.e., how the overall UI responds to interactions by the user. Usually this method consists of specifications of actions to per- form when a certain event is received by a widget. The whole interaction flow of the UI then emerges from the propagation of those events."
 	inquisitorDropList whenSelectedItemChangedDo: [ :newlySelectedInquisitor |
-		self whenInquisitorIsSelected: newlySelectedInquisitor.
+		self inquisitorCodeFieldsMuted ifFalse: [ self whenInquisitorIsSelected: newlySelectedInquisitor].
 	].
 	questionDropList whenSelectedItemChangedDo: [ :newlySelectedQuestion |
-		self whenQuestionIsSelected: newlySelectedQuestion.
+		self inquisitorCodeFieldsMuted ifFalse: [ self whenQuestionIsSelected: newlySelectedQuestion].
 	].
 	self postInitialisation.
 ]
@@ -253,7 +253,7 @@ InqInquisitorWorkbenchPresenter >> eventInquisitorRemoved: anInqInquisitorRemove
 	] ifFalse: [
 		self setItemsOfInquisitorDropList: ((OrderedCollection new) add: InqEmptyInquisitor new; yourself)
 	].
-	(selected == anInqInquisitorRemoved inquisitor) ifFalse: [inquisitorDropList selectItem: selected].
+	(selected == anInqInquisitorRemoved inquisitor) ifFalse: [inquisitorDropList selectItem: selected] ifTrue: [ inquisitorDropList selectIndex: 1].
 ]
 
 { #category : #initialization }
@@ -261,7 +261,7 @@ InqInquisitorWorkbenchPresenter >> eventInquisitorUpdated: anInqInquisitorUpdate
 	| selected |
 	self eventLog add: anInqInquisitorUpdated.
 	selected := inquisitorDropList selectedItem.
-	self setItemsOfInquisitorDropList: InqInquisitor instances.
+	self setItemsOfInquisitorDropList: InqInquisitor instances. "The content of the list of inquisitor instances did not change, but resetting the items of the drop list is the only way I found to make sure their display block (their name in the droplist) are re-evaluated"
 	selected ifNotNil: [inquisitorDropList selectItem: selected].
 	self flag: 'todo'.
 	"update question list. Maybe not needed because the selected inquisitor is reselected"
@@ -334,7 +334,7 @@ InqInquisitorWorkbenchPresenter >> initializeWindow: aWindowPresenter [
 { #category : #accessing }
 InqInquisitorWorkbenchPresenter >> inquisitorCodeFieldsMuted [
 	"If true, disables the #whenTextChangedDo: of the setupCodeField and executionCodeField"
-	inquisitorCodeFieldsMuted ifNil: [ inquisitorCodeFieldsMuted := false ].
+	inquisitorCodeFieldsMuted ifNil: [ inquisitorCodeFieldsMuted := true ].
 	^ inquisitorCodeFieldsMuted
 ]
 
@@ -351,6 +351,7 @@ InqInquisitorWorkbenchPresenter >> postInitialisation [
 	InqInquisitor instanceLogAnnouncer weak when: InqInquisitorAdded send: #eventInquisitorAdded: to: self.
 	InqInquisitor instanceLogAnnouncer weak when: InqInquisitorRemoved send: #eventInquisitorRemoved: to: self.
 	InqInquisitor instanceLogAnnouncer weak when: InqInquisitorMainInstanceChanged send: #eventInquisitorMainInstanceChanged: to: self.
+	inquisitorCodeFieldsMuted := false.
 ]
 
 { #category : #initialization }
@@ -363,14 +364,16 @@ InqInquisitorWorkbenchPresenter >> presenterNamed: aSymbol fromUISection: aUISec
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> setItemsOfInquisitorDropList: anOrderedCollection [
 	"Change the inquisitor list shown in inquisitorDropList. If the new inquisitor list is empty, instead put a list containing an empty inquisitor in order to prevent inquisitorDropList from being empty."
-	anOrderedCollection isEmpty ifFalse: [inquisitorDropList items: anOrderedCollection] ifTrue: [ inquisitorDropList items: (OrderedCollection new add: InqEmptyInquisitor new; yourself) ].
-	inquisitorDropList selectIndex: 1.
+	[self inquisitorCodeFieldsMuted: true.
+	anOrderedCollection isEmpty ifFalse: [inquisitorDropList items: anOrderedCollection] ifTrue: [ inquisitorDropList items: (OrderedCollection new add: InqEmptyInquisitor new; yourself) ]] ensure: [ self inquisitorCodeFieldsMuted: false ].
+	"inquisitorDropList selectIndex: 1."
 ]
 
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> setItemsOfQuestionDropList: anOrderedCollection [
 	"Change the question list shown in questionDropList. If the new question list is empty, instead put a list containing an empty question in order to prevent questionDropList from being empty"
-	anOrderedCollection isEmpty ifFalse: [questionDropList items: anOrderedCollection] ifTrue: [ questionDropList items: (OrderedCollection new add: InqEmptyQuestion new; yourself) ].
+	[self inquisitorCodeFieldsMuted: true.
+	anOrderedCollection isEmpty ifFalse: [questionDropList items: anOrderedCollection] ifTrue: [ questionDropList items: (OrderedCollection new add: InqEmptyQuestion new; yourself) ].] ensure: [ self inquisitorCodeFieldsMuted: false ].
 	questionDropList selectIndex: 1.
 ]
 
