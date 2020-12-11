@@ -388,16 +388,15 @@ InqInquisitorWorkbenchPresenter >> uiIsMuted: aBoolean [
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> whenInquisitorIsSelected: anInquisitor [
 	anInquisitor ifNil: [ ^ self ].
-	uiIsMuted := true.
-	[
+	self uiIsMuted: true.
 	self setItemsOfQuestionDropList: anInquisitor questionHistory.
 	setupCodeField text: anInquisitor setupCode.
 	setupCodeField editable: (anInquisitor isEmptyInquisitor not).
 	executionCodeField text: anInquisitor executionCode.
 	executionCodeField editable: (anInquisitor isEmptyInquisitor not).
 	removeInquisitorButton enabled: (anInquisitor isEmptyInquisitor not).
-	setMainInquisitorButton enabled: ((anInquisitor isEmptyInquisitor not) and: [InqInquisitor mainInstance ~= anInquisitor])
-	] ensure: [ uiIsMuted := false ]
+	setMainInquisitorButton enabled: ((anInquisitor isEmptyInquisitor not) and: [InqInquisitor mainInstance ~= anInquisitor]).
+	self uiIsMuted: false
 	
 ]
 
