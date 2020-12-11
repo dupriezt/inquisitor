@@ -25,8 +25,8 @@ Class {
 		'setMainInquisitorButton',
 		'inspectInquisitorButton',
 		'editInquisitorButton',
-		'inquisitorCodeFieldsMuted',
-		'eventLog'
+		'eventLog',
+		'uiIsMuted'
 	],
 	#classVars : [
 		'constraints'
@@ -127,10 +127,10 @@ InqInquisitorWorkbenchPresenter >> capturePointsPagesDictionary [
 InqInquisitorWorkbenchPresenter >> connectPresenters [
 	"The method connectPresenters defines the interactions between the dif- ferent widgets. By connecting the behaviors of the different widgets it speci- fies the overall presentation, i.e., how the overall UI responds to interactions by the user. Usually this method consists of specifications of actions to per- form when a certain event is received by a widget. The whole interaction flow of the UI then emerges from the propagation of those events."
 	inquisitorDropList whenSelectedItemChangedDo: [ :newlySelectedInquisitor |
-		self inquisitorCodeFieldsMuted ifFalse: [ self whenInquisitorIsSelected: newlySelectedInquisitor].
+		self uiIsMuted ifFalse: [ self whenInquisitorIsSelected: newlySelectedInquisitor].
 	].
 	questionDropList whenSelectedItemChangedDo: [ :newlySelectedQuestion |
-		self inquisitorCodeFieldsMuted ifFalse: [ self whenQuestionIsSelected: newlySelectedQuestion].
+		self uiIsMuted ifFalse: [ self whenQuestionIsSelected: newlySelectedQuestion].
 	].
 	self postInitialisation.
 ]
@@ -288,7 +288,6 @@ InqInquisitorWorkbenchPresenter >> initializePresenters [
 		• widget instantiation
 		• widget configuration specification
 		• specification of focus order"
-	
 	inquisitorSection := InqUISectionInquisitor on: self.
 	inquisitorSectionHolder := self newNotebook addPageTitle: 'Inquisitor' provider: [ 
 		inquisitorSection
@@ -317,8 +316,6 @@ InqInquisitorWorkbenchPresenter >> initializePresenters [
 	capturePointsNotebook := self presenterNamed: #capturePointsNotebook fromUISection: capturePointsSection.
 	capturePointsActionBar := self presenterNamed: #capturePointsActionBar fromUISection: capturePointsSection.
 	capturePointsPlayground := self presenterNamed: #capturePointsPlayground fromUISection: capturePointsSection.
-	
-	self setItemsOfInquisitorDropList: InqInquisitor instances.
 ]
 
 { #category : #initialization }
@@ -331,19 +328,6 @@ InqInquisitorWorkbenchPresenter >> initializeWindow: aWindowPresenter [
 		windowIcon: (self iconManager iconNamed: #home) "Icon that will be shown in the bottom windowbar for this window"
 ]
 
-{ #category : #accessing }
-InqInquisitorWorkbenchPresenter >> inquisitorCodeFieldsMuted [
-	"If true, disables the #whenTextChangedDo: of the setupCodeField and executionCodeField"
-	inquisitorCodeFieldsMuted ifNil: [ inquisitorCodeFieldsMuted := true ].
-	^ inquisitorCodeFieldsMuted
-]
-
-{ #category : #accessing }
-InqInquisitorWorkbenchPresenter >> inquisitorCodeFieldsMuted: aBoolean [
-	"If true, disables the #whenTextChangedDo: of the setupCodeField and executionCodeField"
-	inquisitorCodeFieldsMuted := aBoolean
-]
-
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> postInitialisation [
 	"Executed after #initializePresenters and #connectPresenters"
@@ -351,7 +335,9 @@ InqInquisitorWorkbenchPresenter >> postInitialisation [
 	InqInquisitor instanceLogAnnouncer weak when: InqInquisitorAdded send: #eventInquisitorAdded: to: self.
 	InqInquisitor instanceLogAnnouncer weak when: InqInquisitorRemoved send: #eventInquisitorRemoved: to: self.
 	InqInquisitor instanceLogAnnouncer weak when: InqInquisitorMainInstanceChanged send: #eventInquisitorMainInstanceChanged: to: self.
-	inquisitorCodeFieldsMuted := false.
+	self setItemsOfInquisitorDropList: InqInquisitor instances.
+	inquisitorDropList selectIndex: 1.
+	uiIsMuted := false.
 ]
 
 { #category : #initialization }
@@ -364,16 +350,16 @@ InqInquisitorWorkbenchPresenter >> presenterNamed: aSymbol fromUISection: aUISec
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> setItemsOfInquisitorDropList: anOrderedCollection [
 	"Change the inquisitor list shown in inquisitorDropList. If the new inquisitor list is empty, instead put a list containing an empty inquisitor in order to prevent inquisitorDropList from being empty."
-	[self inquisitorCodeFieldsMuted: true.
-	anOrderedCollection isEmpty ifFalse: [inquisitorDropList items: anOrderedCollection] ifTrue: [ inquisitorDropList items: (OrderedCollection new add: InqEmptyInquisitor new; yourself) ]] ensure: [ self inquisitorCodeFieldsMuted: false ].
+	[self uiIsMuted: true.
+	anOrderedCollection isEmpty ifFalse: [inquisitorDropList items: anOrderedCollection] ifTrue: [ inquisitorDropList items: (OrderedCollection new add: InqEmptyInquisitor new; yourself) ]] ensure: [ self uiIsMuted: false ].
 	"inquisitorDropList selectIndex: 1."
 ]
 
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> setItemsOfQuestionDropList: anOrderedCollection [
 	"Change the question list shown in questionDropList. If the new question list is empty, instead put a list containing an empty question in order to prevent questionDropList from being empty"
-	[self inquisitorCodeFieldsMuted: true.
-	anOrderedCollection isEmpty ifFalse: [questionDropList items: anOrderedCollection] ifTrue: [ questionDropList items: (OrderedCollection new add: InqEmptyQuestion new; yourself) ].] ensure: [ self inquisitorCodeFieldsMuted: false ].
+	[self uiIsMuted: true.
+	anOrderedCollection isEmpty ifFalse: [questionDropList items: anOrderedCollection] ifTrue: [ questionDropList items: (OrderedCollection new add: InqEmptyQuestion new; yourself) ].] ensure: [ self uiIsMuted: false ].
 	questionDropList selectIndex: 1.
 ]
 
@@ -385,10 +371,24 @@ InqInquisitorWorkbenchPresenter >> setModelBeforeInitialization: anObject [
 	"instanceVariable1 := anObject getValueForInstanceVariable1"
 ]
 
+{ #category : #accessing }
+InqInquisitorWorkbenchPresenter >> uiIsMuted [
+	"If true, indicates that the text fields should not #whenTextChangedDo: and dropList should not whenSelectionChangedDo: . Used to disable UI reactions when the UI modifies itself (changing text in text fields, selecting items in droplist) and we do not want these modifications to trigger more reactions.
+	It is muted by default so that it is muted during its own initialisation"
+	uiIsMuted ifNil: [ uiIsMuted := true ].
+	^ uiIsMuted
+]
+
+{ #category : #accessing }
+InqInquisitorWorkbenchPresenter >> uiIsMuted: aBoolean [
+	"See comment of #uiIsMuted"
+	uiIsMuted := aBoolean
+]
+
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> whenInquisitorIsSelected: anInquisitor [
 	anInquisitor ifNil: [ ^ self ].
-	inquisitorCodeFieldsMuted := true.
+	uiIsMuted := true.
 	[
 	self setItemsOfQuestionDropList: anInquisitor questionHistory.
 	setupCodeField text: anInquisitor setupCode.
@@ -397,7 +397,7 @@ InqInquisitorWorkbenchPresenter >> whenInquisitorIsSelected: anInquisitor [
 	executionCodeField editable: (anInquisitor isEmptyInquisitor not).
 	removeInquisitorButton enabled: (anInquisitor isEmptyInquisitor not).
 	setMainInquisitorButton enabled: ((anInquisitor isEmptyInquisitor not) and: [InqInquisitor mainInstance ~= anInquisitor])
-	] ensure: [ inquisitorCodeFieldsMuted := false ]
+	] ensure: [ uiIsMuted := false ]
 	
 ]
 

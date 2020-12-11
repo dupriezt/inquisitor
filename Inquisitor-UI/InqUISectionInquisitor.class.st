@@ -128,10 +128,10 @@ InqUISectionInquisitor >> initializePresenters [
 		yourself.
 		
 	setupCodeField := self newCode
-		whenTextChangedDo: [ :newText | workbench inquisitorCodeFieldsMuted ifFalse: [ inquisitorDropList selectedItem setupCode: newText ]];
+		whenTextChangedDo: [ :newText | workbench uiIsMuted ifFalse: [inquisitorDropList selectedItem setupCode: newText ]];
 		yourself.
 	executionCodeField := self newCode
-		whenTextChangedDo: [ :newText | workbench inquisitorCodeFieldsMuted ifFalse: [ inquisitorDropList selectedItem executionCode: newText]];
+		whenTextChangedDo: [ :newText | workbench uiIsMuted ifFalse: [inquisitorDropList selectedItem executionCode: newText]];
 		yourself
 ]
 
