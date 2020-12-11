@@ -418,6 +418,8 @@ InqInquisitorWorkbenchPresenter >> whenQuestionIsSelected: anInqInquisitorQuesti
 			]
 		]	
 	].
+	"Bind the collection of capturePoints to the 'capturePointsCollection' variable in the capture points playground"
+	(capturePointsPlayground bindingOf: 'capturePointsCollection') ifNotNil: [:binding | binding value: anInqInquisitorQuestion capturePoints]. "The ifNotNil is because at some point in the initialisation, this method gets called and capturePointsPlayground is a StPlayground (no idea why, as it should be a SpCodePresenter), and #bindingOf: returns nil."
 	capturePointsNotebook selectPageIndex: 1.
 ]
 

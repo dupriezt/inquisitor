@@ -64,7 +64,10 @@ InqUISectionCapturePoints >> initializePresenters [
 				yourself
 			);
 			yourself.
-		capturePointsPlayground := StPlayground new.
+		capturePointsPlayground := self newCode
+			beForScripting;
+			text: 'capturePointsCollection';
+			yourself
 ]
 
 { #category : #initialization }

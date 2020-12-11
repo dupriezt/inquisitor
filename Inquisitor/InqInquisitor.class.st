@@ -187,6 +187,11 @@ InqInquisitor >> runExecution [
 	OpalCompiler new source: sourceCode; evaluate.
 ]
 
+{ #category : #initialization }
+InqInquisitor >> setAsMainInstance [
+	InqInquisitor mainInstance: self
+]
+
 { #category : #'question management' }
 InqInquisitor >> setupCode [
 	setupCode ifNil: [ setupCode := '' ].
