@@ -75,7 +75,7 @@ InqInquisitorWorkbenchPresenter >> buttonActionInspectAllCapturePoints [
 
 { #category : #'button action' }
 InqInquisitorWorkbenchPresenter >> buttonActionInspectCapturePoint [
-	capturePointsNotebook selectedPage activePresenter selectedCapturePoint inspect
+	capturePointsNotebook selectedPage activePresenter selectedCapturePoint ifNotNil: [:capturePoint | capturePoint inspect] ifNil: [ self inform: 'No capture point selected' ]
 ]
 
 { #category : #'button action' }
