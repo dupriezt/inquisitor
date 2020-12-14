@@ -45,6 +45,7 @@ InqHitCheckTest >> testHitCheckNotAffectedByOtherBreakpoints [
 	oneHitNode := inquisitedMethod ast body statements at: 1.
 	q := InqHitCheckQuestion newForNode: oneHitNode.
 	q askToInquisitor: inquisitor.
+	self assertExecutionTerminationNormal: q.
 	self assert: q capturePoints size equals: 1.
 	"self assertNoBreakpointInAssistMethodAfterTest. It is normal that there is a breakpoint in the assist method after this test. The tearDown should remove it."
 ]
@@ -58,6 +59,7 @@ InqHitCheckTest >> testHitCheck_FourHit [
 	fourHitNode :=  ((inquisitedMethod ast body statements at: 2) arguments at: 1) body statements at: 1. "'i := i - 1' assignment node"
 	q := InqHitCheckQuestion newForNode: fourHitNode.
 	q askToInquisitor: inquisitor.
+	self assertExecutionTerminationNormal: q.
 	self assert: q capturePoints size equals: 4.
 	self assertNoBreakpointInAssistMethodAfterTest.
 ]
@@ -71,6 +73,7 @@ InqHitCheckTest >> testHitCheck_OneHit [
 	oneHitNode := inquisitedMethod ast body statements at: 1. "'i := 4' assignment node"
 	q := InqHitCheckQuestion newForNode: oneHitNode.
 	q askToInquisitor: inquisitor.
+	self assertExecutionTerminationNormal: q.
 	self assert: q capturePoints size equals: 1.
 	self assertNoBreakpointInAssistMethodAfterTest.
 ]

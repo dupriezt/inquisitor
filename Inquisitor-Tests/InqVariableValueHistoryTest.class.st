@@ -53,14 +53,15 @@ InqVariableValueHistoryTest >> tearDown [
 
 { #category : #running }
 InqVariableValueHistoryTest >> testVariableValueHistory_ArgumentVariables [
-	| questionedMethod argumentOneNode question cps inst1 inst2 qMeth |
+	| questionedMethod argumentOneNode q cps inst1 inst2 qMeth |
 	self setUpForInquisitedMethod: (self class)>>#dummyForTestVariableValueHistory_ArgumentVariables.
 	
 	questionedMethod := (self assistClass)>>#methodWithArgument:.
 	argumentOneNode := questionedMethod ast arguments at: 1. "Argument named arg1"
-	question := InqArgumentVariableValueHistoryQuestion newForNode: argumentOneNode andMethod: questionedMethod.
-	question askToInquisitor: inquisitor.
-	cps := question capturePoints.
+	q := InqArgumentVariableValueHistoryQuestion newForNode: argumentOneNode andMethod: questionedMethod.
+	q askToInquisitor: inquisitor.
+	self assertExecutionTerminationNormal: q.
+	cps := q capturePoints.
 	self assert: cps size equals: 3.
 	"Asserts that all three capture points are on different method invocations"
 	self assertCollection: (cps collect: [:cp | cp methodInvocation contextHash]) matchesPattern: { #a. #b. #c }.
@@ -75,15 +76,16 @@ InqVariableValueHistoryTest >> testVariableValueHistory_ArgumentVariables [
 
 { #category : #running }
 InqVariableValueHistoryTest >> testVariableValueHistory_ClassVariables [
-	| questionedMethod classVariableNode question cps qMeth varOwner |
+	| questionedMethod classVariableNode q cps qMeth varOwner |
 	self setUpForInquisitedMethod: (self class)>>#dummyForTestVariableValueHistory_ClassVariable.
 	
 	"In this test, the questionedMethod (method owning the variable ast node on which the question is asked) is the same as the method that the dummy execution will use to change the value of the variable (i.e. the method whose invocations will end up in capture points). These two methods do not have to be the same."
 	questionedMethod := (self assistClass class)>>#setClassVariableTo:.
 	classVariableNode := (questionedMethod ast body statements at: 1) variable. "Class variable named: myClassVariable"
-	question := InqClassVariableValueHistoryQuestion newForNode: classVariableNode andMethod: questionedMethod.
-	question askToInquisitor: inquisitor.
-	cps := question capturePoints.
+	q := InqClassVariableValueHistoryQuestion newForNode: classVariableNode andMethod: questionedMethod.
+	q askToInquisitor: inquisitor.
+	self assertExecutionTerminationNormal: q.
+	cps := q capturePoints.
 	self assert: cps size equals: 3.
 	"Asserts that all three capture points are on different method invocations"
 	self assertCollection: (cps collect: [:cp | cp methodInvocation contextHash]) matchesPattern: { #a. #b. #c }.
@@ -96,15 +98,16 @@ InqVariableValueHistoryTest >> testVariableValueHistory_ClassVariables [
 
 { #category : #running }
 InqVariableValueHistoryTest >> testVariableValueHistory_InstanceVariables [
-	| questionedMethod instanceVariableNode question cps inst1 inst2 qMeth |
+	| questionedMethod instanceVariableNode q cps inst1 inst2 qMeth |
 	self setUpForInquisitedMethod: (self class)>>#dummyForTestVariableValueHistory_InstanceVariable.
 	
 	"In this test, the questionedMethod (method owning the variable ast node on which the question is asked) is the same as the method that the dummy execution will use to change the value of the variable (i.e. the method whose invocations will end up in capture points). These two methods do not have to be the same."
 	questionedMethod := (self assistClass)>>#setInstanceVariableTo:.
 	instanceVariableNode := (questionedMethod ast body statements at: 1) variable. "Instance variable named: myInstanceVariable"
-	question := InqInstanceVariableValueHistoryQuestion newForNode: instanceVariableNode andMethod: questionedMethod.
-	question askToInquisitor: inquisitor.
-	cps := question capturePoints.
+	q := InqInstanceVariableValueHistoryQuestion newForNode: instanceVariableNode andMethod: questionedMethod.
+	q askToInquisitor: inquisitor.
+	self assertExecutionTerminationNormal: q.
+	cps := q capturePoints.
 	self assert: cps size equals: 3.
 	"Asserts that all three capture points are on different method invocations"
 	self assertCollection: (cps collect: [:cp | cp methodInvocation contextHash]) matchesPattern: { #a. #b. #c }.
@@ -119,14 +122,15 @@ InqVariableValueHistoryTest >> testVariableValueHistory_InstanceVariables [
 
 { #category : #running }
 InqVariableValueHistoryTest >> testVariableValueHistory_LocalVariable [
-	| localVariableNode questionedMethod cps inst1 inst2 qMeth question |
+	| localVariableNode questionedMethod cps inst1 inst2 qMeth q |
 	self setUpForInquisitedMethod: (self class)>>#dummyForTestVariableValueHistory_LocalVariable.
 	
 	questionedMethod := (self assistClass)>>#setLocalVariables.
 	localVariableNode := (questionedMethod ast body statements at: 1) variable. "local variable #a"
-	question := InqLocalVariableValueHistoryQuestion newForNode: localVariableNode andMethod: questionedMethod.
-	question askToInquisitor: inquisitor.
-	cps := question capturePoints.
+	q := InqLocalVariableValueHistoryQuestion newForNode: localVariableNode andMethod: questionedMethod.
+	q askToInquisitor: inquisitor.
+	self assertExecutionTerminationNormal: q.
+	cps := q capturePoints.
 	self assert: cps size equals: 9.
 	"Asserts that the first three capture points are on the same method invocation, that the next three are on another method invocation, and that the final three are on a third method invocation"
 	self assertCollection: (cps collect: [:cp | cp methodInvocation contextHash]) matchesPattern: { #a. #a. #a. #b. #b. #b. #c. #c. #c }.

@@ -29,13 +29,14 @@ InqValueCheckTest >> tearDown [
 
 { #category : #tests }
 InqValueCheckTest >> testValueCheck [
-	| questionedMethod targetNode question cps qMeth inst2 inst1 |
+	| questionedMethod targetNode q cps qMeth inst2 inst1 |
 	self setUpForInquisitedMethod: (self class)>>#dummyForTestValueCheck.
 	questionedMethod :=(self assistClass)>>#incrementArgument:.
 	targetNode := questionedMethod ast body statements at: 1. "targetNode = 'self flag: 'targetNode'"
-	question := InqValueCheckQuestion newForNode: targetNode andExpression: 'anInteger isPrime'.
-	question askToInquisitor: inquisitor.
-	cps := question capturePoints.
+	q := InqValueCheckQuestion newForNode: targetNode andExpression: 'anInteger isPrime'.
+	q askToInquisitor: inquisitor.
+	self assertExecutionTerminationNormal: q.
+	cps := q capturePoints.
 	self assert: cps size equals: 3.
 	"Asserts that the three capture points have been captured in different method invocations"
 	self assertCollection: (cps collect: [:cp | cp methodInvocation contextHash]) matchesPattern: { #a. #b. #c }.

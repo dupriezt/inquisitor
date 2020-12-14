@@ -58,14 +58,15 @@ InqMethodReturnQuestionTest >> tearDown [
 
 { #category : #tests }
 InqMethodReturnQuestionTest >> testImplicitReturnSelf [
-	| question capturePoints questionedMethod receiverInstance |
+	| q capturePoints questionedMethod receiverInstance |
 	self setUpForInquisitedMethod: (self class)>>#dummyForTestReturnImplicitSelf.
 	
 	questionedMethod := (self assistClass)>>#returnImplicitSelf.
-	question := InqMethodReturnQuestion newForMethod: questionedMethod.
-	question askToInquisitor: inquisitor.
+	q := InqMethodReturnQuestion newForMethod: questionedMethod.
+	q askToInquisitor: inquisitor.
+	self assertExecutionTerminationNormal: q.
 	receiverInstance := (self assistClass) instances at: 1.
-	capturePoints := question capturePoints.
+	capturePoints := q capturePoints.
 	self assert: capturePoints size equals: 1.
 	self assert: capturePoints first capturedValue equals: receiverInstance.
 	self assert: capturePoints first breakpointsEncountered size equals: 1.
@@ -75,12 +76,13 @@ InqMethodReturnQuestionTest >> testImplicitReturnSelf [
 
 { #category : #tests }
 InqMethodReturnQuestionTest >> testReturnFalse [
-	| question capturePoints questionedMethod inst |
+	| q capturePoints questionedMethod inst |
 	self setUpForInquisitedMethod: (self class)>>#dummyForTestReturnFalse.
 	questionedMethod := (self assistClass)>>#returnFalse.
-	question := InqMethodReturnQuestion newForMethod: questionedMethod.
-	question askToInquisitor: inquisitor.
-	capturePoints := question capturePoints.
+	q := InqMethodReturnQuestion newForMethod: questionedMethod.
+	q askToInquisitor: inquisitor.
+	self assertExecutionTerminationNormal: q.
+	capturePoints := q capturePoints.
 	self assert: capturePoints size equals: 1.
 	self assert: self assistClass instances size equals: 1.
 	inst := self assistClass instances first.
@@ -89,12 +91,13 @@ InqMethodReturnQuestionTest >> testReturnFalse [
 
 { #category : #tests }
 InqMethodReturnQuestionTest >> testReturnInBlock [
-	| question capturePoints questionedMethod inst |
+	| q capturePoints questionedMethod inst |
 	self setUpForInquisitedMethod: (self class)>>#dummyForTestReturnInBlock.
 	questionedMethod := (self assistClass)>>#returnInBlock.
-	question := InqMethodReturnQuestion newForMethod: questionedMethod.
-	question askToInquisitor: inquisitor.
-	capturePoints := question capturePoints.
+	q := InqMethodReturnQuestion newForMethod: questionedMethod.
+	q askToInquisitor: inquisitor.
+	self assertExecutionTerminationNormal: q.
+	capturePoints := q capturePoints.
 	self assert: capturePoints size equals: 1.
 	self assert: self assistClass instances size equals: 1.
 	inst := self assistClass instances first.
@@ -103,12 +106,13 @@ InqMethodReturnQuestionTest >> testReturnInBlock [
 
 { #category : #tests }
 InqMethodReturnQuestionTest >> testReturnNil [
-	| question capturePoints questionedMethod inst |
+	| q capturePoints questionedMethod inst |
 	self setUpForInquisitedMethod: (self class)>>#dummyForTestReturnNil.
 	questionedMethod := (self assistClass)>>#returnNil.
-	question := InqMethodReturnQuestion newForMethod: questionedMethod.
-	question askToInquisitor: inquisitor.
-	capturePoints := question capturePoints.
+	q := InqMethodReturnQuestion newForMethod: questionedMethod.
+	q askToInquisitor: inquisitor.
+	self assertExecutionTerminationNormal: q.
+	capturePoints := q capturePoints.
 	self assert: capturePoints size equals: 1.
 	self assert: self assistClass instances size equals: 1.
 	inst := self assistClass instances first.
@@ -118,12 +122,13 @@ InqMethodReturnQuestionTest >> testReturnNil [
 
 { #category : #tests }
 InqMethodReturnQuestionTest >> testReturnNonSpecialCase [
-	| question capturePoints questionedMethod inst |
+	| q capturePoints questionedMethod inst |
 	self setUpForInquisitedMethod: (self class)>>#dummyForTestReturnNonSpecialCase.
 	questionedMethod := (self assistClass)>>#nonSpecialReturn.
-	question := InqMethodReturnQuestion newForMethod: questionedMethod.
-	question askToInquisitor: inquisitor.
-	capturePoints := question capturePoints.
+	q := InqMethodReturnQuestion newForMethod: questionedMethod.
+	q askToInquisitor: inquisitor.
+	self assertExecutionTerminationNormal: q.
+	capturePoints := q capturePoints.
 	self assert: capturePoints size equals: 1.
 	self assert: self assistClass instances size equals: 1.
 	inst := self assistClass instances first.
@@ -132,12 +137,13 @@ InqMethodReturnQuestionTest >> testReturnNonSpecialCase [
 
 { #category : #tests }
 InqMethodReturnQuestionTest >> testReturnSelf [
-	| question capturePoints questionedMethod inst |
+	| q capturePoints questionedMethod inst |
 	self setUpForInquisitedMethod: (self class)>>#dummyForTestReturnSelf.
 	questionedMethod := (self assistClass)>>#returnSelf.
-	question := InqMethodReturnQuestion newForMethod: questionedMethod.
-	question askToInquisitor: inquisitor.
-	capturePoints := question capturePoints.
+	q := InqMethodReturnQuestion newForMethod: questionedMethod.
+	q askToInquisitor: inquisitor.
+	self assertExecutionTerminationNormal: q.
+	capturePoints := q capturePoints.
 	self assert: capturePoints size equals: 1.
 	self assert: self assistClass instances size equals: 1.
 	inst := self assistClass instances first.
@@ -146,12 +152,13 @@ InqMethodReturnQuestionTest >> testReturnSelf [
 
 { #category : #tests }
 InqMethodReturnQuestionTest >> testReturnTrue [
-	| question capturePoints questionedMethod inst |
+	| q capturePoints questionedMethod inst |
 	self setUpForInquisitedMethod: (self class)>>#dummyForTestReturnTrue.
 	questionedMethod := (self assistClass)>>#returnTrue.
-	question := InqMethodReturnQuestion newForMethod: questionedMethod.
-	question askToInquisitor: inquisitor.
-	capturePoints := question capturePoints.
+	q := InqMethodReturnQuestion newForMethod: questionedMethod.
+	q askToInquisitor: inquisitor.
+	self assertExecutionTerminationNormal: q.
+	capturePoints := q capturePoints.
 	self assert: capturePoints size equals: 1.
 	self assert: self assistClass instances size equals: 1.
 	inst := self assistClass instances first.

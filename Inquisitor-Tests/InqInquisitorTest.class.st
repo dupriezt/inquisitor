@@ -36,6 +36,11 @@ InqInquisitorTest >> assertCollection: aCollection matchesPattern: patternCollec
 	
 ]
 
+{ #category : #asserting }
+InqInquisitorTest >> assertExecutionTerminationNormal: anInqInquisitorQuestion [
+	self assert: anInqInquisitorQuestion executionTermination isNormalTermination
+]
+
 { #category : #running }
 InqInquisitorTest >> checkFormatOf: aCollection accordingTo: aTemplate [
 	
@@ -125,8 +130,8 @@ InqInquisitorTest >> testHaltInCodeShouldBeIgnored [
 	inq := (InqInquisitor newWithoutRegisteringInstanceForCode: 'InqInquisitorTestAssistClass new doNothingWithHalt' withSetupCode: '') isSilent: true; yourself.
 	q := InqHitCheckQuestion newForNode: ((InqInquisitorTestAssistClass>>#doNothingWithHalt) ast body statements first). "Point new"
 	self shouldnt: [inq askQuestion: q] raise: Halt.
+	self assertExecutionTerminationNormal: q.
 	self assert: q capturePoints size equals: 1.
-	self assert: q executionTermination isNormalTermination
 ]
 
 { #category : #tests }
@@ -136,5 +141,6 @@ InqInquisitorTest >> testSetupCodeShouldNotProduceCapturePoints [
 	inq := (InqInquisitor newWithoutRegisteringInstanceForCode: 'InqInquisitorTestAssistClass new doNothing' withSetupCode: 'InqInquisitorTestAssistClass new doNothing') isSilent: true; yourself.
 	q := InqHitCheckQuestion newForNode: ((InqInquisitorTestAssistClass>>#doNothing) ast body statements first). "Point new"
 	inq askQuestion: q.
+	self assertExecutionTerminationNormal: q.
 	self assert: q capturePoints size equals: 1.
 ]
