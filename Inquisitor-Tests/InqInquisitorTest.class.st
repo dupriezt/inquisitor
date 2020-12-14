@@ -110,12 +110,23 @@ InqInquisitorTest >> testDummy [
 ]
 
 { #category : #tests }
+InqInquisitorTest >> testExceptionRaisedByExecutionShouldStopQuestionAndAppearAsTermination [
+	| inq q |
+	inq := (InqInquisitor newWithoutRegisteringInstanceForCode: 'InqInquisitorTestAssistClass new callDoNothingWithError' withSetupCode: '') isSilent: true; yourself.
+	q := InqHitCheckQuestion newForNode: ((InqInquisitorTestAssistClass>>#doNothingWithError) ast body statements first). "Point new"
+	inq askQuestion: q.
+	self assert: q capturePoints size equals: 1. "Checks that the execution of the question was stopped at the first error. Otherwise, the inquisited node would have been reached more than one time"
+	self assert: q executionTermination isNormalTermination not.
+]
+
+{ #category : #tests }
 InqInquisitorTest >> testHaltInCodeShouldBeIgnored [
 	| inq q |
 	inq := (InqInquisitor newWithoutRegisteringInstanceForCode: 'InqInquisitorTestAssistClass new doNothingWithHalt' withSetupCode: '') isSilent: true; yourself.
-	q := InqHitCheckQuestion newForNode: ((InqInquisitorTestAssistClass>>#doNothingWithHalt) ast body statements first).
+	q := InqHitCheckQuestion newForNode: ((InqInquisitorTestAssistClass>>#doNothingWithHalt) ast body statements first). "Point new"
 	self shouldnt: [inq askQuestion: q] raise: Halt.
 	self assert: q capturePoints size equals: 1.
+	self assert: q executionTermination isNormalTermination
 ]
 
 { #category : #tests }
@@ -123,7 +134,7 @@ InqInquisitorTest >> testSetupCodeShouldNotProduceCapturePoints [
 	"Test that when asking a question to an inquisitor, no capture points are created when the setup code is executed."
 	| inq q |
 	inq := (InqInquisitor newWithoutRegisteringInstanceForCode: 'InqInquisitorTestAssistClass new doNothing' withSetupCode: 'InqInquisitorTestAssistClass new doNothing') isSilent: true; yourself.
-	q := InqHitCheckQuestion newForNode: ((InqInquisitorTestAssistClass>>#doNothing) ast body statements first).
+	q := InqHitCheckQuestion newForNode: ((InqInquisitorTestAssistClass>>#doNothing) ast body statements first). "Point new"
 	inq askQuestion: q.
 	self assert: q capturePoints size equals: 1.
 ]

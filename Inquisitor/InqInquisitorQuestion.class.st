@@ -7,7 +7,8 @@ Class {
 		'lastBreakpointHit',
 		'capturePoints',
 		'breakpointsEncountered',
-		'capturePointFactory'
+		'capturePointFactory',
+		'executionTermination'
 	],
 	#category : #Inquisitor
 }
@@ -45,6 +46,11 @@ InqInquisitorQuestion >> capturePointFactory [
 InqInquisitorQuestion >> capturePoints [
 	capturePoints ifNil: [ capturePoints := OrderedCollection new ].
 	^ capturePoints
+]
+
+{ #category : #accessing }
+InqInquisitorQuestion >> executionTermination [
+	^ executionTermination
 ]
 
 { #category : #'as yet unclassified' }

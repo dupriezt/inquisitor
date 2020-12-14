@@ -30,9 +30,24 @@ InqInquisitorTestAssistClass class >> new [
 ]
 
 { #category : #'as yet unclassified' }
+InqInquisitorTestAssistClass >> callDoNothingWithError [
+	"Used for tests"
+	self doNothingWithError.
+	self doNothingWithError.
+]
+
+{ #category : #'as yet unclassified' }
 InqInquisitorTestAssistClass >> doNothing [
 	"Used for tests"
 	Point new
+]
+
+{ #category : #'as yet unclassified' }
+InqInquisitorTestAssistClass >> doNothingWithError [
+	<haltOrBreakpointForTesting>
+	"Used for tests"
+	Point new.
+	1/0.
 ]
 
 { #category : #'as yet unclassified' }
