@@ -34,3 +34,11 @@ InqInquisitorTestAssistClass >> doNothing [
 	"Used for tests"
 	Point new
 ]
+
+{ #category : #'as yet unclassified' }
+InqInquisitorTestAssistClass >> doNothingWithHalt [
+	<haltOrBreakpointForTesting>
+	"Used for tests"
+	Point new.
+	self halt.
+]

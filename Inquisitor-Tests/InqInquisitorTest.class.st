@@ -79,7 +79,12 @@ InqInquisitorTest >> setUpForInquisitedMethod: aCompiledMethod [
 
 { #category : #running }
 InqInquisitorTest >> tearDown [
+	| methodsToClean breakpointsToRemove |
 	self removeBreakpoints.
+	"Remove breakpoints from the following methods"
+	methodsToClean := { InqInquisitorTestAssistClass>>#doNothingWithHalt }.
+	breakpointsToRemove := Breakpoint all select: [ :brkpt | (brkpt link methods) includesAny: methodsToClean].
+	breakpointsToRemove do: [ :brkpt | brkpt remove ]
 ]
 
 { #category : #tests }
@@ -102,6 +107,15 @@ InqInquisitorTest >> testCreateInquisitorOnTestAndRunExecution [
 InqInquisitorTest >> testDummy [
 	"Do nothing. Used by other tests"
 	Point new
+]
+
+{ #category : #tests }
+InqInquisitorTest >> testHaltInCodeShouldBeIgnored [
+	| inq q |
+	inq := (InqInquisitor newWithoutRegisteringInstanceForCode: 'InqInquisitorTestAssistClass new doNothingWithHalt' withSetupCode: '') isSilent: true; yourself.
+	q := InqHitCheckQuestion newForNode: ((InqInquisitorTestAssistClass>>#doNothingWithHalt) ast body statements first).
+	self shouldnt: [inq askQuestion: q] raise: Halt.
+	self assert: q capturePoints size equals: 1.
 ]
 
 { #category : #tests }
