@@ -62,6 +62,16 @@ InqCapturePoint >> methodInvocation: anObject [
 	methodInvocation := anObject
 ]
 
+{ #category : #printing }
+InqCapturePoint >> printOn: aStream [
+	aStream nextPutAll: 'CapturePoint(';
+		nextPutAll: self capturedValue asString;
+		nextPutAll: ', ';
+		nextPutAll: self methodInvocation asStringForCapturePointsTable;
+		nextPutAll: ')'
+	
+]
+
 { #category : #accessing }
 InqCapturePoint >> receiver [
 	^ receiver
