@@ -9,8 +9,7 @@ Class {
 		'addInquisitorButton',
 		'removeInquisitorButton',
 		'setMainInquisitorButton',
-		'inspectInquisitorButton',
-		'editInquisitorButton'
+		'inspectInquisitorButton'
 	],
 	#category : #'Inquisitor-UI'
 }
@@ -107,17 +106,11 @@ InqUISectionInquisitor >> initializePresenters [
 			action: [ workbench buttonActionInspectInquisitor ];
 			help: 'Inspect selected inquisitor';
 			yourself.
-	editInquisitorButton := self newButton
-			icon: (self iconManager iconNamed: #smallCogInitialState);
-			action: [ workbench buttonActionEditInquisitor ];
-			help: 'Edit selected inquisitor';
-			yourself.
 	inquisitorActionBar := SpActionBarPresenter new
 		add: addInquisitorButton;
 		add: removeInquisitorButton;
 		add: setMainInquisitorButton;
 		add: inspectInquisitorButton;
-		add: editInquisitorButton;
 		flag: 'TODO: remove this button vvv';
 		add: (self newButton
 			icon: (self iconManager iconNamed: #smallInspectIt);

@@ -24,7 +24,6 @@ Class {
 		'removeInquisitorButton',
 		'setMainInquisitorButton',
 		'inspectInquisitorButton',
-		'editInquisitorButton',
 		'eventLog',
 		'uiIsMuted'
 	],
@@ -63,19 +62,13 @@ InqInquisitorWorkbenchPresenter >> buttonActionAddInquisitor [
 ]
 
 { #category : #'button action' }
-InqInquisitorWorkbenchPresenter >> buttonActionEditInquisitor [
-	self flag: 'TODO'.
-	self inform: 'Edit Inquisitor'
-]
-
-{ #category : #'button action' }
 InqInquisitorWorkbenchPresenter >> buttonActionInspectAllCapturePoints [
 	questionDropList selectedItem capturePoints inspect
 ]
 
 { #category : #'button action' }
 InqInquisitorWorkbenchPresenter >> buttonActionInspectCapturePoint [
-	capturePointsNotebook selectedPage activePresenter selectedCapturePoint ifNotNil: [:capturePoint | capturePoint inspect] ifNil: [ self inform: 'No capture point selected' ]
+	self selectedCapturePointDo: [ :capturePoint | capturePoint inspect ] ifNilDo: [ self inform: 'No capture point selected' ].
 ]
 
 { #category : #'button action' }
@@ -90,8 +83,9 @@ InqInquisitorWorkbenchPresenter >> buttonActionInspectQuestion [
 
 { #category : #'button action' }
 InqInquisitorWorkbenchPresenter >> buttonActionOpenCapturePoint [
-	self flag: 'TODO'.
-	self inform: 'Open Capture point'
+	"self inform: 'Open Capture point'."
+	self selectedCapturePointDo: [ :cp | inquisitorDropList selectedItem openExecutionOnCapturePoint: cp ] ifNilDo: [ self inform: 'No capture point selected' ]
+
 ]
 
 { #category : #'button action' }
@@ -307,7 +301,7 @@ InqInquisitorWorkbenchPresenter >> initializePresenters [
 	removeInquisitorButton := self presenterNamed: #removeInquisitorButton fromUISection: inquisitorSection.
 	setMainInquisitorButton := self presenterNamed: #setMainInquisitorButton fromUISection: inquisitorSection.
 	inspectInquisitorButton := self presenterNamed: #inspectInquisitorButton fromUISection: inquisitorSection.
-	editInquisitorButton := self presenterNamed: #editInquisitorButton fromUISection: inquisitorSection.
+	
 	setupCodeField := self presenterNamed: #setupCodeField fromUISection: inquisitorSection.
 	executionCodeField := self presenterNamed: #executionCodeField fromUISection: inquisitorSection.
 	questionDropList := self presenterNamed: #questionDropList fromUISection: questionSection.
@@ -345,6 +339,12 @@ InqInquisitorWorkbenchPresenter >> presenterNamed: aSymbol fromUISection: aUISec
 	"Retrieve individual elements of the UIsection objects"
 	^ aUISection instVarNamed: aSymbol. 
 "	^ aUISection pages first retrievePresenter "
+]
+
+{ #category : #'button action' }
+InqInquisitorWorkbenchPresenter >> selectedCapturePointDo: aBlock ifNilDo: anotherBlock [
+	"If a capture point is selected in the capturePoints section, execute @aBlock with it as argument. Otherwise, execute @anotherBlock"
+	capturePointsNotebook selectedPage activePresenter selectedCapturePoint ifNil: [anotherBlock value] ifNotNil: [:cp | aBlock cull: cp]
 ]
 
 { #category : #initialization }
