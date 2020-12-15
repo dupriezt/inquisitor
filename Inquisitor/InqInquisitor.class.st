@@ -115,7 +115,7 @@ InqInquisitor >> askQuestion: anInquisitorQuestion [
 InqInquisitor >> displayResultOfQuestion: anInquisitorQuestion [
 	self isSilent ifTrue: [ ^ self ].
 	self inform: anInquisitorQuestion resultDescription.
-	anInquisitorQuestion capturePoints inspect.
+	InqAnswer new inquisitor: self; question: anInquisitorQuestion; capturePoints: anInquisitorQuestion capturePoints; inspect.
 ]
 
 { #category : #'question management' }
