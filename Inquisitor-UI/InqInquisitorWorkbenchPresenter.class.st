@@ -97,7 +97,7 @@ InqInquisitorWorkbenchPresenter >> buttonActionOpenCapturePoint [
 { #category : #'button action' }
 InqInquisitorWorkbenchPresenter >> buttonActionReAskQuestion [
 	self flag: 'TODO'.
-	self inform: 'Re-ask selected question'
+	self inform: 'Re-ask selected question TODO'.
 ]
 
 { #category : #'button action' }
@@ -425,5 +425,6 @@ InqInquisitorWorkbenchPresenter >> whenQuestionIsSelected: anInqInquisitorQuesti
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> windowIsClosing [
 	super windowIsClosing.
-	InqInquisitor instanceLogAnnouncer unsubscribe: self
+	InqInquisitor instanceLogAnnouncer unsubscribe: self.
+	InqInquisitor instances do: [ :inq | inq updateAnnouncer unsubscribe: self ].
 ]

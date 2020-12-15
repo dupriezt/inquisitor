@@ -91,7 +91,8 @@ InqInquisitorQuestion >> quickView [
 	result := OrderedCollection new.
 	result add: #node->(self node sourceCode);
 		add: #method -> (self node methodNode methodClass asString, '>>', self node methodNode selector);
-		add: #capturePoints -> (self capturePoints size).
+		add: #capturePoints -> (self capturePoints size);
+		add: #termination -> (self executionTermination description).
 	^ result
 ]
 
