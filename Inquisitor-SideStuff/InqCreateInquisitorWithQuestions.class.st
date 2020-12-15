@@ -21,9 +21,11 @@ InqCreateInquisitorWithQuestions class >> create [
 { #category : #operations }
 InqCreateInquisitorWithQuestions class >> createOnCode [
 	<script>
-	| inq hitCheckTargetNode |
+	| inq |
 	inq := InqInquisitor newForCode: 'someCode' withSetupCode: 'someSetupCode'.
 	inq isSilent: true.
+	inq isSilent: false.
+	
 	
 ]
 

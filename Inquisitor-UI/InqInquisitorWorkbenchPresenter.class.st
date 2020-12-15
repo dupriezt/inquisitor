@@ -24,7 +24,6 @@ Class {
 		'removeInquisitorButton',
 		'setMainInquisitorButton',
 		'inspectInquisitorButton',
-		'eventLog',
 		'uiIsMuted'
 	],
 	#classVars : [
@@ -219,7 +218,6 @@ InqInquisitorWorkbenchPresenter >> defaultSpec_ [
 
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> eventInquisitorAdded: anInqInquisitorAdded [
-	self eventLog add: anInqInquisitorAdded.
 	self setItemsOfInquisitorDropList: InqInquisitor instances.
 	anInqInquisitorAdded inquisitor updateAnnouncer weak when: InqInquisitorUpdated send: #eventInquisitorUpdated: to: self.
 	inquisitorDropList selectItem: anInqInquisitorAdded inquisitor
@@ -228,7 +226,6 @@ InqInquisitorWorkbenchPresenter >> eventInquisitorAdded: anInqInquisitorAdded [
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> eventInquisitorMainInstanceChanged: anInqInquisitorMainInstanceChanged [
 	| selected |
-	self eventLog add: anInqInquisitorMainInstanceChanged.
 	selected := inquisitorDropList selectedItem.
 	self setItemsOfInquisitorDropList: InqInquisitor instances.
 	selected ifNotNil: [inquisitorDropList selectItem: selected].
@@ -237,7 +234,6 @@ InqInquisitorWorkbenchPresenter >> eventInquisitorMainInstanceChanged: anInqInqu
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> eventInquisitorRemoved: anInqInquisitorRemoved [
 	| selected |
-	self eventLog add: anInqInquisitorRemoved.
 	anInqInquisitorRemoved inquisitor updateAnnouncer unsubscribe: self.
 	selected := inquisitorDropList selectedItem.
 	inquisitorDropList resetSelection.
@@ -253,19 +249,12 @@ InqInquisitorWorkbenchPresenter >> eventInquisitorRemoved: anInqInquisitorRemove
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> eventInquisitorUpdated: anInqInquisitorUpdated [
 	| selected |
-	self eventLog add: anInqInquisitorUpdated.
 	selected := inquisitorDropList selectedItem.
 	self setItemsOfInquisitorDropList: InqInquisitor instances. "The content of the list of inquisitor instances did not change, but resetting the items of the drop list is the only way I found to make sure their display block (their name in the droplist) are re-evaluated"
 	selected ifNotNil: [inquisitorDropList selectItem: selected].
 	self flag: 'todo'.
 	"update question list. Maybe not needed because the selected inquisitor is reselected"
 	
-]
-
-{ #category : #accessing }
-InqInquisitorWorkbenchPresenter >> eventLog [
-	eventLog ifNil: [ eventLog := OrderedCollection new ].
-	^ eventLog
 ]
 
 { #category : #icon }
