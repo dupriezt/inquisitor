@@ -28,6 +28,11 @@ InqMethodReturnQuestion >> method: aCompiledMethod [
 ]
 
 { #category : #'as yet unclassified' }
+InqMethodReturnQuestion >> name [
+	^ 'MethodReturn'
+]
+
+{ #category : #'as yet unclassified' }
 InqMethodReturnQuestion >> resultDescription [
 	"Only shows the first 5 returned values"
 	| returnValueString threeDots numberOfValuesShown |

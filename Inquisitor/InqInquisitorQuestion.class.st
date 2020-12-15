@@ -65,6 +65,11 @@ InqInquisitorQuestion >> keepFirst: anInteger ofCollection: aCollection [
 	^ aCollection copy
 ]
 
+{ #category : #'as yet unclassified' }
+InqInquisitorQuestion >> name [
+	^ self class name
+]
+
 { #category : #accessing }
 InqInquisitorQuestion >> node [
 	^ node
@@ -77,7 +82,8 @@ InqInquisitorQuestion >> node: aRBProgramNode [
 
 { #category : #'as yet unclassified' }
 InqInquisitorQuestion >> printOn: aStream [
-	super printOn: aStream.
+	aStream nextPutAll: self name.
+	"super printOn: aStream."
 	aStream
 		nextPutAll: '(';
 		nextPutAll: self resultDescription;

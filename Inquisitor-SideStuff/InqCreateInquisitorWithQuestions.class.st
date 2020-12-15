@@ -10,10 +10,11 @@ InqCreateInquisitorWithQuestions class >> create [
 	| inq hitCheckTargetNode |
 	inq := InqInquisitorForTest newForTestMethodName: #testDummyFull onTestClass: InqInquisitorTestDummy.
 	inq isSilent: true.
-	hitCheckTargetNode := self findFlagNode: 'hitCheckTargetNode' inMethod: (InqInquisitorTestDummy>>#testDummyFull).
+	hitCheckTargetNode := self findFlagNode: 'targetNode' inMethod: (InqInquisitorTestDummy>>#testDummyFull).
 	inq askQuestion: (InqHitCheckQuestion newForNode: hitCheckTargetNode).
 	
 	inq askQuestion: (InqMethodReturnQuestion newForMethod: (InqPointDummy>>#sum)).
+	inq isSilent: false.
 	
 ]
 

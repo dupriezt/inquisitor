@@ -47,6 +47,11 @@ InqVariableValueHistoryQuestion >> method: aCompiledMethod [
 ]
 
 { #category : #'as yet unclassified' }
+InqVariableValueHistoryQuestion >> name [
+	^ 'VariableHistory'
+]
+
+{ #category : #'as yet unclassified' }
 InqVariableValueHistoryQuestion >> placeWriteBreakpointOnVariable [
 	"Must return the breakpoint it placed"
 	self subclassResponsibility 

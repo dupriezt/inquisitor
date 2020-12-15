@@ -18,6 +18,11 @@ InqHitCheckQuestion >> askToInquisitor: anInquisitor [
 ]
 
 { #category : #'as yet unclassified' }
+InqHitCheckQuestion >> name [
+	^ 'HitCheck'
+]
+
+{ #category : #'as yet unclassified' }
 InqHitCheckQuestion >> resultDescription [
 	^ self capturePoints size asString, ' hits of ''', node sourceCode asString, ''' in ', self fullMethodNameOfNode
 ]

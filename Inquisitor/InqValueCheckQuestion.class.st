@@ -26,6 +26,11 @@ InqValueCheckQuestion >> expression: aString [
 ]
 
 { #category : #'as yet unclassified' }
+InqValueCheckQuestion >> name [
+	^ 'ValueCheck'
+]
+
+{ #category : #'as yet unclassified' }
 InqValueCheckQuestion >> resultDescription [
 	"Only shows the first 5 values"
 	| numberOfValuesShown valuesString threeDots |

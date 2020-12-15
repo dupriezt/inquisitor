@@ -15,6 +15,11 @@ InqArgumentVariableValueHistoryQuestion >> getVariableValueAndVariableOwnerInCon
 ]
 
 { #category : #'as yet unclassified' }
+InqArgumentVariableValueHistoryQuestion >> name [
+	^ 'ArgVariableHistory'
+]
+
+{ #category : #'as yet unclassified' }
 InqArgumentVariableValueHistoryQuestion >> placeWriteBreakpointOnVariable [
 	"Must return the breakpoint it placed"
 	"Argument variables are never written to, so placing the breakpoint on the method declaring the argument instead"

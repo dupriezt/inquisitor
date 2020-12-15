@@ -15,6 +15,11 @@ InqClassVariableValueHistoryQuestion >> getVariableValueAndVariableOwnerInContex
 ]
 
 { #category : #'as yet unclassified' }
+InqClassVariableValueHistoryQuestion >> name [
+	^ 'ClassVariableHistory'
+]
+
+{ #category : #'as yet unclassified' }
 InqClassVariableValueHistoryQuestion >> placeWriteBreakpointOnVariable [
 	"Must return the breakpoint it placed"
 	^ VariableBreakpoint watchVariableWrites: node name inClass: method methodClass soleInstance
