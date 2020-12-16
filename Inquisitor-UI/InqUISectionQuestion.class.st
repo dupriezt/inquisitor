@@ -56,6 +56,12 @@ InqUISectionQuestion >> initializePresenters [
 			yourself
 		);
 		add: (self newButton
+			icon: (self iconManager iconNamed: #smallDelete);
+			action: [ workbench buttonActionRemoveQuestion ];
+			help: 'Delete selected question';
+			yourself
+		);
+		add: (self newButton
 			icon: (self iconManager iconNamed: #glamorousRestart);
 			action: [ workbench buttonActionReAskQuestion ];
 			help: 'Re-ask selected question';

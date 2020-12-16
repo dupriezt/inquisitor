@@ -22,6 +22,13 @@ InqInquisitor class >> askQuestion: anInquisitorQuestion [
 	self mainInstance ifNil: [ self error: 'Undefined main instance of Inquisitor' ] ifNotNil: [ :mnInst | mnInst askQuestion: anInquisitorQuestion ]
 ]
 
+{ #category : #'as yet unclassified' }
+InqInquisitor class >> clearAllSubscriptions [
+	<script>
+	self instanceLogAnnouncer subscriptions reset.
+	self allInstancesDo: [ :inq | inq updateAnnouncer subscriptions reset ]
+]
+
 { #category : #'instance creation' }
 InqInquisitor class >> clearInstances [
 	<script>
@@ -95,8 +102,27 @@ InqInquisitor >> addAnsweredQuestion: anInquisitorQuestion [
 ]
 
 { #category : #accessing }
-InqInquisitor >> announceUpdate [
-	self updateAnnouncer announce: (InqInquisitorUpdated newFor: self)
+InqInquisitor >> announceCodeUpdate [
+	self announceUpdate: (InqInquisitorUpdatedCode newFor: self)
+	
+]
+
+{ #category : #accessing }
+InqInquisitor >> announceQuestionHistoryUpdate [
+	self announceUpdate: (InqInquisitorUpdatedQuestionHistory newFor: self)
+	
+]
+
+{ #category : #accessing }
+InqInquisitor >> announceSetupUpdate [
+	self announceUpdate: (InqInquisitorUpdatedSetup newFor: self)
+	
+]
+
+{ #category : #accessing }
+InqInquisitor >> announceUpdate: anUpdateAnnouncement [
+	self updateAnnouncer announce: anUpdateAnnouncement.
+	
 ]
 
 { #category : #converting }
@@ -108,7 +134,7 @@ InqInquisitor >> asStringForClyCommand [
 InqInquisitor >> askQuestion: anInquisitorQuestion [
 	anInquisitorQuestion askToInquisitor: self.
 	self addAnsweredQuestion: anInquisitorQuestion.
-	self announceUpdate
+	self announceQuestionHistoryUpdate.
 ]
 
 { #category : #'question management' }
@@ -127,7 +153,7 @@ InqInquisitor >> executionCode [
 { #category : #'question management' }
 InqInquisitor >> executionCode: aString [
 	executionCode := aString.
-	self announceUpdate
+	self announceCodeUpdate
 ]
 
 { #category : #testing }
@@ -178,6 +204,13 @@ InqInquisitor >> questionHistory [
 	^ questionHistory 
 ]
 
+{ #category : #accessing }
+InqInquisitor >> removeQuestion: anInqInquisitorQuestion [
+	"Remove @anInqInquisitorQuestion from the @questionHistory list"
+	questionHistory remove: anInqInquisitorQuestion.
+	self announceQuestionHistoryUpdate
+]
+
 { #category : #utility }
 InqInquisitor >> runExecution [
 	| sourceCode |
@@ -201,7 +234,7 @@ InqInquisitor >> setupCode [
 { #category : #'question management' }
 InqInquisitor >> setupCode: aString [
 	setupCode := aString.
-	self announceUpdate
+	self announceSetupUpdate
 ]
 
 { #category : #accessing }

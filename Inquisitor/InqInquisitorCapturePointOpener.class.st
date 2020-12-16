@@ -68,20 +68,22 @@ InqInquisitorCapturePointOpener >> open [
 	self installBreakpoints.
 	self registerToBreakpointHitAnnouncements.
 	"[inquisitor runExecution] on: Break do: [:ex | self removeBreakpoints. ex pass ]."
-	[
+	[[
 		[inquisitor runExecution] on: Break do: [ :ex |
 			"If the execution already reached @capturePoint and this handler is activated, it means the user used the debugger that opened on @capturePoint to step the execution, and it reached a breakpoint. If the breakpoint reached is one this instance installed, we resume the execution (i.e. ignore this breakpoint). Otherwise, it is a breakpoint that was set by someone else, so we let the Break exception pass through this handler"
 			self capturePointReached ifTrue: [ 
-				(self relevantBreakpoints includes: lastBreakpointHit) ifTrue: [ ex resume ] ifFalse: [ ex pass ].
+				(self relevantBreakpoints includes: lastBreakpointHit) ifTrue: [ex resume]
+					ifFalse: [ ex pass ].
 			].
 			lastBreakpointHit ifNil: [ self error: 'Unexpected Case: Break exception signalled, but no breakpoint hit registered' ].
 			"If the last breakpoint hit is not one of those we installed, ignore it and this exception by resuming the execution"
 			(self relevantBreakpoints includes: lastBreakpointHit) ifFalse: [ ex resume ].
-			(lastBreakpointHit == self nextBreakpointInPath) ifTrue: [ self encounteredNextBreakpoint ] ifFalse: [ self error: 'Unexpected Case: encountered a breakpoint that we installed, but that is not the next breakpoint on the path to @capturePoint' ].
+			(lastBreakpointHit == self nextBreakpointInPath) ifTrue: [ self encounteredNextBreakpoint ]
+				ifFalse: [ self error: 'Unexpected Case: encountered a breakpoint that we installed, but that is not the next breakpoint on the path to @capturePoint' ].
 			"If the execution reached @capturePoint, we simply let the debugger open. Otherwise, there are still breakpoints to encounter so we let the execution continue"
 			self capturePointReached ifTrue: [ ex pass ] ifFalse: [ ex resume ].
-		]	
-	] ensure: [	self removeBreakpoints ].
+		]
+	] on: Halt do: [:ex | ex resume "Ignore Halts raised by the execution"]] ensure: [	self removeBreakpoints ].
 	self unregisterFromBreakpointHitAnnouncements.
 ]
 

@@ -5,6 +5,25 @@ Class {
 }
 
 { #category : #'helper methods' }
+InqCapturePointTest >> assertBreakException: aBreakException isADebuggerOpenOnMethod: aCompiledMethod [
+	| debuggerContext breakNode |
+	debuggerContext := aBreakException signalerContext sender. "Context on which the debugger opens"
+	self assert: debuggerContext method name equals: aCompiledMethod name.
+	breakNode := debuggerContext currentNode. "Current AST node being executed by debuggerContext. It should be the #breakInContext:node: message node introduced into the method by the breakpoint. We check this now:"
+	self assert: breakNode isMessage.
+	self assert: breakNode selector = #breakInContext:node:.
+]
+
+{ #category : #'helper methods' }
+InqCapturePointTest >> breakExceptionToHighlightedNodeInDebugger: aBreakException [
+	"Take a Break exception. Return the ast node that would be highlighted if that exception was opened in a debugger"
+	| debuggerContext breakNode |
+	debuggerContext := aBreakException signalerContext sender. "Context on which the debugger opens"
+	breakNode := debuggerContext currentNode. "Current AST node being executed by debuggerContext. It should be the #breakInContext:node: message node introduced into the method by the breakpoint"
+	^ breakNode parent. "Node currently highlighted in the debugger"
+]
+
+{ #category : #'helper methods' }
 InqCapturePointTest >> breakpointTarget [
 	"Does nothing. Used in dummy methods to mark locations to place breakpoints at"
 	^ self
@@ -31,6 +50,20 @@ InqCapturePointTest >> createCapturePointCapturing: aValue [
 	self removeBreakpoints. "Removing the breakpoints we introduced to create @capturePoint, to avoid polluting tests about opening @capturePoint"
 	^ capturePoint
 	
+]
+
+{ #category : #'helper methods' }
+InqCapturePointTest >> createCapturePointOnNode: aNode Capturing: aValue whenExecuting: aBlock [
+	"Set a breakpoint on @aNode. Run @aBlock (which is expected to reach @aNode) to trigger the breakpoint. Create a CapturePoint capturing @aValue on that breakpoint hit."
+	| capturePoint b |
+	b := Breakpoint new node: aNode; always; install; yourself.
+	breakpoints add: b. "So that tearDown removes the breakpoint"
+	
+	[aBlock on: Break do: [ :ex | capturePoint := InqCapturePointFactory new newCapturePointForContext: (ex signalerContext sender "context of the method in which the breakpoint was installed") andCapturedValue: aValue andBreakpointsEncountered: (OrderedCollection new add: b; yourself)]] on: Halt do: [ :ex | ex resume. "Ignore Halt exceptions raised by the execution. InqInquisitorQuestions have a mechanism to ignore halts in the same way" ].
+	
+	self removeBreakpoints. "Removing the breakpoints we introduced to create @capturePoint, to avoid polluting tests about opening @capturePoint"
+	capturePoint ifNil: [ self error: 'No capture point was created. The execution above probably did not trigger a Break exception to enter the handler above' ].
+	^ capturePoint
 ]
 
 { #category : #'helper methods' }
@@ -63,6 +96,20 @@ InqCapturePointTest >> dummyMethodA2 [
 	| i |
 	i := 0.
 	[ i = 4 ] whileFalse: [ i := i + 1. self breakpointTarget ].
+]
+
+{ #category : #'helper methods' }
+InqCapturePointTest >> dummyMethodWithHalt [
+	<haltOrBreakpointForTesting>
+	Point x:1 y:2.
+	self halt.
+	self breakpointTarget.
+]
+
+{ #category : #'helper methods' }
+InqCapturePointTest >> getBreakpointTargetNodeOf: aCompiledMethod [
+	"Return the first 'self breakpointTarget' message node of @aCompiledMethod"
+	^ aCompiledMethod ast allChildren detect: [ :node | node isMessage and: [ node selector = #breakpointTarget ] ].
 ]
 
 { #category : #'helper methods' }
@@ -120,6 +167,23 @@ InqCapturePointTest >> testOpenCapturePoint [
 		self assert: (debuggerContext tempNamed: #i) equals: 3.
 		ex pass.
 	]] raise: Break.
+]
+
+{ #category : #'helper methods' }
+InqCapturePointTest >> testOpenCapturePointWithHalt [
+	"Test that opening a capture point works and opens a debugger at the right place when there is a halt in the execution that is being re-executed"
+	| cp openNode |
+	self setUpForInquisitedMethod: ((self class)>>#dummyMethodWithHalt).
+	cp := self createCapturePointOnNode: (self getBreakpointTargetNodeOf: inquisitedMethod) Capturing: nil whenExecuting: [ self perform: inquisitedMethod selector ].
+	
+	"Opening the capture point should raise a Break (that would normally open a debugger as required by the user), but should ignore the Halt of #dummyMethodWithHalt and not raise it"
+	self shouldnt: [[inquisitor openExecutionOnCapturePoint: cp] on: Break do: [ :ex |
+		self assertBreakException: ex isADebuggerOpenOnMethod: inquisitedMethod.
+		openNode := self breakExceptionToHighlightedNodeInDebugger: ex.
+		self assert: openNode isMessage.
+		self assert: openNode selector = #breakpointTarget.
+		^ 'Test passed'
+	]] raise: Halt.
 ]
 
 { #category : #'helper methods' }

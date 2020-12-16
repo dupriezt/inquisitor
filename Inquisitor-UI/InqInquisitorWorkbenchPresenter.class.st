@@ -99,6 +99,11 @@ InqInquisitorWorkbenchPresenter >> buttonActionRemoveInquisitor [
 ]
 
 { #category : #'button action' }
+InqInquisitorWorkbenchPresenter >> buttonActionRemoveQuestion [
+	inquisitorDropList selectedItem removeQuestion: questionDropList selectedItem
+]
+
+{ #category : #'button action' }
 InqInquisitorWorkbenchPresenter >> buttonActionSetMainInquisitor [
 	InqInquisitor mainInstance: inquisitorDropList selectedItem
 ]
@@ -120,10 +125,12 @@ InqInquisitorWorkbenchPresenter >> capturePointsPagesDictionary [
 InqInquisitorWorkbenchPresenter >> connectPresenters [
 	"The method connectPresenters defines the interactions between the dif- ferent widgets. By connecting the behaviors of the different widgets it speci- fies the overall presentation, i.e., how the overall UI responds to interactions by the user. Usually this method consists of specifications of actions to per- form when a certain event is received by a widget. The whole interaction flow of the UI then emerges from the propagation of those events."
 	inquisitorDropList whenSelectedItemChangedDo: [ :newlySelectedInquisitor |
-		self uiIsMuted ifFalse: [ self whenInquisitorIsSelected: newlySelectedInquisitor].
+		newlySelectedInquisitor ifNotNil: [ self whenInquisitorIsSelected: newlySelectedInquisitor].
+		"self uiIsMuted ifFalse: [ self whenInquisitorIsSelected: newlySelectedInquisitor]."
 	].
 	questionDropList whenSelectedItemChangedDo: [ :newlySelectedQuestion |
-		self uiIsMuted ifFalse: [ self whenQuestionIsSelected: newlySelectedQuestion].
+		newlySelectedQuestion ifNotNil: [ self whenQuestionIsSelected: newlySelectedQuestion].
+		"self uiIsMuted ifFalse: [ self whenQuestionIsSelected: newlySelectedQuestion]."
 	].
 	self postInitialisation.
 ]
@@ -219,7 +226,8 @@ InqInquisitorWorkbenchPresenter >> defaultSpec_ [
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> eventInquisitorAdded: anInqInquisitorAdded [
 	self setItemsOfInquisitorDropList: InqInquisitor instances.
-	anInqInquisitorAdded inquisitor updateAnnouncer weak when: InqInquisitorUpdated send: #eventInquisitorUpdated: to: self.
+	self when: InqInquisitorUpdated from: (anInqInquisitorAdded inquisitor updateAnnouncer) send: #eventInquisitorUpdated: to: self.
+	"anInqInquisitorAdded inquisitor updateAnnouncer weak when: InqInquisitorUpdated send: #eventInquisitorUpdated: to: self."
 	inquisitorDropList selectItem: anInqInquisitorAdded inquisitor
 ]
 
@@ -234,7 +242,8 @@ InqInquisitorWorkbenchPresenter >> eventInquisitorMainInstanceChanged: anInqInqu
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> eventInquisitorRemoved: anInqInquisitorRemoved [
 	| selected |
-	anInqInquisitorRemoved inquisitor updateAnnouncer unsubscribe: self.
+	self unsubscribeFrom: anInqInquisitorRemoved inquisitor updateAnnouncer.
+"	anInqInquisitorRemoved inquisitor updateAnnouncer unsubscribe: self."
 	selected := inquisitorDropList selectedItem.
 	inquisitorDropList resetSelection.
 	"If the removed inquisitor was not the last, simply update the list. It is was the list, replace the list with a list containing a single empty inquisitor"
@@ -252,7 +261,8 @@ InqInquisitorWorkbenchPresenter >> eventInquisitorUpdated: anInqInquisitorUpdate
 	selected := inquisitorDropList selectedItem.
 	self setItemsOfInquisitorDropList: InqInquisitor instances. "The content of the list of inquisitor instances did not change, but resetting the items of the drop list is the only way I found to make sure their display block (their name in the droplist) are re-evaluated"
 	selected ifNotNil: [inquisitorDropList selectItem: selected].
-	self flag: 'todo'.
+	self setItemsOfQuestionDropList: inquisitorDropList selectedItem questionHistory.
+"	self flag: 'todo'."
 	"update question list. Maybe not needed because the selected inquisitor is reselected"
 	
 ]
@@ -314,13 +324,17 @@ InqInquisitorWorkbenchPresenter >> initializeWindow: aWindowPresenter [
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> postInitialisation [
 	"Executed after #initializePresenters and #connectPresenters"
-	inquisitorDropList items isEmpty ifFalse: [ inquisitorDropList selectIndex: 1 ]. "After everything is initialised, to trigger a refresh of the Ui as if the user had selected the first inquisitor in the list."
-	InqInquisitor instanceLogAnnouncer weak when: InqInquisitorAdded send: #eventInquisitorAdded: to: self.
-	InqInquisitor instanceLogAnnouncer weak when: InqInquisitorRemoved send: #eventInquisitorRemoved: to: self.
-	InqInquisitor instanceLogAnnouncer weak when: InqInquisitorMainInstanceChanged send: #eventInquisitorMainInstanceChanged: to: self.
+	"inquisitorDropList items isEmpty ifFalse: [ inquisitorDropList selectIndex: 1 ]. ""After everything is initialised, to trigger a refresh of the Ui as if the user had selected the first inquisitor in the list."""
+	self when: InqInquisitorAdded from: (InqInquisitor instanceLogAnnouncer) send: #eventInquisitorAdded: to: self.
+	self when: InqInquisitorRemoved from: (InqInquisitor instanceLogAnnouncer) send: #eventInquisitorRemoved: to: self.
+	self when: InqInquisitorMainInstanceChanged from: (InqInquisitor instanceLogAnnouncer) send: #eventInquisitorMainInstanceChanged: to: self.
+	"InqInquisitor instanceLogAnnouncer weak when: InqInquisitorAdded send: #eventInquisitorAdded: to: self."
+	"InqInquisitor instanceLogAnnouncer weak when: InqInquisitorRemoved send: #eventInquisitorRemoved: to: self.
+	InqInquisitor instanceLogAnnouncer weak when: InqInquisitorMainInstanceChanged send: #eventInquisitorMainInstanceChanged: to: self."
 	self setItemsOfInquisitorDropList: InqInquisitor instances.
-	inquisitorDropList selectIndex: 1.
+	InqInquisitor instances do: [ :inq | self when: InqInquisitorUpdated from: (inq updateAnnouncer) send: #eventInquisitorUpdated: to: self ].
 	uiIsMuted := false.
+	inquisitorDropList selectIndex: inquisitorDropList listSize.
 ]
 
 { #category : #initialization }
@@ -339,17 +353,19 @@ InqInquisitorWorkbenchPresenter >> selectedCapturePointDo: aBlock ifNilDo: anoth
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> setItemsOfInquisitorDropList: anOrderedCollection [
 	"Change the inquisitor list shown in inquisitorDropList. If the new inquisitor list is empty, instead put a list containing an empty inquisitor in order to prevent inquisitorDropList from being empty."
-	[self uiIsMuted: true.
-	anOrderedCollection isEmpty ifFalse: [inquisitorDropList items: anOrderedCollection] ifTrue: [ inquisitorDropList items: (OrderedCollection new add: InqEmptyInquisitor new; yourself) ]] ensure: [ self uiIsMuted: false ].
+	"self uiIsMuted: true."
+	anOrderedCollection isEmpty ifFalse: [inquisitorDropList items: anOrderedCollection] ifTrue: [ inquisitorDropList items: (OrderedCollection new add: InqEmptyInquisitor new; yourself) ].
+	"self uiIsMuted: false."
 	"inquisitorDropList selectIndex: 1."
 ]
 
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> setItemsOfQuestionDropList: anOrderedCollection [
 	"Change the question list shown in questionDropList. If the new question list is empty, instead put a list containing an empty question in order to prevent questionDropList from being empty"
-	[self uiIsMuted: true.
-	anOrderedCollection isEmpty ifFalse: [questionDropList items: anOrderedCollection] ifTrue: [ questionDropList items: (OrderedCollection new add: InqEmptyQuestion new; yourself) ].] ensure: [ self uiIsMuted: false ].
-	questionDropList selectIndex: 1.
+	"self uiIsMuted: true."
+	anOrderedCollection isEmpty ifFalse: [questionDropList items: anOrderedCollection] ifTrue: [ questionDropList items: (OrderedCollection new add: InqEmptyQuestion new; yourself) ].
+	"self uiIsMuted: false."
+	"questionDropList selectIndex: 1"
 ]
 
 { #category : #initialization }
@@ -374,6 +390,26 @@ InqInquisitorWorkbenchPresenter >> uiIsMuted: aBoolean [
 	uiIsMuted := aBoolean
 ]
 
+{ #category : #events }
+InqInquisitorWorkbenchPresenter >> unsubscribeFrom: anAnnouncer [
+	"Custom function to unsubscribe, to easily locate places where in the code where this object unsubscribes from announcers, by looking at the senders of this method."
+	anAnnouncer unsubscribe: self
+	
+]
+
+{ #category : #events }
+InqInquisitorWorkbenchPresenter >> when: anAnnouncement from: anAnnouncer send: aSymbol to: anObject [
+	"Custom function to subscribe, to easily locate places where in the code where this object subscribes to announcers, by looking at the senders of this method."
+	anAnnouncer weak when: anAnnouncement send: aSymbol to: anObject.
+	
+	self flag: 'comment'
+"subscribeTo: anObject withAnnouncerGetterMethodName: aSymbol when: anAnnouncement send: anotherSymbol
+	
+	announcer := anObject perform: aSymbol.
+	announcer when: anAnnouncement send: anotherSymbol to: self.
+	subscriptions add: { anObject -> aSymbol }"
+]
+
 { #category : #initialization }
 InqInquisitorWorkbenchPresenter >> whenInquisitorIsSelected: anInquisitor [
 	anInquisitor ifNil: [ ^ self ].
@@ -385,7 +421,10 @@ InqInquisitorWorkbenchPresenter >> whenInquisitorIsSelected: anInquisitor [
 	executionCodeField editable: (anInquisitor isEmptyInquisitor not).
 	removeInquisitorButton enabled: (anInquisitor isEmptyInquisitor not).
 	setMainInquisitorButton enabled: ((anInquisitor isEmptyInquisitor not) and: [InqInquisitor mainInstance ~= anInquisitor]).
-	self uiIsMuted: false
+	
+	self uiIsMuted: false.
+	questionDropList selectIndex: questionDropList listSize.
+"	questionDropList selectIndex: 1."
 	
 ]
 
@@ -393,7 +432,7 @@ InqInquisitorWorkbenchPresenter >> whenInquisitorIsSelected: anInquisitor [
 InqInquisitorWorkbenchPresenter >> whenQuestionIsSelected: anInqInquisitorQuestion [
 	| selectedQuestion |
 	selectedQuestion := anInqInquisitorQuestion.
-	selectedQuestion ifNil: [ selectedQuestion := InqEmptyQuestion new ].
+	"selectedQuestion ifNil: [ selectedQuestion := InqEmptyQuestion new ]."
 	questionQuickViewTable items: selectedQuestion quickView.
 	capturePointsNotebook removeAll.
 	capturePointsPagesDictionary := nil.
@@ -411,7 +450,7 @@ InqInquisitorWorkbenchPresenter >> whenQuestionIsSelected: anInqInquisitorQuesti
 	capturePointsNotebook selectPageIndex: 1.
 ]
 
-{ #category : #initialization }
+{ #category : #updating }
 InqInquisitorWorkbenchPresenter >> windowIsClosing [
 	super windowIsClosing.
 	InqInquisitor instanceLogAnnouncer unsubscribe: self.
