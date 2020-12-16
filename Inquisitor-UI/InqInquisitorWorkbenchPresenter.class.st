@@ -236,7 +236,8 @@ InqInquisitorWorkbenchPresenter >> eventInquisitorMainInstanceChanged: anInqInqu
 	| selected |
 	selected := inquisitorDropList selectedItem.
 	self setItemsOfInquisitorDropList: InqInquisitor instances.
-	selected ifNotNil: [inquisitorDropList selectItem: selected].
+	selected ifNil: [^ self ].
+	selected isEmptyInquisitor ifTrue: [ inquisitorDropList selectIndex: 1 ] ifFalse: [ inquisitorDropList selectItem: selected ]
 ]
 
 { #category : #initialization }
