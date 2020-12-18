@@ -366,7 +366,7 @@ InqInquisitorWorkbenchPresenter >> selectedCapturePointDo: aBlock ifNilDo: anoth
 InqInquisitorWorkbenchPresenter >> setItemsOfInquisitorDropList: anOrderedCollection [
 	"Change the inquisitor list shown in inquisitorDropList. If the new inquisitor list is empty, instead put a list containing an empty inquisitor in order to prevent inquisitorDropList from being empty."
 	"self uiIsMuted: true."
-	anOrderedCollection isEmpty ifFalse: [inquisitorDropList items: anOrderedCollection] ifTrue: [ inquisitorDropList items: (OrderedCollection new add: InqEmptyInquisitor new; yourself) ].
+	anOrderedCollection isEmpty ifFalse: [inquisitorDropList items: anOrderedCollection reversed] ifTrue: [ inquisitorDropList items: (OrderedCollection new add: InqEmptyInquisitor new; yourself) ].
 	"self uiIsMuted: false."
 	"inquisitorDropList selectIndex: 1."
 ]
@@ -375,9 +375,9 @@ InqInquisitorWorkbenchPresenter >> setItemsOfInquisitorDropList: anOrderedCollec
 InqInquisitorWorkbenchPresenter >> setItemsOfQuestionDropList: anOrderedCollection [
 	"Change the question list shown in questionDropList. If the new question list is empty, instead put a list containing an empty question in order to prevent questionDropList from being empty"
 	"self uiIsMuted: true."
-	anOrderedCollection isEmpty ifFalse: [questionDropList items: anOrderedCollection] ifTrue: [ questionDropList items: (OrderedCollection new add: InqEmptyQuestion new; yourself) ].
+	anOrderedCollection isEmpty ifFalse: [questionDropList items: anOrderedCollection reversed] ifTrue: [ questionDropList items: (OrderedCollection new add: InqEmptyQuestion new; yourself) ].
 	"self uiIsMuted: false."
-	"questionDropList selectIndex: 1"
+	questionDropList selectIndex: 1
 ]
 
 { #category : #initialization }
@@ -435,8 +435,8 @@ InqInquisitorWorkbenchPresenter >> whenInquisitorIsSelected: anInquisitor [
 	setMainInquisitorButton enabled: ((anInquisitor isEmptyInquisitor not) and: [InqInquisitor mainInstance ~= anInquisitor]).
 	
 	self uiIsMuted: false.
-	questionDropList selectIndex: questionDropList listSize.
-"	questionDropList selectIndex: 1."
+"	questionDropList selectIndex: questionDropList listSize."
+	questionDropList selectIndex: 1.
 	
 ]
 
