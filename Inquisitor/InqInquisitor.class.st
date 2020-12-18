@@ -12,7 +12,8 @@ Class {
 	#classVars : [
 		'instanceLogAnnouncer',
 		'instances',
-		'mainInstance'
+		'mainInstance',
+		'numberOfOpenUIs'
 	],
 	#category : #Inquisitor
 }
@@ -89,10 +90,34 @@ InqInquisitor class >> newWithoutRegisteringInstanceForCode: aString withSetupCo
 	^ self newWithoutRegisteringInstance executionCode: aString; setupCode: aString2; yourself.
 ]
 
+{ #category : #'as yet unclassified' }
+InqInquisitor class >> numberOfOpenUIs [
+	numberOfOpenUIs ifNil: [ numberOfOpenUIs := 0 ].
+	^ numberOfOpenUIs
+]
+
 { #category : #'instance creation' }
 InqInquisitor class >> removeInstance: anInquisitor [
 	self instances remove: anInquisitor.
 	self instanceLogAnnouncer announce: (InqInquisitorRemoved newFor: anInquisitor)
+]
+
+{ #category : #'as yet unclassified' }
+InqInquisitor class >> uiCloses [
+	"Call this when a workbench ui closes"
+	numberOfOpenUIs := 0 max: (self numberOfOpenUIs - 1)
+]
+
+{ #category : #'as yet unclassified' }
+InqInquisitor class >> uiIsOpen [
+	"Whether at least one workbench ui is currently open"
+	^ numberOfOpenUIs > 0
+]
+
+{ #category : #'as yet unclassified' }
+InqInquisitor class >> uiOpens [
+	"Call this when a workbench ui opens"
+	numberOfOpenUIs := self numberOfOpenUIs + 1
 ]
 
 { #category : #'question management' }
@@ -141,7 +166,8 @@ InqInquisitor >> askQuestion: anInquisitorQuestion [
 InqInquisitor >> displayResultOfQuestion: anInquisitorQuestion [
 	self isSilent ifTrue: [ ^ self ].
 	self inform: anInquisitorQuestion resultDescription.
-	InqAnswer new inquisitor: self; question: anInquisitorQuestion; capturePoints: anInquisitorQuestion capturePoints; inspect.
+	self class uiIsOpen ifFalse: [
+		InqAnswer new inquisitor: self; question: anInquisitorQuestion; capturePoints: anInquisitorQuestion capturePoints; inspect]
 ]
 
 { #category : #'question management' }

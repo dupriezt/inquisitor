@@ -347,6 +347,7 @@ InqInquisitorWorkbenchPresenter >> postInitialisation [
 	InqInquisitor instances do: [ :inq | self when: InqInquisitorUpdated from: (inq updateAnnouncer) send: #eventInquisitorUpdated: to: self ].
 	uiIsMuted := false.
 	inquisitorDropList selectIndex: inquisitorDropList listSize.
+	InqInquisitor uiOpens.
 ]
 
 { #category : #initialization }
@@ -467,4 +468,5 @@ InqInquisitorWorkbenchPresenter >> windowIsClosing [
 	super windowIsClosing.
 	InqInquisitor instanceLogAnnouncer unsubscribe: self.
 	InqInquisitor instances do: [ :inq | inq updateAnnouncer unsubscribe: self ].
+	InqInquisitor uiCloses.
 ]
