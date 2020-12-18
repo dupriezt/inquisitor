@@ -83,8 +83,8 @@ InqInquisitorCapturePointOpener >> open [
 			"If the execution reached @capturePoint, we simply let the debugger open. Otherwise, there are still breakpoints to encounter so we let the execution continue"
 			self capturePointReached ifTrue: [ ex pass ] ifFalse: [ ex resume ].
 		]
-	] on: Halt do: [:ex | ex resume "Ignore Halts raised by the execution"]] ensure: [	self removeBreakpoints ].
-	self unregisterFromBreakpointHitAnnouncements.
+	] on: Halt do: [:ex | ex isBreak ifTrue: [ ex pass "It's really a Break and not a Halt, we let it pass so that it opens a debugger at the right place in the execution" ] ifFalse: [ ex resume "It's a Halt and not a Break. We resume it because we want to ignore 'self halt' statements left in the code by the user"]]] ensure: [	self unregisterFromBreakpointHitAnnouncements. self removeBreakpoints ]
+	.
 ]
 
 { #category : #'as yet unclassified' }
