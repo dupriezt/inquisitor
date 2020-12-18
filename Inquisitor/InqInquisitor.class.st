@@ -13,7 +13,7 @@ Class {
 		'instanceLogAnnouncer',
 		'instances',
 		'mainInstance',
-		'numberOfOpenUIs'
+		'openUIs'
 	],
 	#category : #Inquisitor
 }
@@ -96,6 +96,12 @@ InqInquisitor class >> numberOfOpenUIs [
 	^ numberOfOpenUIs
 ]
 
+{ #category : #'as yet unclassified' }
+InqInquisitor class >> openUIs [
+	openUIs ifNil: [ openUIs := IdentitySet new ].
+	^ openUIs
+]
+
 { #category : #'instance creation' }
 InqInquisitor class >> removeInstance: anInquisitor [
 	self instances remove: anInquisitor.
@@ -103,21 +109,28 @@ InqInquisitor class >> removeInstance: anInquisitor [
 ]
 
 { #category : #'as yet unclassified' }
-InqInquisitor class >> uiCloses [
+InqInquisitor class >> resetOpenUIs [
+	<script>
+	openUIs := nil
+]
+
+{ #category : #'as yet unclassified' }
+InqInquisitor class >> uiCloses: ui [
 	"Call this when a workbench ui closes"
-	numberOfOpenUIs := 0 max: (self numberOfOpenUIs - 1)
+	[self openUIs remove: ui] on: NotFound do: [].
 ]
 
 { #category : #'as yet unclassified' }
 InqInquisitor class >> uiIsOpen [
 	"Whether at least one workbench ui is currently open"
-	^ numberOfOpenUIs > 0
+	"^ numberOfOpenUIs > 0"
+	^ self openUIs size > 0
 ]
 
 { #category : #'as yet unclassified' }
-InqInquisitor class >> uiOpens [
+InqInquisitor class >> uiOpens: ui [
 	"Call this when a workbench ui opens"
-	numberOfOpenUIs := self numberOfOpenUIs + 1
+	self openUIs add: ui.
 ]
 
 { #category : #'question management' }
