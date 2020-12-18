@@ -43,6 +43,17 @@ InqInquisitorWorkbenchPresenter class >> cstrAt: aSymbol [
 	^ constraints at: aSymbol
 ]
 
+{ #category : #all }
+InqInquisitorWorkbenchPresenter class >> debugWorldMenuOn: aBuilder [
+	<worldMenu>
+	(aBuilder item: #'Inquisitor')
+		order: 0;
+		parent: #Debugging;
+		icon: (self iconNamed: #haloView);
+		help: 'Open the Inquisitor workbench UI';
+		action: [ self open ]
+]
+
 { #category : #specs }
 InqInquisitorWorkbenchPresenter class >> defaultSpec [
 	"Definition of the layout moved to the instance side, for easier editing (no need to switch between the instance and class side in the code browser"
@@ -319,7 +330,7 @@ InqInquisitorWorkbenchPresenter >> initializeWindow: aWindowPresenter [
 	aWindowPresenter
 		title: 'Inquisitor Workbench';
 		initialExtent: 860@655; "initial width@height of the window" "Size of a calypso browser"
-		windowIcon: (self iconManager iconNamed: #home) "Icon that will be shown in the bottom windowbar for this window"
+		windowIcon: (self iconManager iconNamed: #haloView "#home") "Icon that will be shown in the bottom windowbar for this window"
 ]
 
 { #category : #initialization }
