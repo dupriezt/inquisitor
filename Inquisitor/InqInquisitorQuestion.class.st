@@ -118,6 +118,7 @@ InqInquisitorQuestion >> resultDescription [
 InqInquisitorQuestion >> runExecutionWithInquisitor: anInquisitor [
 	SystemAnnouncer uniqueInstance when: BreakpointHit send: #registerBreakpointHit: to: self.
 	[ anInquisitor runExecution ] on: Exception do: [ :ex |
+		GV v0 add: ex.
 		"- Exception is a notification that will pass without effect if not handled, so we do not care"
 		ex isNotification ifTrue: [ ex pass ].
 		"- Exception is from a breakpoint"

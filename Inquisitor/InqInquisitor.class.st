@@ -179,6 +179,7 @@ InqInquisitor >> askQuestion: anInquisitorQuestion [
 InqInquisitor >> displayResultOfQuestion: anInquisitorQuestion [
 	self isSilent ifTrue: [ ^ self ].
 	self inform: anInquisitorQuestion resultDescription.
+	anInquisitorQuestion executionTermination isNormalTermination ifFalse: [ self inform: 'Warning: the execution signalled an error' ].
 	self class uiIsOpen ifFalse: [
 		InqAnswer new inquisitor: self; question: anInquisitorQuestion; capturePoints: anInquisitorQuestion capturePoints; inspect]
 ]
@@ -255,7 +256,7 @@ InqInquisitor >> runExecution [
 	| sourceCode |
 	"There is a handler for Break around the setupCode, that ignores the Break and resumes the execution. These Break likely come from the breakpoints inserted by the question, and we do not want the question to see them trigger in the setup code"
 	sourceCode := '[', setupCode, '] on: Break do: [:ex | ex resume].
-	[', executionCode, '] on: Error do: [ :ex| self inform: ''Inquisitor execution stopped at: '', ex asString ]'.
+	', executionCode.
 	OpalCompiler new source: sourceCode; evaluate.
 ]
 
