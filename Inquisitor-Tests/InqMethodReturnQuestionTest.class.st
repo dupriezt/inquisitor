@@ -58,6 +58,7 @@ InqMethodReturnQuestionTest >> tearDown [
 
 { #category : #tests }
 InqMethodReturnQuestionTest >> testImplicitReturnSelf [
+	"This test is expected to fail at the moment, because the feature of capturing implicit returns has not yet been implemented"
 	| q capturePoints questionedMethod receiverInstance |
 	self setUpForInquisitedMethod: (self class)>>#dummyForTestReturnImplicitSelf.
 	
