@@ -143,5 +143,6 @@ InqInquisitorQuestion >> runExecutionWithInquisitor: anInquisitor [
 
 { #category : #'as yet unclassified' }
 InqInquisitorQuestion >> whenBreakpoint: aBreakpoint isHitForBreakException: aBreakException [
+	"This method will be called whenever the inquisited execution encounters a breakpoint present in the @breakpoints variable of this object (the list of breakpoints this question has installed)"
 	self subclassResponsibility
 ]

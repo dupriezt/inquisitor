@@ -1,6 +1,6 @@
 Class {
 	#name : #ClyInquisitorCommand,
-	#superclass : #SycSourceCodeCommand,
+	#superclass : #CmdCommand,
 	#category : #Inquisitor
 }
 
