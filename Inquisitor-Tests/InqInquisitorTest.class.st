@@ -76,7 +76,15 @@ InqInquisitorTest >> setUp [
 ]
 
 { #category : #running }
+InqInquisitorTest >> setUpForInquisitedCode: aString withSetupCode: anotherString [	
+	inquisitor := InqInquisitor newForCode: aString withSetupCode: anotherString.
+	inquisitor isSilent: true.
+]
+
+{ #category : #running }
 InqInquisitorTest >> setUpForInquisitedMethod: aCompiledMethod [
+	inquisitor := InqInquisitorForTest newWithoutRegisteringInstance.
+	inquisitor isSilent: true.
 	inquisitedMethod := aCompiledMethod.
 	inquisitor testClass: inquisitedMethod methodClass.
 	inquisitor testMethodName: inquisitedMethod selector.

@@ -20,7 +20,7 @@ InqInquisitorQuestion class >> isAbstract [
 
 { #category : #'as yet unclassified' }
 InqInquisitorQuestion >> askToInquisitor: anInquisitor [
-	"Answer the question, using anInquisitor to run the execution."
+	"Answer the question, using anInquisitor to run the execution. No need to return anything, fill your capturePoints variable with the capture points constituting the answer to the question."
 	self subclassResponsibility 
 ]
 
@@ -122,9 +122,9 @@ InqInquisitorQuestion >> runExecutionWithInquisitor: anInquisitor [
 		ex isNotification ifTrue: [ ex pass ].
 		"- Exception is from a breakpoint"
 		ex isBreak ifTrue: [
-			lastBreakpointHit ifNil: [ self error: 'Unexpected case: Break exception signalled, but no breakpoint hit has been registered' ].
+			lastBreakpointHit ifNil: [ self whenBreakpointlessBreakException: ex ].
 			"We only do something if the breakpoint that was hit belongs to those that this question installed"
-			(breakpoints includes: lastBreakpointHit) ifTrue: [ self whenBreakpoint: lastBreakpointHit isHitForBreakException: ex ].
+			(self breakpoints includes: lastBreakpointHit) ifTrue: [ self whenBreakpoint: lastBreakpointHit isHitForBreakException: ex ].
 			lastBreakpointHit := nil.
 			ex resume
 		].
@@ -145,4 +145,10 @@ InqInquisitorQuestion >> runExecutionWithInquisitor: anInquisitor [
 InqInquisitorQuestion >> whenBreakpoint: aBreakpoint isHitForBreakException: aBreakException [
 	"This method will be called whenever the inquisited execution encounters a breakpoint present in the @breakpoints variable of this object (the list of breakpoints this question has installed)"
 	self subclassResponsibility
+]
+
+{ #category : #'as yet unclassified' }
+InqInquisitorQuestion >> whenBreakpointlessBreakException: aBreakException [
+	"This method will be called whenever the inquisited execution signals a Break exception, but no breakpoint hit has been registered. Typically happens because of a 'Break break' statement in the inquisited execution"
+	self error: 'Unexpected case: Break exception signalled, but no breakpoint hit has been registered'
 ]
