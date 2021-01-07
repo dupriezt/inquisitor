@@ -134,6 +134,8 @@ InqCapturePointTest >> testCreateCapturePoint [
 	self assert: capturePoint receiver identicalTo: self.
 	self assert: capturePoint methodInvocation invokedMethod name equals: inquisitedMethod name. "Their names are equal, but these two CompiledMethod are not equal, because invokedMethod is the method with a breakpoint in it, while inquisitedMethod is the method before a breakpoint was put in it"
 	
+	self postTestAssertions
+	
 ]
 
 { #category : #'helper methods' }
@@ -167,6 +169,8 @@ InqCapturePointTest >> testOpenCapturePoint [
 		self assert: (debuggerContext tempNamed: #i) equals: 3.
 		ex pass.
 	]] raise: Break.
+
+	self postTestAssertions
 ]
 
 { #category : #'helper methods' }
@@ -184,6 +188,8 @@ InqCapturePointTest >> testOpenCapturePointWithHalt [
 		self assert: openNode selector = #breakpointTarget.
 		^ 'Test passed'
 	]] raise: Halt.
+
+	self postTestAssertions
 ]
 
 { #category : #'helper methods' }
@@ -204,4 +210,6 @@ InqCapturePointTest >> testOpenSimpleCapturePoint [
 		self assert: node selector equals: #breakpointTarget.
 		ex pass.
 	]] raise: Break.
+
+	self postTestAssertions
 ]

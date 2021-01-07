@@ -1,11 +1,11 @@
 Class {
-	#name : #InqInquisitorTestValueCheckDummy,
+	#name : #InqTestAssistClassForValueCheckQuestion,
 	#superclass : #InqInquisitorTestAssistClass,
 	#category : #'Inquisitor-Tests'
 }
 
 { #category : #'as yet unclassified' }
-InqInquisitorTestValueCheckDummy >> incrementArgument: anInteger [
+InqTestAssistClassForValueCheckQuestion >> incrementArgument: anInteger [
 	self flag: 'targetNode'.
 	^ anInteger + 1
 ]

@@ -4,10 +4,23 @@ Class {
 	#instVars : [
 		'inquisitor',
 		'inquisitedMethod',
-		'breakpoints'
+		'breakpoints',
+		'assistClassesInitialStateDictionary'
 	],
 	#category : #'Inquisitor-Tests'
 }
+
+{ #category : #running }
+InqInquisitorTest >> assertAssistClassesHaveSameMethodsAsInitially [
+	"Assert that the assist classes have the same methods (at least in terms of selectors) that they had during the setUp. Checks for both instance side and class side methods."
+	| assistClass initialStateDictionary |
+	assistClassesInitialStateDictionary associationsDo: [ :assoc |
+		assistClass := assoc key.
+		initialStateDictionary := assoc value.
+		self assert: (initialStateDictionary at: #instanceSideSelectors) equals: (assistClass methods collect: [:meth | meth selector]).
+		self assert: (initialStateDictionary at: #classSideSelectors) equals: (assistClass class methods collect: [:meth | meth selector]).		
+	]
+]
 
 { #category : #running }
 InqInquisitorTest >> assertCapturePoint: aCapturePoint value: aValue receiver: anObject method: aCompiledMethod nbBreakpoints: anInteger [
@@ -41,6 +54,27 @@ InqInquisitorTest >> assertExecutionTerminationNormal: anInqInquisitorQuestion [
 	self assert: anInqInquisitorQuestion executionTermination isNormalTermination
 ]
 
+{ #category : #'as yet unclassified' }
+InqInquisitorTest >> assertNoBreakpointsInMethodsOfAssistClasses [
+	"Asserts that there are no breakpoints in the methods of the assist classes"
+	"Instance side methods"
+	(self assistClasses flatCollect: [:assistClass | assistClass methods]) do: [ :meth | self assert: meth hasBreakpoint not ].
+	"Class side methods"
+	(self assistClasses flatCollect: [:assistClass | assistClass class methods]) do: [ :meth | self assert: meth hasBreakpoint not ].
+]
+
+{ #category : #tests }
+InqInquisitorTest >> assistClasses [
+	"Classes used by this test class in its test"
+	^ {  }
+]
+
+{ #category : #running }
+InqInquisitorTest >> captureInitialStateOfAssistClass: assistClass inDictionary: d [
+	d at: #instanceSideSelectors put: (assistClass methods collect: [ :meth | meth selector ]).
+	d at: #classSideSelectors put: (assistClass class methods collect: [ :meth | meth selector ])
+]
+
 { #category : #running }
 InqInquisitorTest >> checkFormatOf: aCollection accordingTo: aTemplate [
 	
@@ -61,6 +95,13 @@ InqInquisitorTest >> checkFormatOf: aCollection accordingTo: aTemplate [
 	]
 ]
 
+{ #category : #'as yet unclassified' }
+InqInquisitorTest >> postTestAssertions [
+	"Common assertions to be checked after each test run"
+	self assertAssistClassesHaveSameMethodsAsInitially.
+	self assertNoBreakpointsInMethodsOfAssistClasses.
+]
+
 { #category : #running }
 InqInquisitorTest >> removeBreakpoints [
 	breakpoints do: [ :brkpt | brkpt remove ].
@@ -70,9 +111,16 @@ InqInquisitorTest >> removeBreakpoints [
 { #category : #running }
 InqInquisitorTest >> setUp [
 	super setUp.
-	inquisitor := InqInquisitorForTest newWithoutRegisteringInstance.
-	inquisitor isSilent: true.
-	breakpoints := OrderedCollection new
+	breakpoints := OrderedCollection new.
+	"Empties the instance registers of the assist classes"
+	self assistClasses do: [ :assistClass | assistClass clearInstances ].
+	"Capture initial state of assist classes, so that it can be asserted later that they were not modified by the tests"
+	assistClassesInitialStateDictionary := Dictionary new.
+	self assistClasses do: [ :assistClass | |d|
+		d := Dictionary new.
+		assistClassesInitialStateDictionary at: assistClass put: d.
+		self captureInitialStateOfAssistClass: assistClass inDictionary: d
+	].
 ]
 
 { #category : #running }
@@ -97,7 +145,8 @@ InqInquisitorTest >> tearDown [
 	"Remove breakpoints from the following methods"
 	methodsToClean := { InqInquisitorTestAssistClass>>#doNothingWithHalt }.
 	breakpointsToRemove := Breakpoint all select: [ :brkpt | (brkpt link methods) includesAny: methodsToClean].
-	breakpointsToRemove do: [ :brkpt | brkpt remove ]
+	breakpointsToRemove do: [ :brkpt | brkpt remove ].
+	self assistClasses do: [ :assistClass | assistClass clearInstances ]
 ]
 
 { #category : #tests }
@@ -106,6 +155,8 @@ InqInquisitorTest >> testCreateInquisitorOnCustomCodeAndRunExecution [
 	| inq |
 	inq := InqInquisitor newForCode: 'Point x: 1 y: var' withSetupCode: 'var := 2'.
 	inq runExecution.
+	
+	self postTestAssertions
 ]
 
 { #category : #tests }
@@ -114,6 +165,8 @@ InqInquisitorTest >> testCreateInquisitorOnTestAndRunExecution [
 	| inq |
 	inq := InqInquisitorForTest newForTestMethodName: #testDummy onTestClass: self class.
 	inq runExecution.
+	
+	self postTestAssertions
 ]
 
 { #category : #tests }
@@ -130,6 +183,8 @@ InqInquisitorTest >> testExceptionRaisedByExecutionShouldStopQuestionAndAppearAs
 	inq askQuestion: q.
 	self assert: q capturePoints size equals: 1. "Checks that the execution of the question was stopped at the first error. Otherwise, the inquisited node would have been reached more than one time"
 	self assert: q executionTermination isNormalTermination not.
+	
+	self postTestAssertions
 ]
 
 { #category : #tests }
@@ -140,6 +195,8 @@ InqInquisitorTest >> testHaltInCodeShouldBeIgnored [
 	self shouldnt: [inq askQuestion: q] raise: Halt.
 	self assertExecutionTerminationNormal: q.
 	self assert: q capturePoints size equals: 1.
+	
+	self postTestAssertions
 ]
 
 { #category : #tests }
@@ -151,4 +208,6 @@ InqInquisitorTest >> testSetupCodeShouldNotProduceCapturePoints [
 	inq askQuestion: q.
 	self assertExecutionTerminationNormal: q.
 	self assert: q capturePoints size equals: 1.
+	
+	self postTestAssertions
 ]

@@ -1,5 +1,5 @@
 Class {
-	#name : #InqInquisitorTestVariableDummy,
+	#name : #InqTestAssistClassForVariableHistoryQuestion,
 	#superclass : #InqInquisitorTestAssistClass,
 	#instVars : [
 		'myInstanceVariable'
@@ -11,23 +11,23 @@ Class {
 }
 
 { #category : #initialization }
-InqInquisitorTestVariableDummy class >> setClassVariableTo: aValue [
+InqTestAssistClassForVariableHistoryQuestion class >> setClassVariableTo: aValue [
 	myClassVariable := aValue
 ]
 
 { #category : #initialization }
-InqInquisitorTestVariableDummy >> methodWithArgument: arg1 [
+InqTestAssistClassForVariableHistoryQuestion >> methodWithArgument: arg1 [
 	Point new.
 	^ self 
 ]
 
 { #category : #initialization }
-InqInquisitorTestVariableDummy >> setInstanceVariableTo: aValue [
+InqTestAssistClassForVariableHistoryQuestion >> setInstanceVariableTo: aValue [
 	myInstanceVariable := aValue
 ]
 
 { #category : #initialization }
-InqInquisitorTestVariableDummy >> setLocalVariables [
+InqTestAssistClassForVariableHistoryQuestion >> setLocalVariables [
 	| a b |
 	a := 0.
 	Point new.

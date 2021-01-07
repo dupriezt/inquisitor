@@ -1,52 +1,52 @@
 Class {
-	#name : #InqInquisitorTestMethodReturnDummy,
+	#name : #InqTestAssistClassForMethodReturnQuestion,
 	#superclass : #InqInquisitorTestAssistClass,
 	#category : #'Inquisitor-Tests'
 }
 
 { #category : #'as yet unclassified' }
-InqInquisitorTestMethodReturnDummy >> evaluateBlock: aBlock [
+InqTestAssistClassForMethodReturnQuestion >> evaluateBlock: aBlock [
 	aBlock value
 ]
 
 { #category : #'as yet unclassified' }
-InqInquisitorTestMethodReturnDummy >> nonSpecialReturn [
+InqTestAssistClassForMethodReturnQuestion >> nonSpecialReturn [
 	Point x: 2 y: 5.
 	^ 42
 ]
 
 { #category : #'as yet unclassified' }
-InqInquisitorTestMethodReturnDummy >> returnFalse [
+InqTestAssistClassForMethodReturnQuestion >> returnFalse [
 	Point x: 2 y: 5.
 	^ false
 ]
 
 { #category : #'as yet unclassified' }
-InqInquisitorTestMethodReturnDummy >> returnImplicitSelf [
+InqTestAssistClassForMethodReturnQuestion >> returnImplicitSelf [
 	Point x: 2 y: 5.
 ]
 
 { #category : #'as yet unclassified' }
-InqInquisitorTestMethodReturnDummy >> returnInBlock [
+InqTestAssistClassForMethodReturnQuestion >> returnInBlock [
 	Point x: 2 y: 5.
 	self evaluateBlock: [ ^ 42 ].
 	^ false
 ]
 
 { #category : #'as yet unclassified' }
-InqInquisitorTestMethodReturnDummy >> returnNil [
+InqTestAssistClassForMethodReturnQuestion >> returnNil [
 	Point x: 2 y: 5.
 	^ nil
 ]
 
 { #category : #'as yet unclassified' }
-InqInquisitorTestMethodReturnDummy >> returnSelf [
+InqTestAssistClassForMethodReturnQuestion >> returnSelf [
 	Point x: 2 y: 5.
 	^ self
 ]
 
 { #category : #'as yet unclassified' }
-InqInquisitorTestMethodReturnDummy >> returnTrue [
+InqTestAssistClassForMethodReturnQuestion >> returnTrue [
 	Point x: 2 y: 5.
 	^ true
 ]

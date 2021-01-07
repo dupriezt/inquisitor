@@ -6,7 +6,12 @@ Class {
 
 { #category : #tests }
 InqValueCheckTest >> assistClass [
-	^ InqInquisitorTestValueCheckDummy
+	^ InqTestAssistClassForValueCheckQuestion
+]
+
+{ #category : #tests }
+InqValueCheckTest >> assistClasses [
+	^ OrderedCollection new add: InqTestAssistClassForValueCheckQuestion; yourself
 ]
 
 { #category : #tests }
@@ -47,4 +52,5 @@ InqValueCheckTest >> testValueCheck [
 	self assertCapturePoint: (cps at: 1) value: false receiver: inst1 method: qMeth nbBreakpoints: 1.
 	self assertCapturePoint: (cps at: 2) value: true receiver: inst1 method: qMeth nbBreakpoints: 2.
 	self assertCapturePoint: (cps at: 3) value: true receiver: inst2 method: qMeth nbBreakpoints: 3.
+	self postTestAssertions.
 ]

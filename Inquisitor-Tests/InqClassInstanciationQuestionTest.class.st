@@ -5,7 +5,27 @@ Class {
 }
 
 { #category : #tests }
+InqClassInstanciationQuestionTest >> assistClasses [
+	^ { InqTestAssistClassForClassInstanciation }
+]
+
+{ #category : #tests }
+InqClassInstanciationQuestionTest >> createTestInstances [
+	"Dummy code for tests"
+	InqTestAssistClassForClassInstanciation new.
+	Point new.
+	InqTestAssistClassForClassInstanciation basicNew. 
+]
+
+{ #category : #tests }
 InqClassInstanciationQuestionTest >> testRunOnSimpleClass [
 
+	| q |
+	self setUpForInquisitedMethod: self class>>#createTestInstances.
 	
+	q := InqClassInstanciationQuestion newForClass: InqTestAssistClassForClassInstanciation.
+	inquisitor askQuestion: q.
+	self assert: q capturePoints size equals: 2.
+	
+	self postTestAssertions
 ]

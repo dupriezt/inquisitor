@@ -6,7 +6,12 @@ Class {
 
 { #category : #tests }
 InqMethodReturnQuestionTest >> assistClass [
-	^ InqInquisitorTestMethodReturnDummy
+	^ InqTestAssistClassForMethodReturnQuestion
+]
+
+{ #category : #tests }
+InqMethodReturnQuestionTest >> assistClasses [
+	^ OrderedCollection new add: self assistClass; yourself
 ]
 
 { #category : #tests }
@@ -72,6 +77,7 @@ InqMethodReturnQuestionTest >> testImplicitReturnSelf [
 	self assert: capturePoints first capturedValue equals: receiverInstance.
 	self assert: capturePoints first breakpointsEncountered size equals: 1.
 	self assert: capturePoints first methodInvocation invokedMethod name equals: questionedMethod name. "The compiled methods are different because one contains bytecode for the breakpoint that was inserted into it"
+	self postTestAssertions.
 	
 ]
 
@@ -87,7 +93,8 @@ InqMethodReturnQuestionTest >> testReturnFalse [
 	self assert: capturePoints size equals: 1.
 	self assert: self assistClass instances size equals: 1.
 	inst := self assistClass instances first.
-	self assertCapturePoint: (capturePoints first) value: false receiver: inst method: questionedMethod  nbBreakpoints: 1
+	self assertCapturePoint: (capturePoints first) value: false receiver: inst method: questionedMethod  nbBreakpoints: 1.
+	self postTestAssertions.
 ]
 
 { #category : #tests }
@@ -102,7 +109,8 @@ InqMethodReturnQuestionTest >> testReturnInBlock [
 	self assert: capturePoints size equals: 1.
 	self assert: self assistClass instances size equals: 1.
 	inst := self assistClass instances first.
-	self assertCapturePoint: (capturePoints first) value: 42 receiver: inst method: questionedMethod nbBreakpoints: 1
+	self assertCapturePoint: (capturePoints first) value: 42 receiver: inst method: questionedMethod nbBreakpoints: 1.
+	self postTestAssertions.
 ]
 
 { #category : #tests }
@@ -117,7 +125,8 @@ InqMethodReturnQuestionTest >> testReturnNil [
 	self assert: capturePoints size equals: 1.
 	self assert: self assistClass instances size equals: 1.
 	inst := self assistClass instances first.
-	self assertCapturePoint: (capturePoints first) value: nil receiver: inst method: questionedMethod nbBreakpoints: 1
+	self assertCapturePoint: (capturePoints first) value: nil receiver: inst method: questionedMethod nbBreakpoints: 1.
+	self postTestAssertions.
 	
 ]
 
@@ -133,7 +142,8 @@ InqMethodReturnQuestionTest >> testReturnNonSpecialCase [
 	self assert: capturePoints size equals: 1.
 	self assert: self assistClass instances size equals: 1.
 	inst := self assistClass instances first.
-	self assertCapturePoint: (capturePoints first) value: 42 receiver: inst method: questionedMethod nbBreakpoints: 1
+	self assertCapturePoint: (capturePoints first) value: 42 receiver: inst method: questionedMethod nbBreakpoints: 1.
+	self postTestAssertions.
 ]
 
 { #category : #tests }
@@ -149,6 +159,7 @@ InqMethodReturnQuestionTest >> testReturnSelf [
 	self assert: self assistClass instances size equals: 1.
 	inst := self assistClass instances first.
 	self assertCapturePoint: (capturePoints first) value: inst receiver: inst method: questionedMethod nbBreakpoints: 1.
+	self postTestAssertions.
 ]
 
 { #category : #tests }
@@ -163,6 +174,7 @@ InqMethodReturnQuestionTest >> testReturnTrue [
 	self assert: capturePoints size equals: 1.
 	self assert: self assistClass instances size equals: 1.
 	inst := self assistClass instances first.
-	self assertCapturePoint: (capturePoints first) value: true receiver: inst method: questionedMethod nbBreakpoints: 1
+	self assertCapturePoint: (capturePoints first) value: true receiver: inst method: questionedMethod nbBreakpoints: 1.
+	self postTestAssertions.
 	
 ]
