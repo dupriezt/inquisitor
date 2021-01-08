@@ -2,30 +2,23 @@ Class {
 	#name : #InqClassInstanciationQuestion,
 	#superclass : #InqInquisitorQuestion,
 	#instVars : [
-		'class_'
+		'proxyMethods',
+		'targetClass'
 	],
 	#category : #Inquisitor
 }
 
 { #category : #'instance creation' }
 InqClassInstanciationQuestion class >> newForClass: aClass [
-	^ self new class_: aClass; yourself
+	^ self new targetClass: aClass; yourself
 ]
 
 { #category : #'as yet unclassified' }
 InqClassInstanciationQuestion >> askToInquisitor: anInquisitor [
 	"Answer the question, using anInquisitor to run the execution. No need to return anything, fill your capturePoints variable with the capture points constituting the answer to the question."
+	self proxyInstanceCreationMethodsOnClass: targetClass.
 	self runExecutionWithInquisitor: anInquisitor.
-]
-
-{ #category : #accessing }
-InqClassInstanciationQuestion >> class_ [
-	^ class_
-]
-
-{ #category : #accessing }
-InqClassInstanciationQuestion >> class_: aClass [
-	class_ := aClass
+	self unInstallProxyMethods.
 ]
 
 { #category : #'as yet unclassified' }
@@ -51,26 +44,24 @@ InqClassInstanciationQuestion >> methodsToProxyOnInstanceSideOf: aClass [
 ]
 
 { #category : #'as yet unclassified' }
-InqClassInstanciationQuestion >> proxyMethod: aCompiledMethod onClass: aClass [
-	"Create a proxy method on @aClass with the same name as @aCompiledMethod and pointing to it. If @aClass already has a method with that name, first copy @aCompiledMethod with a different name, then create a proxy method pointing to it."
-	
-	(aClass methods includes: aCompiledMethod) ifFalse: [
-	"@aClass does not have a method with the name of @aCompiledMethod"
-		aClass compile: (self proxyMethodSourceCodeForCompiledMethod: aCompiledMethod).
-	] ifTrue: [ 
-	"@aClass has a method with the same name as @aCompiledMethod"
-		self error: 'Case not handled yet'
-	]
+InqClassInstanciationQuestion >> proxyInstanceCreationMethodsOnClass: aClass [
+	| methodsToProxyOnClassSide methodsToProxyOnInstanceSide |
+	methodsToProxyOnClassSide := self methodsToProxyOnClassSideOfClass: aClass.
+	methodsToProxyOnInstanceSide := self methodsToProxyOnInstanceSideOf: aClass.
+	self proxyMethods addAll: (methodsToProxyOnInstanceSide collect: [:meth | (InqProxyMethod newToProxyMethod: meth onClass: aClass) install; yourself]).
+	"The proxy methods on the class side have to be installed on aClass' class"
+	self proxyMethods addAll: (methodsToProxyOnClassSide collect: [:meth | (InqProxyMethod newToProxyMethod: meth onClass: aClass class) install; yourself]).
+]
+
+{ #category : #accessing }
+InqClassInstanciationQuestion >> proxyMethods [
+	proxyMethods ifNil: [ proxyMethods := OrderedCollection new].
+	^ proxyMethods
 ]
 
 { #category : #'as yet unclassified' }
-InqClassInstanciationQuestion >> proxyMethodSourceCodeForCompiledMethod: aCompiledMethod [
-	"Method name + arguments"
-	| firstLine body |
-	firstLine := (aCompiledMethod sourceCode substrings: (Character cr asString)) first.
-	body := 'Break break.
-	^ super ', aCompiledMethod selector asString.
-	^ firstLine, Character cr asString, Character tab asString, body
+InqClassInstanciationQuestion >> proxyMethods: anOrderedCollection [
+	proxyMethods := anOrderedCollection
 ]
 
 { #category : #'as yet unclassified' }
@@ -80,14 +71,26 @@ InqClassInstanciationQuestion >> resultDescription [
 	^ 'Class Instanciation result'
 ]
 
-{ #category : #'as yet unclassified' }
-InqClassInstanciationQuestion >> whenBreakpoint: aBreakpoint isHitForBreakException: aBreakException [
-	"This method will be called whenever the inquisited execution encounters a breakpoint present in the @breakpoints variable of this object (the list of breakpoints this question has installed)"
-	self flag: 'TODO'.
-	self inform: 'Breakpoint hit'
+{ #category : #accessing }
+InqClassInstanciationQuestion >> targetClass [
+	^ targetClass
+]
+
+{ #category : #accessing }
+InqClassInstanciationQuestion >> targetClass: aClass [
+	targetClass := aClass
 ]
 
 { #category : #'as yet unclassified' }
-InqClassInstanciationQuestion >> whenBreakpointlessBreakException: aBreakException [
-	self inform: 'breakpointLessException'
+InqClassInstanciationQuestion >> unInstallProxyMethods [
+	self proxyMethods do: [ :proxyMethod | proxyMethod unInstall ].
+	self proxyMethods: nil.
+]
+
+{ #category : #'as yet unclassified' }
+InqClassInstanciationQuestion >> whenInqQuestionException: anInqQuestionException [
+	"This method will be called whenever the inquisited execution signals an InqQuestionException exception."
+	| astNodeThatCalledTheInstanciationMethod |
+	astNodeThatCalledTheInstanciationMethod := anInqQuestionException signalerContext sender currentNode.
+	self capturePoints add: astNodeThatCalledTheInstanciationMethod
 ]

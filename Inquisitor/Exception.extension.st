@@ -11,6 +11,11 @@ Exception >> isHalt [
 ]
 
 { #category : #'*Inquisitor' }
+Exception >> isInquisitorQuestionException [
+	^ false
+]
+
+{ #category : #'*Inquisitor' }
 Exception >> isNotification [
 	^ false
 ]

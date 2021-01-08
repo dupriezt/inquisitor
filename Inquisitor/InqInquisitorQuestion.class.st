@@ -120,10 +120,15 @@ InqInquisitorQuestion >> runExecutionWithInquisitor: anInquisitor [
 	[ anInquisitor runExecution ] on: Exception do: [ :ex |
 		"- Exception is a notification that will pass without effect if not handled, so we do not care"
 		ex isNotification ifTrue: [ ex pass ].
+		"- Exception is used to transmit information to the question"
+		ex isInquisitorQuestionException ifTrue: [ 
+			self whenInqQuestionException:	ex.
+			ex resume.
+		].
 		"- Exception is from a breakpoint"
 		ex isBreak ifTrue: [
 			lastBreakpointHit ifNil: [ self whenBreakpointlessBreakException: ex ].
-			"We only do something if the breakpoint that was hit belongs to those that this question installed"
+			"We only do something if the breakpoint that was hit was installed by this question"
 			(self breakpoints includes: lastBreakpointHit) ifTrue: [ self whenBreakpoint: lastBreakpointHit isHitForBreakException: ex ].
 			lastBreakpointHit := nil.
 			ex resume
@@ -151,4 +156,10 @@ InqInquisitorQuestion >> whenBreakpoint: aBreakpoint isHitForBreakException: aBr
 InqInquisitorQuestion >> whenBreakpointlessBreakException: aBreakException [
 	"This method will be called whenever the inquisited execution signals a Break exception, but no breakpoint hit has been registered. Typically happens because of a 'Break break' statement in the inquisited execution"
 	self error: 'Unexpected case: Break exception signalled, but no breakpoint hit has been registered'
+]
+
+{ #category : #'as yet unclassified' }
+InqInquisitorQuestion >> whenInqQuestionException: anInqQuestionException [
+	"This method will be called whenever the inquisited execution signals an InqQuestionException exception."
+	self error: 'Unexpected case: This question does not expect the execution to signal an InqQuestionException'
 ]

@@ -24,8 +24,7 @@ InqClassInstanciationQuestionTest >> testRunOnSimpleClass [
 	self setUpForInquisitedMethod: self class>>#createTestInstances.
 	
 	q := InqClassInstanciationQuestion newForClass: InqTestAssistClassForClassInstanciation.
-	inquisitor askQuestion: q.
+	q askToInquisitor: inquisitor.
 	self assert: q capturePoints size equals: 2.
-	
 	self postTestAssertions
 ]
