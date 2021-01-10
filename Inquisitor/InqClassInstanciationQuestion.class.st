@@ -105,7 +105,6 @@ InqClassInstanciationQuestion >> targetClass: aClass [
 { #category : #'as yet unclassified' }
 InqClassInstanciationQuestion >> unInstallProxyMethods [
 	self proxyMethods do: [ :proxyMethod | proxyMethod unInstall ].
-	self proxyMethods: nil.
 ]
 
 { #category : #'as yet unclassified' }
