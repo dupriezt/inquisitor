@@ -22,6 +22,10 @@ InqProxyMethodForClassInstanciation >> classInstanciationQuestionHash: anInteger
 { #category : #accessing }
 InqProxyMethodForClassInstanciation >> instrumentationCode [
 	"See #compileProxyMethodFor:calling: for the code that will be around this code. This code can use temp variable 'returnValue' to access the value returned by the proxied method"
+	"BE VARY CAREFUL ABOUT WRITING CODE THAT CREATE INSTANCES HERE. Because this code will be inserted in, for example, the proxy method to Behavior>>#basicNew, if it creates instances, it will call Behavior>>#basicNew again, trigger the proxy method, execute this code again...etc eternally looping and freezing the image. If this code does create instances, make sure there's a condition so that it doesn't loop"
+"	^ '.'"
+	"^ '(InqClassInstanciationQuestion hashToQuestionDictionary at: ', classInstanciationQuestionHash asString,' ) instanciationData add: returnValue class.'."
+	
 	^ '(returnValue class == ', targetClass name asString, ') ifTrue: [(InqClassInstanciationQuestion hashToQuestionDictionary at: ', classInstanciationQuestionHash asString, ') instanciationData add: {thisContext sender sourceNoceExecuted. returnValue}].' 
 ]
 

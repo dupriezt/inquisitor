@@ -31,17 +31,25 @@ InqClassInstanciationQuestion >> askToInquisitor: anInquisitor [
 	"Add self to the @hashToQuestionDictionary class variable, so that the proxy methods can find self to report information about instance creation"
 	self class hashToQuestionDictionary at: (self hash) put: self.
 	self proxyInstanceCreationMethodsOnClass: targetClass.
-	[self runExecutionWithInquisitor: anInquisitor] ensure: [ self unInstallProxyMethods].
+	self runExecutionWithInquisitor: anInquisitor.
+	self unInstallProxyMethods.
 ]
 
 { #category : #'as yet unclassified' }
-InqClassInstanciationQuestion >> indexesOfInstanceCreationPrimitives [
+InqClassInstanciationQuestion >> indexesOfClassBasedInstanceCreationPrimitives [
+	"Indexes of primitives that are on classes and create an instance of that class"
 	"* 70 */ primitiveNew,
 	/* 71 */ primitiveNewWithArg,
 	/* 79 */ primitiveNewMethod,
-	/* 148 */ primitiveClone,
 	/* 160 */ primitiveAdoptInstance,"
-	^#(70 71 79 148 160)
+	^#(70 71 79 160)
+]
+
+{ #category : #'as yet unclassified' }
+InqClassInstanciationQuestion >> indexesOfInstanceBasedInstanceCreationPrimitives [
+	"Indexes of primitives that are on instances of a class and create an instance of that class"
+	"/* 148 */ primitiveClone,"
+	^#(148)
 ]
 
 { #category : #accessing }
@@ -52,13 +60,13 @@ InqClassInstanciationQuestion >> instanciationData [
 { #category : #'as yet unclassified' }
 InqClassInstanciationQuestion >> methodsToProxyOnClassSideOfClass: aClass [
 	"Returns the list of all class side methods of @aClass that should be proxied to capture all attempts to instanciate it"
-	^ (aClass class allMethods select: [ :meth | self indexesOfInstanceCreationPrimitives includes: meth primitive ]) asOrderedCollection.
+	^ (aClass class allMethods select: [ :meth | self indexesOfClassBasedInstanceCreationPrimitives includes: meth primitive ]) asOrderedCollection.
 ]
 
 { #category : #'as yet unclassified' }
 InqClassInstanciationQuestion >> methodsToProxyOnInstanceSideOf: aClass [
 	"Returns the list of all instance side methods of @aClass that should be proxied to capture all attempts to instanciate it"
-	^ (aClass allMethods select: [ :meth | self indexesOfInstanceCreationPrimitives includes: meth primitive ]) asOrderedCollection
+	^ (aClass allMethods select: [ :meth | self indexesOfInstanceBasedInstanceCreationPrimitives includes: meth primitive ]) asOrderedCollection
 ]
 
 { #category : #'as yet unclassified' }
