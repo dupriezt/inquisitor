@@ -23,6 +23,6 @@ ClyValueCheckCommand >> defaultMenuItemName [
 ClyValueCheckCommand >> execute [
 	| dict |
 	dict := Dictionary new.
-	dict at: #node put: sourceNode.
+	dict at: #node put: targetNode.
 	(InqValueCheckPopup on: dict) openWithSpec
 ]

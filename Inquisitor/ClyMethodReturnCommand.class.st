@@ -21,5 +21,5 @@ ClyMethodReturnCommand >> defaultMenuItemName [
 
 { #category : #accessing }
 ClyMethodReturnCommand >> execute [
-	InqInquisitor askQuestion: (InqMethodReturnQuestion newForMethod: method)
+	InqInquisitor askQuestion: (InqMethodReturnQuestion newForMethod: targetMethod)
 ]

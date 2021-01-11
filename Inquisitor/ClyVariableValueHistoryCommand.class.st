@@ -18,22 +18,22 @@ ClyVariableValueHistoryCommand class >> contextMenuOrder [
 { #category : #accessing }
 ClyVariableValueHistoryCommand >> createQuestion [
 
-	sourceNode isTempVariable ifTrue: [ 
+	targetNode isTempVariable ifTrue: [ 
 		^ InqLocalVariableValueHistoryQuestion
-			  newForNode: sourceNode
-			  andMethod: method ].
-	sourceNode isArgumentVariable ifTrue: [ 
+			  newForNode: targetNode
+			  andMethod: targetMethod ].
+	targetNode isArgumentVariable ifTrue: [ 
 		^ InqArgumentVariableValueHistoryQuestion
-			  newForNode: sourceNode
-			  andMethod: method ].
-	sourceNode isInstanceVariable ifTrue: [ 
+			  newForNode: targetNode
+			  andMethod: targetMethod ].
+	targetNode isInstanceVariable ifTrue: [ 
 		^ InqInstanceVariableValueHistoryQuestion
-			  newForNode: sourceNode
-			  andMethod: method ].
-	sourceNode isClassVariable ifTrue: [ 
+			  newForNode: targetNode
+			  andMethod: targetMethod ].
+	targetNode isClassVariable ifTrue: [ 
 		^ InqClassVariableValueHistoryQuestion
-			  newForNode: sourceNode
-			  andMethod: method ].
+			  newForNode: targetNode
+			  andMethod: targetMethod ].
 	self error: 'Unsupported variable type'
 ]
 
