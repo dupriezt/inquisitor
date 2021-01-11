@@ -5,7 +5,9 @@ Class {
 		'proxiedMethod',
 		'proxyMethod',
 		'targetMethod',
-		'isInstalled'
+		'isInstalled',
+		'isProxiedMethodInstalled',
+		'isProxyMethodInstalled'
 	],
 	#category : #Inquisitor
 }
@@ -35,7 +37,9 @@ InqProxyMethod >> compileProxyMethodFor: aCompiledMethod calling: anotherCompile
 InqProxyMethod >> install [
 	self isInstalled ifTrue: [ ^ self "Proxy is already installed"].
 	proxiedMethod := self compileProxiedMethodFor: targetMethod.
+	isProxiedMethodInstalled := true.
 	proxyMethod := self compileProxyMethodFor: targetMethod calling: proxiedMethod.
+	isProxyMethodInstalled := true.
 	isInstalled := true.
 	
 ]
@@ -50,6 +54,11 @@ InqProxyMethod >> instrumentationCode [
 InqProxyMethod >> isInstalled [
 	isInstalled ifNil: [ isInstalled := false ].
 	^ isInstalled
+]
+
+{ #category : #actions }
+InqProxyMethod >> isProxiedMethodInstalled [
+	^ isProxiedMethodInstalled
 ]
 
 { #category : #actions }
@@ -92,6 +101,8 @@ InqProxyMethod >> targetMethod: aCompiledMethod [
 InqProxyMethod >> unInstall [
 	self isInstalled ifFalse: [ ^ self "Nothing to uninstall"].
 	targetMethod methodClass compile: (targetMethod ast sourceCode).
+	isProxyMethodInstalled := false.
 	proxiedMethod removeFromSystem.
+	isProxiedMethodInstalled := false.
 	isInstalled := false
 ]

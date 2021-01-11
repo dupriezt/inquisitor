@@ -24,15 +24,23 @@ InqClassInstanciationQuestion class >> newForClass: aClass [
 ]
 
 { #category : #'as yet unclassified' }
+InqClassInstanciationQuestion class >> resetHashToQuestionDictionary [
+	hashToQuestionDictionary := nil.
+]
+
+{ #category : #'as yet unclassified' }
 InqClassInstanciationQuestion >> askToInquisitor: anInquisitor [
 	"Answer the question, using anInquisitor to run the execution. No need to return anything, fill your capturePoints variable with the capture points constituting the answer to the question."
 	"Create an empty collection where the proxy methods can put the information they gather on the instanciations"
 	instanciationData := OrderedCollection new.
 	"Add self to the @hashToQuestionDictionary class variable, so that the proxy methods can find self to report information about instance creation"
 	self class hashToQuestionDictionary at: (self hash) put: self.
-	self proxyInstanceCreationMethodsOnClass: targetClass.
-	self runExecutionWithInquisitor: anInquisitor.
-	self unInstallProxyMethods.
+	[self proxyInstanceCreationMethodsOnClass: targetClass.
+	self runExecutionWithInquisitor: anInquisitor.] ensure: [
+		self unInstallProxyMethods.
+		self class hashToQuestionDictionary removeKey: (self hash). "Remove self from the @hashToQuestionDictionary class variable"
+	].
+
 ]
 
 { #category : #'as yet unclassified' }
