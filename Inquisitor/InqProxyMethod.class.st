@@ -62,6 +62,21 @@ InqProxyMethod >> isProxiedMethodInstalled [
 ]
 
 { #category : #actions }
+InqProxyMethod >> isProxyMethodInstalled [
+	^ isProxyMethodInstalled
+]
+
+{ #category : #accessing }
+InqProxyMethod >> proxiedMethod [
+	^ proxiedMethod
+]
+
+{ #category : #accessing }
+InqProxyMethod >> proxyMethod [
+	^ proxyMethod
+]
+
+{ #category : #actions }
 InqProxyMethod >> sourceCodeOfProxiedMethodFor: aCompiledMethod [
 	"Return the source code compiled by #compiledProxiedMethodFor:"
 	| selectorForProxiedMethod |
@@ -90,6 +105,11 @@ InqProxyMethod >> sourceCodeOfProxyMethodFor: aCompiledMethod calling: anotherCo
 		Character tab asString, instrumentation, Character cr asString,
 		Character tab asString, lastLine.
 	^ fullSourceCode
+]
+
+{ #category : #accessing }
+InqProxyMethod >> targetMethod [
+	^ targetMethod
 ]
 
 { #category : #accessing }

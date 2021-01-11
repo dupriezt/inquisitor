@@ -25,5 +25,6 @@ ClyClassInstanciationCommand >> defaultMenuItemName [
 
 { #category : #execution }
 ClyClassInstanciationCommand >> execute [
-	self inform: self class name asString, ' executed for class: ', self targetClass name asString
+	InqInquisitor askQuestion: (InqClassInstanciationQuestion newForClass: self targetClass).
+	"self inform: self class name asString, ' executed for class: ', self targetClass name asString"
 ]

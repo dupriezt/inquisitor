@@ -40,7 +40,7 @@ InqClassInstanciationQuestion >> askToInquisitor: anInquisitor [
 		self unInstallProxyMethods.
 		self class hashToQuestionDictionary removeKey: (self hash). "Remove self from the @hashToQuestionDictionary class variable"
 	].
-
+	self processInstanciationDataIntoCapturePoints.
 ]
 
 { #category : #'as yet unclassified' }
@@ -62,6 +62,13 @@ InqClassInstanciationQuestion >> indexesOfInstanceBasedInstanceCreationPrimitive
 
 { #category : #accessing }
 InqClassInstanciationQuestion >> instanciationData [
+	"Format: an OrderedCollection of arrays of the form:
+	- AST node calling the instance creation primitive
+	- Instance created
+	- Hash of the context containing the call to the instance creation primitive
+	- Method of the context ...
+	- Receiver of the context ...
+	"
 	^ instanciationData
 ]
 
@@ -75,6 +82,23 @@ InqClassInstanciationQuestion >> methodsToProxyOnClassSideOfClass: aClass [
 InqClassInstanciationQuestion >> methodsToProxyOnInstanceSideOf: aClass [
 	"Returns the list of all instance side methods of @aClass that should be proxied to capture all attempts to instanciate it"
 	^ (aClass allMethods select: [ :meth | self indexesOfInstanceBasedInstanceCreationPrimitives includes: meth primitive ]) asOrderedCollection
+]
+
+{ #category : #accessing }
+InqClassInstanciationQuestion >> processInstanciationDataIntoCapturePoints [
+	"Process the information about instance creation contained in @instanciationData and make capture points out of it"
+	instanciationData do: [ :instanceCreationData | |callNode instance contextHash method receiver methodInvocation breakpoint capturePoint|
+		callNode := instanceCreationData at: 1.
+		instance := instanceCreationData at: 2.
+		contextHash := instanceCreationData at: 3.
+		method := instanceCreationData at: 4.
+		receiver := instanceCreationData at: 5.
+		methodInvocation := InqMethodInvocation newForContextHash: contextHash andContextMethod: method.
+		breakpoint := Breakpoint new node: callNode; always; yourself.
+		self breakpointsEncountered add: breakpoint.
+		capturePoint := self capturePointFactory newCapturePointForReceiver: receiver andMethodInvocation: methodInvocation andCapturedValue: instance andBreakpointsEncountered: self breakpointsEncountered copy.
+		self capturePoints add: capturePoint.
+	]
 ]
 
 { #category : #'as yet unclassified' }
@@ -121,6 +145,12 @@ InqClassInstanciationQuestion >> targetClass: aClass [
 { #category : #'as yet unclassified' }
 InqClassInstanciationQuestion >> unInstallProxyMethods [
 	self proxyMethods do: [ :proxyMethod | proxyMethod unInstall ].
+]
+
+{ #category : #'as yet unclassified' }
+InqClassInstanciationQuestion >> whenBreakpoint: aBreakpoint isHitForBreakException: aBreakException [
+	"This method will be called whenever the inquisited execution encounters a breakpoint present in the @breakpoints variable of this object (the list of breakpoints this question has installed)"
+	self error: 'No breakpoint should be hit when runing this question, because it does not set any'
 ]
 
 { #category : #'as yet unclassified' }

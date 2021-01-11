@@ -11,7 +11,12 @@ Class {
 
 { #category : #'instance creation' }
 InqMethodInvocation class >> newForContext: aContext [
-	^ self new add: aContext hash; add: aContext method; yourself
+	^ self newForContextHash: (aContext hash) andContextMethod: (aContext method)
+]
+
+{ #category : #'instance creation' }
+InqMethodInvocation class >> newForContextHash: anInteger andContextMethod: aCompiledMethod [
+	^ self new add: anInteger; add: aCompiledMethod; yourself
 ]
 
 { #category : #converting }

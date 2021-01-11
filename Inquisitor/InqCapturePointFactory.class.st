@@ -16,6 +16,11 @@ InqCapturePointFactory >> newCapturePointForContext: aContext andCapturedValue: 
 ]
 
 { #category : #'as yet unclassified' }
+InqCapturePointFactory >> newCapturePointForReceiver: anObject andMethodInvocation: aMethodInvocation andCapturedValue: aValue andBreakpointsEncountered: anOrderedCollection [
+	^ InqCapturePoint privateNew receiver: anObject; methodInvocation: aMethodInvocation; capturedValue: aValue; breakpointsEncountered: anOrderedCollection; timeIndex: self nextTimeIndex; yourself
+]
+
+{ #category : #'as yet unclassified' }
 InqCapturePointFactory >> nextTimeIndex [
 	timeIndex ifNil: [ timeIndex := 0 ].
 	timeIndex := timeIndex + 1.

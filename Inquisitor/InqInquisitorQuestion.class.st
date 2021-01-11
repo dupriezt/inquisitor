@@ -95,8 +95,8 @@ InqInquisitorQuestion >> quickView [
 	"Returns a list of associations propertyName->propertyValue about this question. To be used to display its important properties"
 	| result |
 	result := OrderedCollection new.
-	result add: #node->(self node sourceCode);
-		add: #method -> (self node methodNode methodClass asString, '>>', self node methodNode selector);
+	result add: #node->(self node ifNil: [nil] ifNotNil: [:nde | nde sourceCode]);
+		add: #method -> (self node ifNil: [nil] ifNotNil: [:nde | nde methodNode methodClass asString, '>>', self node methodNode selector]);
 		add: #capturePoints -> (self capturePoints size);
 		add: #termination -> (self executionTermination description).
 	^ result
