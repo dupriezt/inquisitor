@@ -125,7 +125,7 @@ InqInquisitorTest >> setUp [
 
 { #category : #running }
 InqInquisitorTest >> setUpForInquisitedCode: aString withSetupCode: anotherString [	
-	inquisitor := InqInquisitor newForCode: aString withSetupCode: anotherString.
+	inquisitor := InqInquisitor newWithoutRegisteringInstanceForCode: aString withSetupCode: anotherString.
 	inquisitor isSilent: true.
 ]
 
@@ -152,9 +152,8 @@ InqInquisitorTest >> tearDown [
 { #category : #tests }
 InqInquisitorTest >> testCreateInquisitorOnCustomCodeAndRunExecution [
 	"Test that creating an inquisitor on a custom execution and running it works"
-	| inq |
-	inq := InqInquisitor newForCode: 'Point x: 1 y: var' withSetupCode: 'var := 2'.
-	inq runExecution.
+	self setUpForInquisitedCode: 'Point x: 1 y: var' withSetupCode: 'var := 2'.
+	inquisitor runExecution.
 	
 	self postTestAssertions
 ]
@@ -162,9 +161,8 @@ InqInquisitorTest >> testCreateInquisitorOnCustomCodeAndRunExecution [
 { #category : #tests }
 InqInquisitorTest >> testCreateInquisitorOnTestAndRunExecution [
 	"Test that creating an inquisitor on a test and running it works"
-	| inq |
-	inq := InqInquisitorForTest newForTestMethodName: #testDummy onTestClass: self class.
-	inq runExecution.
+	self setUpForInquisitedMethod: (self class)>>#testDummy.
+	inquisitor runExecution.
 	
 	self postTestAssertions
 ]
@@ -177,10 +175,10 @@ InqInquisitorTest >> testDummy [
 
 { #category : #tests }
 InqInquisitorTest >> testExceptionRaisedByExecutionShouldStopQuestionAndAppearAsTermination [
-	| inq q |
-	inq := (InqInquisitor newWithoutRegisteringInstanceForCode: 'InqInquisitorTestAssistClass new callDoNothingWithError' withSetupCode: '') isSilent: true; yourself.
+	| q |
+	self setUpForInquisitedCode: 'InqInquisitorTestAssistClass new callDoNothingWithError' withSetupCode: ''.
 	q := InqHitCheckQuestion newForNode: ((InqInquisitorTestAssistClass>>#doNothingWithError) ast body statements first). "Point new"
-	inq askQuestion: q.
+	inquisitor askQuestion: q.
 	self assert: q capturePoints size equals: 1. "Checks that the execution of the question was stopped at the first error. Otherwise, the inquisited node would have been reached more than one time"
 	self assert: q executionTermination isNormalTermination not.
 	
@@ -189,10 +187,10 @@ InqInquisitorTest >> testExceptionRaisedByExecutionShouldStopQuestionAndAppearAs
 
 { #category : #tests }
 InqInquisitorTest >> testHaltInCodeShouldBeIgnored [
-	| inq q |
-	inq := (InqInquisitor newWithoutRegisteringInstanceForCode: 'InqInquisitorTestAssistClass new doNothingWithHalt' withSetupCode: '') isSilent: true; yourself.
+	| q |
+	self setUpForInquisitedCode: 'InqInquisitorTestAssistClass new doNothingWithHalt' withSetupCode: ''.
 	q := InqHitCheckQuestion newForNode: ((InqInquisitorTestAssistClass>>#doNothingWithHalt) ast body statements first). "Point new"
-	self shouldnt: [inq askQuestion: q] raise: Halt.
+	self shouldnt: [inquisitor askQuestion: q] raise: Halt.
 	self assertExecutionTerminationNormal: q.
 	self assert: q capturePoints size equals: 1.
 	
@@ -202,10 +200,10 @@ InqInquisitorTest >> testHaltInCodeShouldBeIgnored [
 { #category : #tests }
 InqInquisitorTest >> testSetupCodeShouldNotProduceCapturePoints [
 	"Test that when asking a question to an inquisitor, no capture points are created when the setup code is executed."
-	| inq q |
-	inq := (InqInquisitor newWithoutRegisteringInstanceForCode: 'InqInquisitorTestAssistClass new doNothing' withSetupCode: 'InqInquisitorTestAssistClass new doNothing') isSilent: true; yourself.
+	| q |
+	self setUpForInquisitedCode: 'InqInquisitorTestAssistClass new doNothing' withSetupCode: 'InqInquisitorTestAssistClass new doNothing'.
 	q := InqHitCheckQuestion newForNode: ((InqInquisitorTestAssistClass>>#doNothing) ast body statements first). "Point new"
-	inq askQuestion: q.
+	inquisitor askQuestion: q.
 	self assertExecutionTerminationNormal: q.
 	self assert: q capturePoints size equals: 1.
 	

@@ -18,14 +18,10 @@ InqClassInstanciationQuestionTest >> createTestInstances [
 ]
 
 { #category : #tests }
-InqClassInstanciationQuestionTest >> testDummy [ 
-	self assert: true
-]
-
-{ #category : #tests }
 InqClassInstanciationQuestionTest >> testRunOnSimpleClass [
-
 	| q |
+	self flag: 'Incomplete test. No time'.
+	
 	self setUpForInquisitedMethod: self class>>#createTestInstances.
 	
 	q := InqClassInstanciationQuestion newForClass: InqTestAssistClassForClassInstanciation.
