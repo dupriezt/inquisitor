@@ -43,6 +43,17 @@ InqClassInstanciationQuestion >> askToInquisitor: anInquisitor [
 	self processInstanciationDataIntoCapturePoints.
 ]
 
+{ #category : #accessing }
+InqClassInstanciationQuestion >> createBreakpointForNode: aNode andClassCondition: aClass [
+	"Assumes @aNode is a message node. Create a breakpoint on @aNode, with the condition that the receiver of the message must be @aClass, or an instance of @aClass"
+	^ Breakpoint new node: aNode; condition: [ :ctx |
+		|msgReceiver|
+		"We look at the parent of the currentNode, because the currentNode is the send of the #break message inserted by this breakpoint's installation"
+		msgReceiver := ctx at: (ctx basicSize - ctx currentNode parent arguments size).
+		(msgReceiver == aClass) or: [msgReceiver class == aClass].
+	]; yourself.
+]
+
 { #category : #'as yet unclassified' }
 InqClassInstanciationQuestion >> indexesOfClassBasedInstanceCreationPrimitives [
 	"Indexes of primitives that are on classes and create an instance of that class"
@@ -87,6 +98,9 @@ InqClassInstanciationQuestion >> methodsToProxyOnInstanceSideOf: aClass [
 { #category : #accessing }
 InqClassInstanciationQuestion >> processInstanciationDataIntoCapturePoints [
 	"Process the information about instance creation contained in @instanciationData and make capture points out of it"
+	| nodeToBreakpointDict |
+	"To avoid creating multiple breakpoints for the same AST node"
+	nodeToBreakpointDict := Dictionary new.
 	instanciationData do: [ :instanceCreationData | |callNode instance contextHash method receiver methodInvocation breakpoint capturePoint|
 		callNode := instanceCreationData at: 1.
 		instance := instanceCreationData at: 2.
@@ -94,7 +108,7 @@ InqClassInstanciationQuestion >> processInstanciationDataIntoCapturePoints [
 		method := instanceCreationData at: 4.
 		receiver := instanceCreationData at: 5.
 		methodInvocation := InqMethodInvocation newForContextHash: contextHash andContextMethod: method.
-		breakpoint := Breakpoint new node: callNode; always; yourself.
+		breakpoint := nodeToBreakpointDict at: callNode ifAbsentPut: [ self createBreakpointForNode: callNode andClassCondition: targetClass ].
 		self breakpointsEncountered add: breakpoint.
 		capturePoint := self capturePointFactory newCapturePointForReceiver: receiver andMethodInvocation: methodInvocation andCapturedValue: instance andBreakpointsEncountered: self breakpointsEncountered copy.
 		self capturePoints add: capturePoint.
