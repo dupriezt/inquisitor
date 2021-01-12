@@ -15,7 +15,8 @@ Class {
 		'methodInvocation',
 		'capturedValue',
 		'breakpointsEncountered',
-		'receiver'
+		'receiver',
+		'isOpenable'
 	],
 	#category : #Inquisitor
 }
@@ -50,6 +51,19 @@ InqCapturePoint >> capturedValue [
 { #category : #accessing }
 InqCapturePoint >> capturedValue: anObject [
 	capturedValue := anObject
+]
+
+{ #category : #accessing }
+InqCapturePoint >> isOpenable [
+	"See comment of #isOpenable:"
+	isOpenable ifNil: [ isOpenable := true ].
+	^ isOpenable
+]
+
+{ #category : #accessing }
+InqCapturePoint >> isOpenable: aBoolean [
+	"Special boolean to prevent CapturePoints created by the ClassInstanciation question from being opened and maybe freezing the image. Maybe this will be fixed in the future and this special boolean will not be needed anymore"
+	isOpenable := aBoolean
 ]
 
 { #category : #accessing }

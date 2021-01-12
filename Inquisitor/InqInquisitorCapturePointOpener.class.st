@@ -65,6 +65,7 @@ InqInquisitorCapturePointOpener >> nextBreakpointInPath [
 { #category : #'instance creation' }
 InqInquisitorCapturePointOpener >> open [
 	"Run the execution on which @inquisitor is based, until @capturePoint is reached, and open it in a debugger"
+	self capturePoint isOpenable ifFalse: [ self error: 'You are trying to open a CapturePoint that has been marked as "not openable". You can proceed, but it may freeze your image' ].
 	self installBreakpoints.
 	self registerToBreakpointHitAnnouncements.
 	"[inquisitor runExecution] on: Break do: [:ex | self removeBreakpoints. ex pass ]."

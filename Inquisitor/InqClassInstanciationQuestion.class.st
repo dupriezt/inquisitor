@@ -111,6 +111,8 @@ InqClassInstanciationQuestion >> processInstanciationDataIntoCapturePoints [
 		breakpoint := nodeToBreakpointDict at: callNode ifAbsentPut: [ self createBreakpointForNode: callNode andClassCondition: targetClass ].
 		self breakpointsEncountered add: breakpoint.
 		capturePoint := self capturePointFactory newCapturePointForReceiver: receiver andMethodInvocation: methodInvocation andCapturedValue: instance andBreakpointsEncountered: self breakpointsEncountered copy.
+		self flag: 'Remove following line when capture points created by this question can be opened without danger'.
+		capturePoint isOpenable: false.
 		self capturePoints add: capturePoint.
 	]
 ]

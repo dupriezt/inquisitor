@@ -215,27 +215,7 @@ InqInquisitor >> isSilent: aBoolean [
 { #category : #'as yet unclassified' }
 InqInquisitor >> openExecutionOnCapturePoint: aCapturePoint [
 	"Runs the execution until it reaches the point at which aCapturePoint was created"
-	| breakpoints indexOfNextBreakpointToEncounter sizeOfBreakpointsToEncounter |
 	InqInquisitorCapturePointOpener new inquisitor: self; capturePoint: aCapturePoint; open.
-	
-	"aCapturePoint breakpointsEncountered ifEmpty: [ self error: 'Unexpected case: CapturePoint has empty list of breakpoints encountered' ].
-	""List of the breakpoints encountered 1+ times on the way to the capture point""
-	breakpoints := aCapturePoint breakpointsEncountered asIdentitySet asOrderedCollection.
-	""Installing the breakpoints required by the capture point""
-	breakpoints do: [ :brkpt | brkpt install ].
-	indexOfNextBreakpointToEncounter := 1.
-	sizeOfBreakpointsToEncounter := aCapturePoint breakpointsEncountered size.
-	Breakpoint registerObserver: self.
-	self halt.
-	[self runExecution ] on: Break do: [ :ex |
-		self flag: 'debug code'.
-		self inform: 'On Break'.
-		lastBreakpointHit ifNil: [ self error: 'Unexpected case: Break exception signalled, but no breakpoint hit has been registered' ].
-		(breakpoints includes: lastBreakpointHit) ifFalse: [ lastBreakpointHit := nil. ex resume ""Unrelated breakpoint has been hit. Resuming the execution"" ].
-		(lastBreakpointHit = (aCapturePoint breakpointsEncountered at: indexOfNextBreakpointToEncounter)) ifTrue: [ indexOfNextBreakpointToEncounter := indexOfNextBreakpointToEncounter + 1 ] ifFalse: [ self error: 'Unexpected case: breakpoint encountered at the wrong time' ].
-		(indexOfNextBreakpointToEncounter > sizeOfBreakpointsToEncounter) ifTrue: [ ""Execution reached the capture point. Remove the breakpoints and let the Break exception get opened in a debugger"" breakpoints do: [:brkpt | brkpt remove]. ex pass ] ifFalse: [ ""Execution has not yet reached the capture point"" lastBreakpointHit := nil. ex resume ].
-	]
-""TODO test if it works: after capture point has been reached, execution reaches a breakpoint. Does it trigger this Break handler and mess things up?"""
 ]
 
 { #category : #accessing }
