@@ -1,11 +1,11 @@
 Class {
-	#name : #InqFactorialDummy,
+	#name : #InqFactorial,
 	#superclass : #Object,
 	#category : #'Inquisitor-SideStuff'
 }
 
 { #category : #'as yet unclassified' }
-InqFactorialDummy >> computeFactorialOf: anInt [
+InqFactorial >> computeFactorialOf: anInt [
 	anInt = 0 ifTrue: [ ^ 1 ].
 	^ anInt * (self computeFactorialOf: (anInt - 1))
 ]
