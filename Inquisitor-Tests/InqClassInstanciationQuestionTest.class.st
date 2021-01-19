@@ -19,7 +19,7 @@ InqClassInstanciationQuestionTest >> createTestInstances [
 
 { #category : #tests }
 InqClassInstanciationQuestionTest >> testRunOnSimpleClass [
-	| q |
+	| q firstCP secondCP |
 	self flag: 'Incomplete test. No time'.
 	
 	self setUpForInquisitedMethod: self class>>#createTestInstances.
@@ -27,6 +27,11 @@ InqClassInstanciationQuestionTest >> testRunOnSimpleClass [
 	q := InqClassInstanciationQuestion newForClass: InqTestAssistClassForClassInstanciation.
 	q askToInquisitor: inquisitor.
 	self assert: q capturePoints size equals: 2.
-	q inspect.
+"	q inspect."
+	firstCP := q capturePoints first.
+	self assert: firstCP methodInvocation invokedMethod name equals: 'Behavior>>#new'.
+	secondCP := q capturePoints second.
+	self assert: secondCP methodInvocation invokedMethod name equals: 'InqClassInstanciationQuestionTest>>#createTestInstances'.
+	
 	self postTestAssertions
 ]
