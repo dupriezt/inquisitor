@@ -1,14 +1,21 @@
 Class {
 	#name : #InqProxyMethodTest,
 	#superclass : #TestCase,
+	#instVars : [
+		'targetMethod'
+	],
 	#category : #'Inquisitor-Tests'
 }
 
+{ #category : #'as yet unclassified' }
+InqProxyMethodTest >> createProxyMethod [
+	^ InqProxyMethod newForTargetMethod: targetMethod
+]
+
 { #category : #tests }
-InqProxyMethodTest >> testProxyMethodWithArguments [	
-	| proxyMethod targetMethod originalCodeOfTargetMethod |
-	targetMethod := (InqTestAssistClassForProxyMethod>>#methodToProxy_WithArgument:andArgument:).
-	proxyMethod := InqProxyMethod newForTargetMethod: targetMethod.
+InqProxyMethodTest >> templateForTestProxyMethodWithArguments [	
+	| proxyMethod originalCodeOfTargetMethod |
+	proxyMethod := self createProxyMethod.
 	originalCodeOfTargetMethod := targetMethod sourceCode.
 
 	[
@@ -19,7 +26,7 @@ InqProxyMethodTest >> testProxyMethodWithArguments [
 	self assert: proxyMethod proxyMethod sourceCode equals: 'methodToProxy_WithArgument: arg1 andArgument: arg2
 	| returnValue |
 	returnValue := self ___methodToProxy_WithArgument: arg1 andArgument: arg2.
-	"instrumentation code"
+	', proxyMethod instrumentationCode, '
 	^ returnValue'.
 	self assert: proxyMethod proxiedMethod sourceCode equals: '___', originalCodeOfTargetMethod.
 	] ensure: [ 
@@ -30,10 +37,9 @@ InqProxyMethodTest >> testProxyMethodWithArguments [
 ]
 
 { #category : #tests }
-InqProxyMethodTest >> testProxyMethodWithNoArgument [
-	| proxyMethod targetMethod originalCodeOfTargetMethod |
-	targetMethod := (InqTestAssistClassForProxyMethod>>#methodToProxy_NoArgument).
-	proxyMethod := InqProxyMethod newForTargetMethod: targetMethod.
+InqProxyMethodTest >> templateForTestProxyMethodWithNoArgument [
+	| proxyMethod originalCodeOfTargetMethod |
+	proxyMethod := self createProxyMethod.
 	originalCodeOfTargetMethod := targetMethod sourceCode.
 
 	[
@@ -44,7 +50,7 @@ InqProxyMethodTest >> testProxyMethodWithNoArgument [
 	self assert: proxyMethod proxyMethod sourceCode equals: 'methodToProxy_NoArgument
 	| returnValue |
 	returnValue := self ___methodToProxy_NoArgument.
-	"instrumentation code"
+	', proxyMethod instrumentationCode, '
 	^ returnValue'.
 	self assert: proxyMethod proxiedMethod sourceCode equals: '___', originalCodeOfTargetMethod.
 	] ensure: [ 
@@ -52,4 +58,16 @@ InqProxyMethodTest >> testProxyMethodWithNoArgument [
 		self assert: (InqTestAssistClassForProxyMethod>>#methodToProxy_NoArgument) sourceCode equals: originalCodeOfTargetMethod.
 		self should: [(InqTestAssistClassForProxyMethod>>#___methodToProxy_NoArgument)] raise: KeyNotFound.
 	]
+]
+
+{ #category : #tests }
+InqProxyMethodTest >> testProxyMethodWithArguments [	
+	targetMethod := (InqTestAssistClassForProxyMethod>>#methodToProxy_WithArgument:andArgument:).
+	self templateForTestProxyMethodWithArguments
+]
+
+{ #category : #tests }
+InqProxyMethodTest >> testProxyMethodWithNoArgument [
+	targetMethod := (InqTestAssistClassForProxyMethod>>#methodToProxy_NoArgument).
+	self templateForTestProxyMethodWithNoArgument
 ]
