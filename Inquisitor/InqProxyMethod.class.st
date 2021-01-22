@@ -47,7 +47,7 @@ InqProxyMethod >> install [
 { #category : #actions }
 InqProxyMethod >> instrumentationCode [
 	"See #compileProxyMethodFor:calling: for the code that will be around this code. This code can use temp variable 'returnValue' to access the value returned by the proxied method"
-	^ ''
+	^ '"instrumentation code"'
 ]
 
 { #category : #accessing }

@@ -5,25 +5,51 @@ Class {
 }
 
 { #category : #tests }
-InqProxyMethodTest >> testCodeForProxyMethodTo_NoArgument_NotOnSameClass [
-	| proxyMethod methodToProxy classToProxyOn |
-	methodToProxy := (InqTestAssistSuperClassForProxyMethod>>#methodToProxy_NoArgument).
-	classToProxyOn := InqTestAssistClassForProxyMethod.
-	proxyMethod := InqProxyMethod newToProxyMethod: methodToProxy onClass: classToProxyOn.
-	self assert: (proxyMethod codeForProxyMethodTo: methodToProxy) equals:
-'methodToProxy_NoArgument
-	Break break.
-	^ super methodToProxy_NoArgument'.
+InqProxyMethodTest >> testProxyMethodWithArguments [	
+	| proxyMethod targetMethod originalCodeOfTargetMethod |
+	targetMethod := (InqTestAssistClassForProxyMethod>>#methodToProxy_WithArgument:andArgument:).
+	proxyMethod := InqProxyMethod newForTargetMethod: targetMethod.
+	originalCodeOfTargetMethod := targetMethod sourceCode.
+
+	[
+	proxyMethod install.
+	self assert: proxyMethod proxyMethod selector equals: targetMethod selector.
+	self assert: proxyMethod proxiedMethod selector equals: #___, targetMethod selector.
+	
+	self assert: proxyMethod proxyMethod sourceCode equals: 'methodToProxy_WithArgument: arg1 andArgument: arg2
+	| returnValue |
+	returnValue := self ___methodToProxy_WithArgument: arg1 andArgument: arg2.
+	"instrumentation code"
+	^ returnValue'.
+	self assert: proxyMethod proxiedMethod sourceCode equals: '___', originalCodeOfTargetMethod.
+	] ensure: [ 
+		proxyMethod unInstall.
+		self assert: (InqTestAssistClassForProxyMethod>>#methodToProxy_WithArgument:andArgument:) sourceCode equals: originalCodeOfTargetMethod.
+		self should: [(InqTestAssistClassForProxyMethod>>#___methodToProxy_WithArgument:andArgument:)] raise: KeyNotFound.
+	]
 ]
 
 { #category : #tests }
-InqProxyMethodTest >> testCodeForProxyMethodTo_WithArguments_NotOnSameClass [
-	| proxyMethod methodToProxy classToProxyOn |
-	methodToProxy := (InqTestAssistSuperClassForProxyMethod>>#methodToProxy_WithArgument:andArgument:).
-	classToProxyOn := InqTestAssistClassForProxyMethod.
-	proxyMethod := InqProxyMethod newToProxyMethod: methodToProxy onClass: classToProxyOn.
-	self assert: (proxyMethod codeForProxyMethodTo: methodToProxy) equals:
-'methodToProxy_WithArgument: arg1 andArgument: arg2
-	Break break.
-	^ super methodToProxy_WithArgument: arg1 andArgument: arg2'.
+InqProxyMethodTest >> testProxyMethodWithNoArgument [
+	| proxyMethod targetMethod originalCodeOfTargetMethod |
+	targetMethod := (InqTestAssistClassForProxyMethod>>#methodToProxy_NoArgument).
+	proxyMethod := InqProxyMethod newForTargetMethod: targetMethod.
+	originalCodeOfTargetMethod := targetMethod sourceCode.
+
+	[
+	proxyMethod install.
+	self assert: proxyMethod proxyMethod selector equals: targetMethod selector.
+	self assert: proxyMethod proxiedMethod selector equals: #___, targetMethod selector.
+	
+	self assert: proxyMethod proxyMethod sourceCode equals: 'methodToProxy_NoArgument
+	| returnValue |
+	returnValue := self ___methodToProxy_NoArgument.
+	"instrumentation code"
+	^ returnValue'.
+	self assert: proxyMethod proxiedMethod sourceCode equals: '___', originalCodeOfTargetMethod.
+	] ensure: [ 
+		proxyMethod unInstall.
+		self assert: (InqTestAssistClassForProxyMethod>>#methodToProxy_NoArgument) sourceCode equals: originalCodeOfTargetMethod.
+		self should: [(InqTestAssistClassForProxyMethod>>#___methodToProxy_NoArgument)] raise: KeyNotFound.
+	]
 ]

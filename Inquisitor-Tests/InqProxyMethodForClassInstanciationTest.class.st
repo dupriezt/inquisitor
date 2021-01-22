@@ -40,6 +40,12 @@ InqProxyMethodForClassInstanciationTest >> testSourceCodeOfProxyMethodForCalling
 'methodToProxy_NoArgument
 	| returnValue |
 	returnValue := self ___methodToProxy_NoArgument.
-	(returnValue class == InqTestAssistClassForProxyMethod) ifTrue: [(InqClassInstanciationQuestion hashToQuestionDictionary at: ', q hash asString, ') instanciationData add: {thisContext sender sourceNoceExecuted. returnValue}].
-	^ returnValue'
+	(returnValue class == ', targetClass name asString, ') ifTrue:  [(InqClassInstanciationQuestion hashToQuestionDictionary at: ', q hash asString,' ) instanciationData add: {
+		(thisContext sender sourceNodeExecuted).
+		returnValue.
+		(thisContext sender) hash.
+		(thisContext sender) method.
+		(thisContext sender) receiver.
+		}].
+	^ returnValue'.
 ]
