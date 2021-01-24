@@ -4,6 +4,15 @@ Inquisitor is a debugging tool which you point at a test method or custom code. 
 
 ## Installation
 
+**Latest Stable Version**
+```Smalltalk
+Metacello new
+  githubUser: 'dupriezt' project: 'Inquisitor' commitish: 'v1.0.0' path: '';
+  baseline: 'Inquisitor';
+  load
+```
+
+**Bleeding Edge**
 ```Smalltalk
 Metacello new
     baseline: 'Inquisitor';
