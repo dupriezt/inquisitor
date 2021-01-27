@@ -16,7 +16,8 @@ Class {
 		'capturedValue',
 		'breakpointsEncountered',
 		'receiver',
-		'isOpenable'
+		'isOpenable',
+		'timeStamp'
 	],
 	#category : #Inquisitor
 }
@@ -51,6 +52,13 @@ InqCapturePoint >> capturedValue [
 { #category : #accessing }
 InqCapturePoint >> capturedValue: anObject [
 	capturedValue := anObject
+]
+
+{ #category : #'as yet unclassified' }
+InqCapturePoint >> comesBefore: aCapturePoint [
+	"The execution during which @aCapturePoint was captured is expected to have the same source code as that during which @self was captured.
+	Returns whether @self would have been captured before @aCapturePoint if both had ben captured during the same execution"
+	^ self timeStamp comesBefore: aCapturePoint timeStamp
 ]
 
 { #category : #accessing }
@@ -104,4 +112,16 @@ InqCapturePoint >> timeIndex [
 { #category : #accessing }
 InqCapturePoint >> timeIndex: anObject [
 	timeIndex := anObject
+]
+
+{ #category : #accessing }
+InqCapturePoint >> timeStamp [
+
+	^ timeStamp
+]
+
+{ #category : #accessing }
+InqCapturePoint >> timeStamp: anObject [
+
+	timeStamp := anObject
 ]
