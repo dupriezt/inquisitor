@@ -22,7 +22,7 @@ InqTimeStampedStack class >> newForContext: aContext [
 InqTimeStampedStack >> beForContext: aContext [
 	| currentContext |
 	context := aContext.
-	self methodCalls addAll: (aContext stack collect: [:ctx | InqTimeStampedContext new methodName: (ctx method name); pc: (ctx pc); yourself ]).
+	self methodCalls addAll: (aContext stack collect: [:ctx | InqTimeStampedContext new methodName: (ctx method method name); pc: (ctx pc); yourself ]).
 	
 	"currentContext := context.
 	[currentContext isNotNil] whileTrue: [

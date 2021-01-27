@@ -43,3 +43,14 @@ InqTimeStampedContext >> pc: anObject [
 
 	pc := anObject
 ]
+
+{ #category : #printing }
+InqTimeStampedContext >> printOn: aStream [
+	aStream
+		nextPutAll: '(';
+	 	nextPutAll: self pc asString;
+		nextPutAll: ', ';
+		nextPutAll: self methodName asString;
+		nextPutAll: ') '.
+	super printOn: aStream
+]
