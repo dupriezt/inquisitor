@@ -48,7 +48,7 @@ InqInquisitorWorkbenchPresenter class >> debugWorldMenuOn: aBuilder [
 	<worldMenu>
 	(aBuilder item: #'Inquisitor')
 		order: 0;
-		parent: #Debugging;
+		parent: #Debug;
 		icon: (self iconNamed: #haloView);
 		help: 'Open the Inquisitor workbench UI';
 		action: [ self open ]
