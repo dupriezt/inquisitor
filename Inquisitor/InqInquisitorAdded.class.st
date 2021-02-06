@@ -14,7 +14,6 @@ InqInquisitorAdded class >> newFor: anInquisitor [
 
 { #category : #accessing }
 InqInquisitorAdded >> inquisitor [
-
 	^ inquisitor
 ]
 
