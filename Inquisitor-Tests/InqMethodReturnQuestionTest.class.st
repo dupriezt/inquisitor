@@ -77,6 +77,7 @@ InqMethodReturnQuestionTest >> testImplicitReturnSelf [
 	self assert: capturePoints first capturedValue equals: receiverInstance.
 	self assert: capturePoints first breakpointsEncountered size equals: 1.
 	self assert: capturePoints first methodInvocation invokedMethod name equals: questionedMethod name. "The compiled methods are different because one contains bytecode for the breakpoint that was inserted into it"
+	self removeBreakpointsOfQuestion: q.
 	self postTestAssertions.
 	
 ]
@@ -94,6 +95,8 @@ InqMethodReturnQuestionTest >> testReturnFalse [
 	self assert: self assistClass instances size equals: 1.
 	inst := self assistClass instances first.
 	self assertCapturePoint: (capturePoints first) value: false receiver: inst method: questionedMethod  nbBreakpoints: 1.
+	
+	self removeBreakpointsOfQuestion: q.
 	self postTestAssertions.
 ]
 
@@ -110,6 +113,8 @@ InqMethodReturnQuestionTest >> testReturnInBlock [
 	self assert: self assistClass instances size equals: 1.
 	inst := self assistClass instances first.
 	self assertCapturePoint: (capturePoints first) value: 42 receiver: inst method: questionedMethod nbBreakpoints: 1.
+	
+	self removeBreakpointsOfQuestion: q.
 	self postTestAssertions.
 ]
 
@@ -126,6 +131,8 @@ InqMethodReturnQuestionTest >> testReturnNil [
 	self assert: self assistClass instances size equals: 1.
 	inst := self assistClass instances first.
 	self assertCapturePoint: (capturePoints first) value: nil receiver: inst method: questionedMethod nbBreakpoints: 1.
+	
+	self removeBreakpointsOfQuestion: q.
 	self postTestAssertions.
 	
 ]
@@ -143,6 +150,8 @@ InqMethodReturnQuestionTest >> testReturnNonSpecialCase [
 	self assert: self assistClass instances size equals: 1.
 	inst := self assistClass instances first.
 	self assertCapturePoint: (capturePoints first) value: 42 receiver: inst method: questionedMethod nbBreakpoints: 1.
+	
+	self removeBreakpointsOfQuestion: q.
 	self postTestAssertions.
 ]
 
@@ -159,6 +168,8 @@ InqMethodReturnQuestionTest >> testReturnSelf [
 	self assert: self assistClass instances size equals: 1.
 	inst := self assistClass instances first.
 	self assertCapturePoint: (capturePoints first) value: inst receiver: inst method: questionedMethod nbBreakpoints: 1.
+	
+	self removeBreakpointsOfQuestion: q.
 	self postTestAssertions.
 ]
 
@@ -175,6 +186,8 @@ InqMethodReturnQuestionTest >> testReturnTrue [
 	self assert: self assistClass instances size equals: 1.
 	inst := self assistClass instances first.
 	self assertCapturePoint: (capturePoints first) value: true receiver: inst method: questionedMethod nbBreakpoints: 1.
+	
+	self removeBreakpointsOfQuestion: q.
 	self postTestAssertions.
 	
 ]

@@ -33,5 +33,6 @@ InqClassInstanciationQuestionTest >> testRunOnSimpleClass [
 	secondCP := q capturePoints second.
 	self assert: secondCP methodInvocation invokedMethod name equals: 'InqClassInstanciationQuestionTest>>#createTestInstances'.
 	
+	self removeBreakpointsOfQuestion: q.
 	self postTestAssertions
 ]

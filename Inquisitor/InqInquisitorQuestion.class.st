@@ -143,7 +143,7 @@ InqInquisitorQuestion >> runExecutionWithInquisitor: anInquisitor [
 		executionTermination := InqNormalTermination newForDescription: 'Inquisited execution finished normally'
 	].
 	SystemAnnouncer uniqueInstance unsubscribe: self.
-	self breakpoints do: [ :brkpt | brkpt remove ].
+	self breakpoints do: [ :brkpt | brkpt disable ].
 ]
 
 { #category : #'as yet unclassified' }

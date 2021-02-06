@@ -12,7 +12,7 @@ Class {
 
 { #category : #'as yet unclassified' }
 InqCapturePointFactory >> newCapturePointForContext: aContext andCapturedValue: aValue andBreakpointsEncountered: anOrderedCollection [
-	^ InqCapturePoint privateNew receiver: aContext receiver; methodInvocation: (InqMethodInvocation newForContext: aContext); capturedValue: aValue; breakpointsEncountered: anOrderedCollection; timeIndex: self nextTimeIndex; timeStamp: InqTimeStampedStack; newForContext: aContext; yourself
+	^ InqCapturePoint privateNew receiver: aContext receiver; methodInvocation: (InqMethodInvocation newForContext: aContext); capturedValue: aValue; breakpointsEncountered: anOrderedCollection; timeIndex: self nextTimeIndex; timeStamp: (InqTimeStampedStack newForContext: aContext); yourself
 ]
 
 { #category : #'as yet unclassified' }

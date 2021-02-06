@@ -1,6 +1,9 @@
 Class {
 	#name : #InqCapturePointTest,
 	#superclass : #InqInquisitorTest,
+	#instVars : [
+		'astCacheCopy'
+	],
 	#category : #'Inquisitor-Tests'
 }
 
@@ -47,7 +50,9 @@ InqCapturePointTest >> createCapturePointCapturing: aValue [
 			capturePoint := InqCapturePointFactory new newCapturePointForContext:  (ex signalerContext sender "context of dummyMethodA2") andCapturedValue: aValue andBreakpointsEncountered: (OrderedCollection new add: b1; add: b2; add: b2; add: b2; yourself)
 		]
 	].
-	self removeBreakpoints. "Removing the breakpoints we introduced to create @capturePoint, to avoid polluting tests about opening @capturePoint"
+	"Disabling the breakpoint on which the capture point was created, because that's what the inquisitor questions do"
+	b1 disable.
+	b2 disable.
 	^ capturePoint
 	
 ]
@@ -61,7 +66,7 @@ InqCapturePointTest >> createCapturePointOnNode: aNode Capturing: aValue whenExe
 	
 	[aBlock on: Break do: [ :ex | capturePoint := InqCapturePointFactory new newCapturePointForContext: (ex signalerContext sender "context of the method in which the breakpoint was installed") andCapturedValue: aValue andBreakpointsEncountered: (OrderedCollection new add: b; yourself)]] on: Halt do: [ :ex | ex resume. "Ignore Halt exceptions raised by the execution. InqInquisitorQuestions have a mechanism to ignore halts in the same way" ].
 	
-	self removeBreakpoints. "Removing the breakpoints we introduced to create @capturePoint, to avoid polluting tests about opening @capturePoint"
+	b disable. "Disabling the breakpoint on which the capture point was created, because that's what the inquisitor questions do"
 	capturePoint ifNil: [ self error: 'No capture point was created. The execution above probably did not trigger a Break exception to enter the handler above' ].
 	^ capturePoint
 ]
@@ -74,7 +79,7 @@ InqCapturePointTest >> createSimpleCapturePointCapturing: aValue [
 
 	b := self installBreakpointAtFirstBreakpointTargetInMethod: inquisitedMethod.
 	[ self dummyMethod ] on: Break do: [ :ex | capturePoint := InqCapturePointFactory new newCapturePointForContext:  (ex signalerContext sender "context of dummyMethod") andCapturedValue: aValue andBreakpointsEncountered: (OrderedCollection new add: b; yourself)].
-	self removeBreakpoints. "Removing the breakpoints we introduced to create @capturePoint, to avoid polluting tests about opening @capturePoint"
+	b disable. "Disabling the breakpoint on which the capture point was created, because that's what the inquisitor questions do"
 	^ capturePoint
 	
 ]
@@ -121,6 +126,28 @@ InqCapturePointTest >> installBreakpointAtFirstBreakpointTargetInMethod: aCompil
 	^ breakpoint
 ]
 
+{ #category : #running }
+InqCapturePointTest >> setUp [
+	super setUp.
+	breakpoints := OrderedCollection new.
+	"Empties the instance registers of the assist classes"
+	self assistClasses do: [ :assistClass | assistClass clearInstances ].
+	"Capture initial state of assist classes, so that it can be asserted later that they were not modified by the tests"
+	assistClassesInitialStateDictionary := Dictionary new.
+	self assistClasses do: [ :assistClass | |d|
+		d := Dictionary new.
+		assistClassesInitialStateDictionary at: assistClass put: d.
+		self captureInitialStateOfAssistClass: assistClass inDictionary: d
+	].
+	astCacheCopy := ASTCache default copy.
+]
+
+{ #category : #running }
+InqCapturePointTest >> tearDown [
+	ASTCache default: astCacheCopy.
+	super tearDown.
+]
+
 { #category : #'helper methods' }
 InqCapturePointTest >> testCreateCapturePoint [
 	"Creates a CapturePoint and checks its content"
@@ -151,10 +178,6 @@ InqCapturePointTest >> testOpenCapturePoint [
 	self assert: breakpointsEncountered second node methodNode selector equals: #dummyMethodA2.
 	self assert: breakpointsEncountered second equals: breakpointsEncountered third.
 	self assert: breakpointsEncountered third equals: breakpointsEncountered fourth.
-	
-	"Checking that the methods that will be ran when opening @capturePoint do not have breakpoints"
-	self deny: (InqCapturePointTest>>#dummyMethodA1) hasBreakpoint.
-	self deny: (InqCapturePointTest>>#dummyMethodA2) hasBreakpoint.
 	
 	self should: [[inquisitor openExecutionOnCapturePoint: capturePoint] on: Break do: [ :ex |
 		debuggerContext := ex signalerContext sender. "Context on which the debugger opens"
@@ -198,6 +221,30 @@ InqCapturePointTest >> testOpenSimpleCapturePoint [
 	The CapturePoint is 'simple' in that there is only one breakpoint to go through to reach it."
 	| capturePoint debuggerContext node breakNode |
 	capturePoint := self createSimpleCapturePointCapturing: nil.
+	
+	self should: [[inquisitor openExecutionOnCapturePoint: capturePoint] on: Break do: [ :ex |
+		debuggerContext := ex signalerContext sender. "Context on which the debugger opens"
+		self assert: debuggerContext method name equals: inquisitedMethod name.
+		breakNode := debuggerContext currentNode. "Current AST node being executed by debuggerContext. It should be the #breakInContext:node: message node introduced into the method by the breakpoint"
+		self assert: breakNode isMessage.
+		self assert: breakNode selector = #breakInContext:node:.
+		node := breakNode parent. "Node currently highlighted in the debugger"
+		self assert: node isMessage.
+		self assert: node selector equals: #breakpointTarget.
+		ex pass.
+	]] raise: Break.
+
+	self postTestAssertions
+]
+
+{ #category : #'helper methods' }
+InqCapturePointTest >> testOpenSimpleCapturePointAfterCleaningASTCache [
+	"Creates a CapturePoint and use Inquisitor>>#openExecutionOnCapturePoint: to run the inquisited execution up until it reaches this capture point. Cleans the AST cache, which can mess with breakpoints. Checks that the execution signals a Break exception that would open a debugger on the right node.
+	The CapturePoint is 'simple' in that there is only one breakpoint to go through to reach it."
+	| capturePoint debuggerContext node breakNode |
+	capturePoint := self createSimpleCapturePointCapturing: nil.
+	"Clean the AST cache"
+	ASTCache default reset.
 
 	self should: [[inquisitor openExecutionOnCapturePoint: capturePoint] on: Break do: [ :ex |
 		debuggerContext := ex signalerContext sender. "Context on which the debugger opens"

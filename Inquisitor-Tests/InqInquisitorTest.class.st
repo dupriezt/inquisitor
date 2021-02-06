@@ -99,13 +99,18 @@ InqInquisitorTest >> checkFormatOf: aCollection accordingTo: aTemplate [
 InqInquisitorTest >> postTestAssertions [
 	"Common assertions to be checked after each test run"
 	self assertAssistClassesHaveSameMethodsAsInitially.
-	self assertNoBreakpointsInMethodsOfAssistClasses.
+	"self assertNoBreakpointsInMethodsOfAssistClasses. Now that breakpoints from questions are disabled instead of removed, it's normal there are (disabled) breakpoints left after the tests" 
 ]
 
 { #category : #running }
 InqInquisitorTest >> removeBreakpoints [
 	breakpoints do: [ :brkpt | brkpt remove ].
 	breakpoints := OrderedCollection new.
+]
+
+{ #category : #running }
+InqInquisitorTest >> removeBreakpointsOfQuestion: anInqInquisitorQuestion [
+	anInqInquisitorQuestion breakpoints do: [ :brkpt | brkpt remove ].
 ]
 
 { #category : #running }

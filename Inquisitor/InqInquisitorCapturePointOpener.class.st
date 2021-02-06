@@ -35,6 +35,16 @@ InqInquisitorCapturePointOpener >> capturePointReached [
 	^ self breakpointPath isEmpty
 ]
 
+{ #category : #'instance creation' }
+InqInquisitorCapturePointOpener >> disableBreakpoints [
+	self relevantBreakpoints do: [ :brkpt | brkpt disable ].
+]
+
+{ #category : #'instance creation' }
+InqInquisitorCapturePointOpener >> enableBreakpoints [
+	self relevantBreakpoints do: [ :brkpt | brkpt enable ].
+]
+
 { #category : #'as yet unclassified' }
 InqInquisitorCapturePointOpener >> encounteredNextBreakpoint [
 	"The execution encountered the next breakpoint in @breakpointPath. So we remove it from the list."
@@ -51,11 +61,6 @@ InqInquisitorCapturePointOpener >> inquisitor: anObject [
 	inquisitor := anObject
 ]
 
-{ #category : #'instance creation' }
-InqInquisitorCapturePointOpener >> installBreakpoints [
-	self relevantBreakpoints do: [ :brkpt | brkpt install ].
-]
-
 { #category : #'as yet unclassified' }
 InqInquisitorCapturePointOpener >> nextBreakpointInPath [
 	"Returns the next breakpoint the execution is supposed to encounter on the way to @capturePoint"
@@ -66,7 +71,7 @@ InqInquisitorCapturePointOpener >> nextBreakpointInPath [
 InqInquisitorCapturePointOpener >> open [
 	"Run the execution on which @inquisitor is based, until @capturePoint is reached, and open it in a debugger"
 	self capturePoint isOpenable ifFalse: [ self error: 'You are trying to open a CapturePoint that has been marked as "not openable". You can proceed, but it may freeze your image' ].
-	self installBreakpoints.
+	self enableBreakpoints.
 	self registerToBreakpointHitAnnouncements.
 	"[inquisitor runExecution] on: Break do: [:ex | self removeBreakpoints. ex pass ]."
 	[[
@@ -84,7 +89,7 @@ InqInquisitorCapturePointOpener >> open [
 			"If the execution reached @capturePoint, we simply let the debugger open. Otherwise, there are still breakpoints to encounter so we let the execution continue"
 			self capturePointReached ifTrue: [ ex pass ] ifFalse: [ ex resume ].
 		]
-	] on: Halt do: [:ex | ex isBreak ifTrue: [ ex pass "It's really a Break and not a Halt, we let it pass so that it opens a debugger at the right place in the execution" ] ifFalse: [ ex resume "It's a Halt and not a Break. We resume it because we want to ignore 'self halt' statements left in the code by the user"]]] ensure: [	self unregisterFromBreakpointHitAnnouncements. self removeBreakpoints ]
+	] on: Halt do: [:ex | ex isBreak ifTrue: [ ex pass "It's really a Break and not a Halt, we let it pass so that it opens a debugger at the right place in the execution" ] ifFalse: [ ex resume "It's a Halt and not a Break. We resume it because we want to ignore 'self halt' statements left in the code by the user"]]] ensure: [	self unregisterFromBreakpointHitAnnouncements. self disableBreakpoints ]
 	.
 ]
 
@@ -103,11 +108,6 @@ InqInquisitorCapturePointOpener >> registerToBreakpointHitAnnouncements [
 InqInquisitorCapturePointOpener >> relevantBreakpoints [
 	"Returns a set containing the breakpoints encountered on the way to reach @capturePoint. A breakpoint will only be present once in this set even if it was encountered multiple times"
 	^ capturePoint breakpointsEncountered asIdentitySet
-]
-
-{ #category : #'instance creation' }
-InqInquisitorCapturePointOpener >> removeBreakpoints [
-	self relevantBreakpoints do: [ :brkpt | brkpt remove ].
 ]
 
 { #category : #'instance creation' }

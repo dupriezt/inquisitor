@@ -34,7 +34,7 @@ InqHitCheckTest >> hasBreakpointsInAssistMethods [
 { #category : #running }
 InqHitCheckTest >> testHitCheckNotAffectedByOtherBreakpoints [
 	| oneHitNode fourHitNode q b |
-	self assertNoBreakpointInAssistMethodBeforeTest. 
+	"self assertNoBreakpointInAssistMethodBeforeTest."
 	self setUpForInquisitedMethod: (self class)>>#dummyForTestHitCheck.
 	
 	fourHitNode := ((inquisitedMethod ast body statements at: 2) arguments at: 1) body statements at: 1.
@@ -47,15 +47,16 @@ InqHitCheckTest >> testHitCheckNotAffectedByOtherBreakpoints [
 	self assertExecutionTerminationNormal: q.
 	self assert: q capturePoints size equals: 1.
 	b remove.
-	self assertNoBreakpointInAssistMethodAfterTest.
+	"self assertNoBreakpointInAssistMethodAfterTest."
 	
+	self removeBreakpointsOfQuestion: q.
 	self postTestAssertions
 ]
 
 { #category : #running }
 InqHitCheckTest >> testHitCheck_FourHit [
 	| fourHitNode q |
-	self assertNoBreakpointInAssistMethodBeforeTest.
+	"self assertNoBreakpointInAssistMethodBeforeTest."
 	self setUpForInquisitedMethod: (self class)>>#dummyForTestHitCheck.
 	
 	fourHitNode :=  ((inquisitedMethod ast body statements at: 2) arguments at: 1) body statements at: 1. "'i := i - 1' assignment node"
@@ -63,15 +64,16 @@ InqHitCheckTest >> testHitCheck_FourHit [
 	q askToInquisitor: inquisitor.
 	self assertExecutionTerminationNormal: q.
 	self assert: q capturePoints size equals: 4.
-	self assertNoBreakpointInAssistMethodAfterTest.
+	"self assertNoBreakpointInAssistMethodAfterTest."
 	
+	self removeBreakpointsOfQuestion: q.
 	self postTestAssertions
 ]
 
 { #category : #running }
 InqHitCheckTest >> testHitCheck_OneHit [
 	| oneHitNode q |
-	self assertNoBreakpointInAssistMethodBeforeTest.
+	"self assertNoBreakpointInAssistMethodBeforeTest."
 	self setUpForInquisitedMethod: (self class)>>#dummyForTestHitCheck.
 	
 	oneHitNode := inquisitedMethod ast body statements at: 1. "'i := 4' assignment node"
@@ -79,7 +81,8 @@ InqHitCheckTest >> testHitCheck_OneHit [
 	q askToInquisitor: inquisitor.
 	self assertExecutionTerminationNormal: q.
 	self assert: q capturePoints size equals: 1.
-	self assertNoBreakpointInAssistMethodAfterTest.
+	"self assertNoBreakpointInAssistMethodAfterTest."
 	
+	self removeBreakpointsOfQuestion: q.
 	self postTestAssertions.
 ]

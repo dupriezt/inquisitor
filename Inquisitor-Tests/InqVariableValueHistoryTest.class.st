@@ -65,6 +65,8 @@ InqVariableValueHistoryTest >> testVariableValueHistory_ArgumentVariables [
 	self assertCapturePoint: (cps at: 1) value: 0 receiver: inst1 method: qMeth nbBreakpoints: 1.
 	self assertCapturePoint: (cps at: 2) value: 1 receiver: inst1 method: qMeth nbBreakpoints: 2.
 	self assertCapturePoint: (cps at: 3) value: 10 receiver: inst2 method: qMeth nbBreakpoints: 3.
+	
+	self removeBreakpointsOfQuestion: q.
 	self postTestAssertions.
 ]
 
@@ -88,6 +90,8 @@ InqVariableValueHistoryTest >> testVariableValueHistory_ClassVariables [
 	self assertCapturePoint: (cps at: 1) value: 0 receiver: varOwner method: qMeth nbBreakpoints: 1.
 	self assertCapturePoint: (cps at: 2) value: 1 receiver: varOwner method: qMeth nbBreakpoints: 2.
 	self assertCapturePoint: (cps at: 3) value: 2 receiver: varOwner method: qMeth nbBreakpoints: 3.
+	
+	self removeBreakpointsOfQuestion: q.
 	self postTestAssertions.
 ]
 
@@ -113,6 +117,8 @@ InqVariableValueHistoryTest >> testVariableValueHistory_InstanceVariables [
 	self assertCapturePoint: (cps at: 1) value: 0 receiver: inst1 method: qMeth nbBreakpoints: 1.
 	self assertCapturePoint: (cps at: 2) value: 1 receiver: inst1 method: qMeth nbBreakpoints: 2.
 	self assertCapturePoint: (cps at: 3) value: 2 receiver: inst2 method: qMeth nbBreakpoints: 3.
+	
+	self removeBreakpointsOfQuestion: q.
 	self postTestAssertions.
 ]
 
@@ -143,5 +149,7 @@ InqVariableValueHistoryTest >> testVariableValueHistory_LocalVariable [
 	self assertCapturePoint: (cps at: 7) value: 0 receiver: inst2 method: qMeth nbBreakpoints: 7.
 	self assertCapturePoint: (cps at: 8) value: 1 receiver: inst2 method: qMeth nbBreakpoints: 8.
 	self assertCapturePoint: (cps at: 9) value: 2 receiver: inst2 method: qMeth nbBreakpoints: 9.
+	
+	self removeBreakpointsOfQuestion: q.
 	self postTestAssertions.
 ]
