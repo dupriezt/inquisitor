@@ -2,6 +2,8 @@
 
 Inquisitor is a debugging tool which you point at a test method or custom code. You can then ask questions like: right-click on a method, "What does it return?". Inquisitor will run the execution and answer you with the list. If you see a suspicious value, there's a button to directly open a debugger on the moment that value was captured.
 
+*Note: Works on Pharo 9 and later*
+
 ## Installation
 
 **Latest Stable Version**
