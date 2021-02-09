@@ -7,7 +7,7 @@ Inquisitor is a debugging tool which you point at a test method or custom code. 
 **Latest Stable Version**
 ```Smalltalk
 Metacello new
-  githubUser: 'dupriezt' project: 'Inquisitor' commitish: 'v1.0.0' path: '';
+  githubUser: 'dupriezt' project: 'Inquisitor' commitish: 'v1.1.0' path: '';
   baseline: 'Inquisitor';
   load
 ```
